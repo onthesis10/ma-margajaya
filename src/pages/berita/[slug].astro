@@ -25,7 +25,10 @@ const breadcrumbs = [
 const articleUrl = `https://mamargajaya.sch.id/berita/${article.slug}`;
 const formattedDate = formatIndonesianDate(article.tanggal);
 const readingTime = estimateReadingTime(article.isi);
-const paragraphs = (article.isi || '').split(/\n\s*\n/).filter(p => p.trim());
+// Detect whether content is stored as HTML (from WYSIWYG) or plain text (legacy)
+const isiContent = article.isi || '';
+const isHtmlContent = isiContent.trimStart().startsWith('<');
+const paragraphs = !isHtmlContent ? isiContent.split(/\n\s*\n/).filter(p => p.trim()) : [];
 ---
 
 <PageLayout 
@@ -181,11 +184,16 @@ const paragraphs = (article.isi || '').split(/\n\s*\n/).filter(p => p.trim());
           </div>
         )}
 
-        <!-- Formatted Body Paragraphs -->
-        <div class="prose prose-lg prose-emerald max-w-none text-slate-800 leading-[2.1] font-normal">
-          {paragraphs.map(p => (
-            <p class="mb-6 whitespace-pre-line text-justify leading-relaxed">{p}</p>
-          ))}
+        <!-- Formatted Body -->
+        <div class="prose-article max-w-none">
+          {isHtmlContent ? (
+            <div set:html={isiContent} />
+          ) : (
+            // Legacy plain text: split by double newline into paragraphs
+            paragraphs.map(p => (
+              <p class="mb-6 whitespace-pre-line text-justify leading-relaxed">{p}</p>
+            ))
+          )}
         </div>
 
         <!-- Academic Footer Sign-off -->

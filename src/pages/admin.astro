@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '../layouts/AdminLayout.astro';
-const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
+const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || 'https://script.google.com/macros/s/AKfycbwboX_4labGuJ9412coI1JrXzpxb11B3xJOlmloGnEsTsRui-yIdssRFl8i2CGga1IF/exec';
 const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://api.vercel.com/v1/integrations/deploy/prj_umwjoNnXfJTjqzpiHS7qcLu3kVpH/rUwycrCtVI';
 ---
 
@@ -15,7 +15,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       <!-- SISI KIRI: Logo Besar Tanpa Border + Tagline & Identitas Madrasah -->
       <div class="lg:col-span-7 space-y-6 sm:space-y-8 text-left py-4 lg:py-8">
         
-        <!-- Big Clean Logo (NO BORDER AT ALL) -->
+        <!-- Clean Logo -->
         <div class="flex items-center gap-6">
           <img 
             src="/logo/logo-ma-margajaya.png" 
@@ -48,7 +48,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
       </div>
 
-      <!-- SISI KANAN: Frosted Glass Login Window Card (Soft Ambient Glow on Hover) -->
+      <!-- SISI KANAN: Frosted Glass Login Window Card -->
       <div class="lg:col-span-5 w-full">
         <div class="group relative rounded-3xl p-8 sm:p-10 border border-white/15 hover:border-emerald-400/40 bg-[#06281D]/60 hover:bg-[#06281D]/80 backdrop-blur-3xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)] hover:shadow-[0_25px_60px_-10px_rgba(5,150,105,0.35),0_0_40px_rgba(232,185,35,0.18)] transition-all duration-500 overflow-hidden">
           
@@ -136,13 +136,13 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
 
   <!-- =========================================================================
-       2. MAIN ADMIN DASHBOARD (SINGLE PAGE SCROLL: FORM + ARCHIVES)
+       2. MAIN ADMIN DASHBOARD (macOS / iOS COMPACT CMS LAYOUT)
        ========================================================================= -->
   <div id="admin-dashboard" class="hidden min-h-screen flex-1 flex flex-col" data-api-url={newsApiUrl} data-deploy-hook={vercelDeployHook}>
     
-    <!-- macOS Floating Frosted Navbar Header (Ultra Clean & Minimal) -->
-    <header class="ios-glass-nav sticky top-0 z-40">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+    <!-- macOS Floating Frosted Navbar Header -->
+    <header class="ios-glass-nav sticky top-0 z-40 border-b border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
         
         <!-- Left Brand -->
         <div class="flex items-center gap-3.5">
@@ -151,14 +151,47 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
             <h1 class="font-serif text-base sm:text-lg font-bold text-white tracking-tight leading-tight">
               MA Margajaya
             </h1>
-            <p class="text-[11px] text-slate-400 font-medium">
-              Portal Pengelolaan Berita &amp; Warta
+            <p class="text-[11px] text-emerald-300/80 font-medium">
+              Portal Warta &amp; CMS Publikasi
             </p>
           </div>
         </div>
 
+        <!-- Center: macOS Sliding Pill Segmented Control -->
+        <nav id="tab-nav" class="hidden md:flex items-center relative p-1 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl shadow-inner gap-0.5" role="tablist">
+          <!-- Animated sliding pill indicator -->
+          <div id="tab-indicator" class="absolute top-1 bottom-1 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-[0_2px_12px_rgba(5,150,105,0.45)] border border-emerald-400/40 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none" style="width:0;left:4px;"></div>
+          
+          <button 
+            type="button" 
+            id="tab-btn-editor"
+            role="tab"
+            aria-selected="true"
+            class="tab-btn relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors duration-200 text-white"
+          >
+            <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            <span>Tulis Warta</span>
+          </button>
+          
+          <button 
+            type="button" 
+            id="tab-btn-archives"
+            role="tab"
+            aria-selected="false"
+            class="tab-btn relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors duration-200 text-slate-400"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            <span>Kelola Arsip</span>
+            <span id="badge-archive-count" class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-slate-300 min-w-[18px] text-center">0</span>
+          </button>
+        </nav>
+
         <!-- Right Clean Actions -->
-        <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex items-center gap-2 sm:gap-2.5">
           
           <!-- View Public Website -->
           <a 
@@ -183,21 +216,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
             <svg id="icon-rebuild" class="w-3.5 h-3.5 text-emerald-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
-            <span class="hidden sm:inline">Sinkronkan Web</span>
-          </button>
-
-          <!-- Settings Button (Opens macOS Settings Dialog) -->
-          <button 
-            id="btn-open-settings" 
-            type="button" 
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/15 transition-all shadow-sm"
-            title="Pengaturan Sistem & Integrasi API"
-          >
-            <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-            <span>Pengaturan</span>
+            <span class="hidden sm:inline">Sinkronkan</span>
           </button>
 
           <!-- Logout Button -->
@@ -205,408 +224,625 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
             id="btn-logout" 
             type="button" 
             class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-semibold border border-rose-500/30 transition-all shadow-sm"
+            title="Keluar dari portal"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
             </svg>
-            <span>Keluar</span>
+            <span class="hidden sm:inline">Keluar</span>
           </button>
 
         </div>
 
+      </div>
+
+      <!-- Mobile Segmented Tabs Bar -->
+      <div class="md:hidden px-4 pb-3 pt-2 border-t border-white/5">
+        <div id="tab-nav-mobile" class="relative flex gap-0.5 p-1 rounded-xl bg-black/40 border border-white/10">
+          <div id="tab-indicator-mobile" class="absolute top-1 bottom-1 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-[0_2px_8px_rgba(5,150,105,0.4)] border border-emerald-400/40 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none" style="width:0;left:4px;"></div>
+          <button 
+            type="button" 
+            id="tab-btn-editor-mobile"
+            class="flex-1 relative z-10 py-2 rounded-lg text-xs font-bold transition-colors duration-200 text-white flex items-center justify-center gap-1.5"
+          >
+            <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            <span>Tulis Warta</span>
+          </button>
+          <button 
+            type="button" 
+            id="tab-btn-archives-mobile"
+            class="flex-1 relative z-10 py-2 rounded-lg text-xs font-semibold transition-colors duration-200 text-slate-400 flex items-center justify-center gap-1.5"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            <span>Arsip (<span id="badge-archive-count-mobile">0</span>)</span>
+          </button>
+        </div>
       </div>
     </header>
 
-    <!-- Main Container Content (Single Page Scroll Layout) -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-12 flex-1 w-full">
+    <!-- Main Container Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 w-full">
+
+      <!-- Dynamic Global Alert Message -->
+      <div id="form-alert" class="hidden mb-6 p-4 sm:p-5 rounded-2xl text-xs sm:text-sm leading-relaxed font-medium transition-all"></div>
 
       <!-- =========================================================================
-           SECTION 1: FORMULIR PUBLIKASI WARTA (Apple macOS Window Form)
+           VIEW TAB 1: 2-COLUMN COMPACT CMS EDITOR (Matching User Reference Image)
            ========================================================================= -->
-      <div class="ios-glass-card rounded-3xl p-6 sm:p-10 border border-white/15 shadow-2xl relative overflow-hidden">
+      <section id="section-editor" class="space-y-6">
         
-        <!-- Header Strip -->
-        <div class="border-b border-white/10 pb-6 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div class="flex items-center gap-2 mb-1.5">
-              <span class="w-4 h-[2px] bg-gold rounded-full"></span>
-              <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">Editor Warta</span>
-            </div>
-            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight">
-              Tulis &amp; Publikasikan Warta Baru
-            </h2>
-            <p class="text-xs text-slate-300/80 mt-1">
-              Data artikel dan foto dokumentasi otomatis disinkronkan ke Google Sheets &amp; Google Drive sekolah.
-            </p>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <span class="px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold uppercase tracking-wider">
-              Format Siap Tayang
-            </span>
-          </div>
-        </div>
-
-        <!-- Dynamic Form Alert Message -->
-        <div id="form-alert" class="hidden mb-8 p-4 sm:p-5 rounded-2xl text-xs sm:text-sm leading-relaxed font-medium transition-all"></div>
-
-        <!-- Form Element -->
         <form id="form-news" class="space-y-6">
           
-          <!-- Judul Warta -->
-          <div>
-            <label for="judul" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-              Judul Berita / Prestasi <span class="text-rose-400">*</span>
-            </label>
-            <input 
-              type="text" 
-              id="judul" 
-              name="judul" 
-              required 
-              placeholder="Contoh: Santri MA Margajaya Raih Juara 1 Olimpiade Sains Madrasah 2026"
-              class="ios-glass-input w-full px-4 sm:px-5 py-3.5 rounded-xl text-sm placeholder:text-slate-500 font-medium"
-            />
-          </div>
-
-          <!-- Grid: Tanggal (CUSTOM THEME CALENDAR) & Penulis -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <!-- Outer Card Container with Sleek macOS Window Frame -->
+          <div class="ios-glass-card rounded-3xl border border-white/15 shadow-2xl overflow-hidden">
             
-            <!-- Custom Theme Calendar Datepicker -->
-            <div class="relative">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-                Tanggal Kegiatan <span class="text-rose-400">*</span>
-              </label>
+            <!-- Window Header Bar (Clean breadcrumb left, Cancel & Publish right) -->
+            <div class="px-6 py-4 border-b border-white/10 bg-black/20 flex flex-wrap items-center justify-between gap-4">
               
-              <!-- Hidden input for standard YYYY-MM-DD storage -->
-              <input type="hidden" id="tanggal" name="tanggal" required value="" />
-
-              <!-- Custom Interactive Trigger Button -->
-              <button 
-                type="button" 
-                id="btn-custom-date" 
-                class="ios-glass-input w-full px-4 sm:px-5 py-3.5 rounded-xl text-sm font-medium flex items-center justify-between text-left hover:border-gold/50 transition-colors group"
-              >
-                <span id="date-display-text" class="text-white font-semibold">
-                  Memuat tanggal...
-                </span>
-                <div class="w-7 h-7 rounded-lg bg-emerald-500/15 text-gold flex items-center justify-center group-hover:scale-110 transition-transform">
+              <!-- Left: Document Context -->
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center justify-center">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                   </svg>
                 </div>
-              </button>
-
-              <!-- Custom Emerald & Gold Theme Calendar Popup Popover -->
-              <div 
-                id="custom-calendar-popover" 
-                class="hidden absolute top-full left-0 mt-2 z-50 w-80 p-5 rounded-3xl ios-glass-panel border border-gold/30 bg-[#062417]/95 shadow-2xl backdrop-blur-2xl"
-              >
-                <!-- Month & Year Navigation Header -->
-                <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
-                  <button 
-                    type="button" 
-                    id="cal-prev-month" 
-                    class="w-8 h-8 rounded-xl bg-white/10 hover:bg-emerald-500/20 text-white flex items-center justify-center transition-colors"
-                  >
-                    &lsaquo;
-                  </button>
-                  <div id="cal-month-year-title" class="font-serif font-bold text-sm text-gold tracking-wide">
-                    September 2026
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 class="text-sm sm:text-base font-serif font-bold text-white tracking-tight">
+                      Editor Artikel Warta
+                    </h2>
+                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider">
+                      Siap Publikasi
+                    </span>
                   </div>
-                  <button 
-                    type="button" 
-                    id="cal-next-month" 
-                    class="w-8 h-8 rounded-xl bg-white/10 hover:bg-emerald-500/20 text-white flex items-center justify-center transition-colors"
-                  >
-                    &rsaquo;
-                  </button>
-                </div>
-
-                <!-- Weekday Headers -->
-                <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold uppercase text-slate-400 mb-2">
-                  <span>Ahd</span>
-                  <span>Sen</span>
-                  <span>Sel</span>
-                  <span>Rab</span>
-                  <span>Kam</span>
-                  <span>Jum</span>
-                  <span>Sab</span>
-                </div>
-
-                <!-- Days Matrix Grid -->
-                <div id="cal-days-grid" class="grid grid-cols-7 gap-1">
-                  <!-- Rendered via JS -->
-                </div>
-
-                <!-- Quick Today Button -->
-                <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
-                  <button 
-                    type="button" 
-                    id="cal-btn-today" 
-                    class="text-[11px] font-bold uppercase tracking-wider text-emerald-300 hover:text-white transition-colors"
-                  >
-                    Pilih Hari Ini
-                  </button>
-                  <button 
-                    type="button" 
-                    id="cal-btn-close" 
-                    class="text-[11px] font-semibold text-slate-400 hover:text-white transition-colors"
-                  >
-                    Tutup
-                  </button>
+                  <p class="text-[11px] text-slate-400">
+                    Format compact 2-kolom terintegrasi pangkalan data madrasah
+                  </p>
                 </div>
               </div>
-            </div>
 
-            <!-- Penulis / Unit -->
-            <div>
-              <label for="penulis" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-                Penulis / Unit Peliput <span class="text-rose-400">*</span>
-              </label>
-              <input 
-                type="text" 
-                id="penulis" 
-                name="penulis" 
-                required 
-                placeholder="Humas MA Margajaya"
-                class="ios-glass-input w-full px-4 sm:px-5 py-3.5 rounded-xl text-sm placeholder:text-slate-500 font-medium"
-              />
-            </div>
-
-          </div>
-
-          <!-- Drag & Drop Photo Upload Zone -->
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-              Foto Dokumentasi Utama (Opsional)
-            </label>
-            
-            <label 
-              for="foto" 
-              id="dropzone-area"
-              class="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl border-2 border-dashed border-white/20 hover:border-emerald-400/60 bg-white/[0.02] hover:bg-emerald-950/20 transition-all cursor-pointer group"
-            >
-              <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-              </div>
-              <div class="text-center space-y-1">
-                <div class="text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors">
-                  Klik untuk Memilih Foto atau Seret File ke Sini
-                </div>
-                <p class="text-xs text-slate-400">
-                  Format: JPG, PNG, WEBP &bull; Maksimum Ukuran: 10 MB
-                </p>
-              </div>
-              <input type="file" id="foto" name="foto" accept="image/*" class="hidden" />
-            </label>
-
-            <!-- Image Live Preview Container -->
-            <div id="preview-container" class="hidden mt-4 p-4 rounded-2xl ios-glass-card border border-emerald-500/30">
-              <div class="flex items-center justify-between mb-3 px-1">
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
-                  <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  <span>Pratinjau Foto Dokumentasi</span>
-                </span>
+              <!-- Right Actions: Cancel / Reset & Publish Button (Matching Image Reference) -->
+              <div class="flex items-center gap-2.5">
                 <button 
                   type="button" 
-                  id="btn-remove-photo" 
-                  class="text-xs text-rose-400 hover:text-rose-300 font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
+                  id="btn-reset-form" 
+                  class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-slate-200 hover:text-white text-xs font-semibold border border-white/15 transition-all flex items-center gap-1.5 shadow-sm"
                 >
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                   </svg>
-                  <span>Hapus Foto</span>
+                  <span>Batal / Reset</span>
+                </button>
+
+                <button 
+                  type="submit" 
+                  id="btn-submit" 
+                  class="px-6 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 hover:from-emerald-500 hover:to-emerald-400 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-[0_4px_16px_rgba(5,150,105,0.4)] hover:shadow-[0_6px_22px_rgba(5,150,105,0.6)] hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span id="btn-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  <svg id="btn-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                  </svg>
+                  <span id="btn-text">Publikasikan</span>
                 </button>
               </div>
-              <img 
-                id="img-preview" 
-                src="" 
-                alt="Pratinjau" 
-                class="max-h-72 w-full object-cover rounded-xl border border-white/10 shadow-lg mx-auto" 
-              />
+
             </div>
-          </div>
 
-          <!-- Isi / Deskripsi Berita -->
-          <div>
-            <label for="isi" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-              Isi Narasi &amp; Detail Warta <span class="text-rose-400">*</span>
-            </label>
-            <textarea 
-              id="isi" 
-              name="isi" 
-              rows="7" 
-              required 
-              placeholder="Tuliskan isi berita secara lengkap, fakta kegiatan, nama-nama santri berprestasi, dan pernyataan resmi..."
-              class="ios-glass-input w-full px-4 sm:px-5 py-4 rounded-xl text-sm placeholder:text-slate-500 font-normal leading-relaxed"
-            ></textarea>
-          </div>
+            <!-- Editor Body: 2-Column Responsive Layout -->
+            <div class="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              <!-- =========================================================
+                   KOLOM KIRI (7-8 Kolom): Judul & Kanvas Penulisan Narasi
+                   ========================================================= -->
+              <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Judul Berita -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <label for="judul" class="block text-xs font-bold uppercase tracking-wider text-slate-200">
+                      Judul Warta / Prestasi <span class="text-rose-400">*</span>
+                    </label>
+                    <span class="text-[11px] text-slate-400 font-medium">Beri judul yang menarik &amp; informatif</span>
+                  </div>
+                  <input 
+                    type="text" 
+                    id="judul" 
+                    name="judul" 
+                    required 
+                    placeholder="Masukkan judul warta madrasah..."
+                    class="ios-glass-input w-full px-4 sm:px-5 py-3.5 rounded-xl text-base sm:text-lg font-serif font-bold placeholder:font-sans placeholder:text-sm placeholder:text-slate-500 focus:border-gold/60 transition-all text-white"
+                  />
+                </div>
 
-          <!-- Submit Bar -->
-          <div class="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p class="text-xs text-slate-400">
-              Pastikan data sudah valid sebelum mengirimkan ke sistem publikasi.
-            </p>
-            
-            <button 
-              type="submit" 
-              id="btn-submit" 
-              class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 hover:from-emerald-500 hover:to-emerald-400 text-white text-xs font-bold uppercase tracking-widest transition-all shadow-[0_10px_30px_-5px_rgba(5,150,105,0.4)] hover:shadow-[0_15px_35px_-5px_rgba(5,150,105,0.6)] hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span id="btn-spinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-              <svg id="btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-              </svg>
-              <span id="btn-text">Kirim &amp; Publikasikan Berita</span>
-            </button>
+                <!-- Konten Narasi: WYSIWYG Rich Editor -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-200">
+                      Isi Warta &amp; Narasi Lengkap <span class="text-rose-400">*</span>
+                    </label>
+                    <span id="editor-counter" class="text-[11px] text-emerald-300/80 font-mono font-medium">
+                      0 kata &bull; 0 karakter
+                    </span>
+                  </div>
+
+                  <!-- macOS Rich Formatting Toolbar -->
+                  <div class="rounded-t-2xl bg-black/40 border border-white/15 border-b-0 p-2 sm:p-2.5 flex flex-wrap items-center justify-between gap-2 backdrop-blur-md">
+                    
+                    <!-- Left Toolbar Controls -->
+                    <div class="flex items-center flex-wrap gap-1">
+                      
+                      <!-- Bold -->
+                      <button 
+                        type="button" 
+                        id="btn-fmt-bold" 
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Tebal (Ctrl+B)"
+                        data-command="bold"
+                      >
+                        <span class="font-black font-serif text-sm leading-none">B</span>
+                      </button>
+
+                      <!-- Italic -->
+                      <button 
+                        type="button" 
+                        id="btn-fmt-italic" 
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Miring (Ctrl+I)"
+                        data-command="italic"
+                      >
+                        <span class="italic font-serif text-sm leading-none font-semibold">I</span>
+                      </button>
+
+                      <!-- Underline -->
+                      <button 
+                        type="button" 
+                        id="btn-fmt-underline" 
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Garis Bawah (Ctrl+U)"
+                        data-command="underline"
+                      >
+                        <span class="underline font-serif text-sm leading-none font-semibold">U</span>
+                      </button>
+
+                      <!-- Strikethrough -->
+                      <button 
+                        type="button" 
+                        id="btn-fmt-strike" 
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Coret"
+                        data-command="strikeThrough"
+                      >
+                        <span class="line-through font-serif text-sm leading-none">S</span>
+                      </button>
+
+                      <div class="w-[1px] h-5 bg-white/15 mx-1"></div>
+
+                      <!-- Heading H2 -->
+                      <button 
+                        type="button" 
+                        id="btn-fmt-h2" 
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Judul Bagian"
+                        data-command="formatBlock"
+                        data-value="H2"
+                      >
+                        <span class="text-[10px] font-black">H2</span>
+                      </button>
+
+                      <!-- Blockquote -->
+                      <button 
+                        type="button" 
+                        id="btn-fmt-quote" 
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Kutipan Pernyataan"
+                        data-command="formatBlock"
+                        data-value="BLOCKQUOTE"
+                      >
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M3 10h4v4H3zm0-6h4v4H3zm6 6h4v4H9zm0-6h4v4H9z" opacity=".5"/>
+                          <path d="M4.5 13.5L3 10h4l-2.5 3.5zm6 0L9 10h4l-2.5 3.5z"/>
+                        </svg>
+                      </button>
+
+                      <!-- Bullet List -->
+                      <button 
+                        type="button" 
+                        id="btn-fmt-ul" 
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Daftar Poin"
+                        data-command="insertUnorderedList"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path>
+                        </svg>
+                      </button>
+
+                      <!-- Numbered List -->
+                      <button 
+                        type="button" 
+                        id="btn-fmt-ol" 
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Daftar Nomor"
+                        data-command="insertOrderedList"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h1v4H4zm0 6h1v4H4zM3 4h2M3 10h2M3 16h2M8 6h13M8 12h13M8 18h13"></path>
+                        </svg>
+                      </button>
+
+                      <div class="w-[1px] h-5 bg-white/15 mx-1"></div>
+
+                      <!-- Align Left -->
+                      <button 
+                        type="button"
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Rata Kiri"
+                        data-command="justifyLeft"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M3 12h12M3 18h15"></path>
+                        </svg>
+                      </button>
+
+                      <!-- Align Center -->
+                      <button 
+                        type="button"
+                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        title="Rata Tengah"
+                        data-command="justifyCenter"
+                      >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M6 12h12M4 18h16"></path>
+                        </svg>
+                      </button>
+
+                    </div>
+
+                    <!-- Right: Clear Formatting -->
+                    <div class="flex items-center gap-1">
+                      <button 
+                        type="button" 
+                        id="btn-fmt-clear" 
+                        class="toolbar-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-rose-500/15 text-slate-400 hover:text-rose-300 text-[11px] font-medium transition-all flex items-center gap-1.5 active:scale-95"
+                        title="Hapus Semua Format"
+                      >
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        <span>Bersihkan</span>
+                      </button>
+                    </div>
+
+                  </div>
+
+                  <!-- WYSIWYG Contenteditable Area -->
+                  <div
+                    id="isi"
+                    contenteditable="true"
+                    data-placeholder="Tuliskan narasi warta secara lengkap. Gunakan toolbar di atas untuk memformat — klik Bold untuk tebal, Italic untuk miring, H2 untuk judul bagian, dan sebagainya..."
+                    class="wysiwyg-editor ios-glass-input w-full min-h-[320px] px-4 sm:px-5 py-4 rounded-b-2xl rounded-t-none text-sm font-normal leading-[2] text-slate-100 border-t-0 focus:outline-none focus:border-gold/60 transition-all font-sans overflow-y-auto"
+                    style="resize:vertical;"
+                  ></div>
+                  <!-- Hidden textarea used for form submit serialization -->
+                  <textarea id="isi-hidden" name="isi" class="hidden" required></textarea>
+                </div>
+
+              </div>
+
+              <!-- =========================================================
+                   KOLOM KANAN (4-5 Kolom): Metadata Sidebar (Cover, Tanggal, Penulis)
+                   ========================================================= -->
+              <div class="lg:col-span-4 space-y-6">
+                
+                <!-- 1. Tanggal Kegiatan (Custom Calendar Popover) -->
+                <div class="p-5 rounded-2xl bg-black/30 border border-white/10 space-y-3">
+                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-200">
+                    Tanggal Kegiatan <span class="text-rose-400">*</span>
+                  </label>
+                  
+                  <input type="hidden" id="tanggal" name="tanggal" required value="" />
+
+                  <!-- Custom Interactive Trigger Button -->
+                  <div class="relative">
+                    <button 
+                      type="button" 
+                      id="btn-custom-date" 
+                      class="ios-glass-input w-full px-4 py-3 rounded-xl text-xs font-medium flex items-center justify-between text-left hover:border-gold/50 transition-colors group"
+                    >
+                      <span id="date-display-text" class="text-white font-semibold truncate">
+                        Memuat tanggal...
+                      </span>
+                      <div class="w-7 h-7 rounded-lg bg-emerald-500/15 text-gold flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                      </div>
+                    </button>
+
+                    <!-- Custom Emerald & Gold Theme Calendar Popup Popover -->
+                    <div 
+                      id="custom-calendar-popover" 
+                      class="hidden absolute top-full left-0 mt-2 z-50 w-72 sm:w-80 p-4 rounded-2xl ios-glass-panel border border-gold/30 bg-[#062417]/95 shadow-2xl backdrop-blur-2xl"
+                    >
+                      <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/10">
+                        <button 
+                          type="button" 
+                          id="cal-prev-month" 
+                          class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-white flex items-center justify-center transition-colors"
+                        >
+                          &lsaquo;
+                        </button>
+                        <div id="cal-month-year-title" class="font-serif font-bold text-xs text-gold tracking-wide">
+                          September 2026
+                        </div>
+                        <button 
+                          type="button" 
+                          id="cal-next-month" 
+                          class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-white flex items-center justify-center transition-colors"
+                        >
+                          &rsaquo;
+                        </button>
+                      </div>
+
+                      <div class="grid grid-cols-7 gap-1 text-center text-[9px] font-bold uppercase text-slate-400 mb-2">
+                        <span>Ahd</span>
+                        <span>Sen</span>
+                        <span>Sel</span>
+                        <span>Rab</span>
+                        <span>Kam</span>
+                        <span>Jum</span>
+                        <span>Sab</span>
+                      </div>
+
+                      <div id="cal-days-grid" class="grid grid-cols-7 gap-1"></div>
+
+                      <div class="mt-3 pt-2 border-t border-white/10 flex items-center justify-between">
+                        <button 
+                          type="button" 
+                          id="cal-btn-today" 
+                          class="text-[10px] font-bold uppercase tracking-wider text-emerald-300 hover:text-white transition-colors"
+                        >
+                          Hari Ini
+                        </button>
+                        <button 
+                          type="button" 
+                          id="cal-btn-close" 
+                          class="text-[10px] font-semibold text-slate-400 hover:text-white transition-colors"
+                        >
+                          Tutup
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 2. Penulis & Unit Peliput -->
+                <div class="p-5 rounded-2xl bg-black/30 border border-white/10 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <label for="penulis" class="block text-xs font-bold uppercase tracking-wider text-slate-200">
+                      Penulis / Unit <span class="text-rose-400">*</span>
+                    </label>
+                    <span class="text-[10px] text-slate-400">Atribusi Warta</span>
+                  </div>
+
+                  <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                      <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                      </svg>
+                    </div>
+                    <input 
+                      type="text" 
+                      id="penulis" 
+                      name="penulis" 
+                      required 
+                      placeholder="Humas MA Margajaya"
+                      class="ios-glass-input w-full pl-10 pr-4 py-3 rounded-xl text-xs font-medium placeholder:text-slate-500"
+                    />
+                  </div>
+
+                  <!-- Quick Author Preset Chips -->
+                  <div class="flex flex-wrap gap-1.5 pt-1">
+                    <button 
+                      type="button" 
+                      class="btn-author-preset px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-200 text-[10px] font-medium border border-white/10 transition-colors"
+                      data-value="Humas MA Margajaya"
+                    >
+                      Humas MA
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-author-preset px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-200 text-[10px] font-medium border border-white/10 transition-colors"
+                      data-value="Tim Jurnalistik Santri"
+                    >
+                      Jurnalistik
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-author-preset px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-200 text-[10px] font-medium border border-white/10 transition-colors"
+                      data-value="Pengurus OSIS MA"
+                    >
+                      OSIS
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 3. Foto Dokumentasi Utama (Cover Image Dropzone - Matching Reference Image) -->
+                <div class="p-5 rounded-2xl bg-black/30 border border-white/10 space-y-3">
+                  <div class="flex items-center justify-between">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-200">
+                      Foto Sampul (Cover Image)
+                    </label>
+                    <span class="text-[10px] text-slate-400">Opsional</span>
+                  </div>
+
+                  <!-- Dropzone Area -->
+                  <label 
+                    for="foto" 
+                    id="dropzone-area"
+                    class="flex flex-col items-center justify-center gap-2.5 p-6 rounded-xl border-2 border-dashed border-white/20 hover:border-emerald-400/60 bg-white/[0.02] hover:bg-emerald-950/20 transition-all cursor-pointer group text-center"
+                  >
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                    </div>
+                    <div class="space-y-0.5">
+                      <div class="text-xs font-semibold text-white group-hover:text-emerald-300 transition-colors">
+                        Klik atau Tarik Foto ke Sini
+                      </div>
+                      <p class="text-[10px] text-slate-400">
+                        JPG, PNG, WEBP &bull; Maks 10 MB
+                      </p>
+                    </div>
+                    <input type="file" id="foto" name="foto" accept="image/*" class="hidden" />
+                  </label>
+
+                  <!-- Image Live Preview Container -->
+                  <div id="preview-container" class="hidden space-y-2.5">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Foto Terpilih</span>
+                      </span>
+                      <button 
+                        type="button" 
+                        id="btn-remove-photo" 
+                        class="text-[10px] text-rose-400 hover:text-rose-300 font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
+                      >
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Hapus</span>
+                      </button>
+                    </div>
+                    <div class="overflow-hidden rounded-xl border border-white/15 bg-black/40 shadow-inner">
+                      <img 
+                        id="img-preview" 
+                        src="" 
+                        alt="Pratinjau Foto" 
+                        class="max-h-48 w-full object-cover" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4. Target Sinkronisasi Informasi -->
+                <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/20 text-[11px] text-slate-300 space-y-1.5">
+                  <div class="font-bold text-emerald-300 flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Penyimpanan Aman Terpadu</span>
+                  </div>
+                  <p class="text-slate-400 leading-relaxed">
+                    Setiap warta yang diterbitkan langsung tersinkronisasi ke Google Sheets dan foto disimpan ke Google Drive madrasah.
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
           </div>
 
         </form>
-      </div>
+
+      </section>
+
 
       <!-- =========================================================================
-           SECTION 2: DAFTAR WARTA TERBIT & KELOLA
+           VIEW TAB 2: KELOLA ARSIP WARTA & PUBLIKASI AKTIF
            ========================================================================= -->
-      <div class="space-y-6">
+      <section id="section-archives" class="hidden space-y-6">
         
-        <div class="flex items-center justify-between pb-3 border-b border-white/10">
-          <div class="flex items-center gap-3">
-            <span class="w-6 h-[2px] bg-gold rounded-full"></span>
+        <!-- Header Strip & Search Bar -->
+        <div class="ios-glass-card rounded-3xl p-6 border border-white/15 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="w-2 h-2 rounded-full bg-gold"></span>
+              <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Basis Data</span>
+            </div>
             <h2 class="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight">
-              Arsip Warta &amp; Publikasi Aktif
+              Daftar Arsip Warta Madrasah
             </h2>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Kelola, pratinjau, atau hapus publikasi artikel yang telah terbit.
+            </p>
           </div>
 
-          <button 
-            id="btn-refresh-list" 
-            type="button" 
-            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/15 transition-all shadow-sm"
-          >
-            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-            </svg>
-            <span>Segarkan</span>
-          </button>
+          <!-- Controls: Search Input + Refresh Button -->
+          <div class="flex items-center gap-2.5">
+            <div class="relative w-full sm:w-64">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+              </div>
+              <input 
+                type="text" 
+                id="input-search-news" 
+                placeholder="Cari judul atau penulis..."
+                class="ios-glass-input w-full pl-9 pr-3 py-2 rounded-xl text-xs placeholder:text-slate-500 font-medium"
+              />
+            </div>
+
+            <button 
+              id="btn-refresh-list" 
+              type="button" 
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/15 transition-all shadow-sm shrink-0"
+              title="Segarkan daftar data dari server"
+            >
+              <svg id="icon-refresh-news" class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              </svg>
+              <span class="hidden sm:inline">Segarkan</span>
+            </button>
+          </div>
         </div>
 
         <!-- Skeleton Loading State -->
-        <div id="news-list-skeleton" class="space-y-4">
-          <div class="ios-glass-card rounded-2xl p-5 h-24 skeleton-shimmer bg-white/5 border border-white/10"></div>
-          <div class="ios-glass-card rounded-2xl p-5 h-24 skeleton-shimmer bg-white/5 border border-white/10"></div>
-          <div class="ios-glass-card rounded-2xl p-5 h-24 skeleton-shimmer bg-white/5 border border-white/10"></div>
+        <div id="news-list-skeleton" class="space-y-3">
+          <div class="ios-glass-card rounded-2xl p-5 h-20 skeleton-shimmer bg-white/5 border border-white/10"></div>
+          <div class="ios-glass-card rounded-2xl p-5 h-20 skeleton-shimmer bg-white/5 border border-white/10"></div>
+          <div class="ios-glass-card rounded-2xl p-5 h-20 skeleton-shimmer bg-white/5 border border-white/10"></div>
         </div>
 
         <!-- Dynamic News Item List -->
-        <div id="news-list-container" class="hidden space-y-4">
+        <div id="news-list-container" class="hidden space-y-3">
           <!-- Rendered via JavaScript -->
         </div>
 
         <!-- Empty State -->
         <div id="news-list-empty" class="hidden py-16 text-center ios-glass-card rounded-3xl border border-white/10">
-          <div class="w-16 h-16 rounded-2xl bg-white/5 text-slate-400 flex items-center justify-center mx-auto mb-4 border border-white/10">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <div class="w-14 h-14 rounded-2xl bg-white/5 text-slate-400 flex items-center justify-center mx-auto mb-3 border border-white/10">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
             </svg>
           </div>
-          <h3 class="font-serif text-lg font-bold text-white mb-1">Belum Ada Warta yang Dipublikasikan</h3>
-          <p class="text-xs text-slate-400 max-w-sm mx-auto">
-            Gunakan formulir editor di atas untuk mempublikasikan artikel berita atau dokumentasi kegiatan pertama.
+          <h3 class="font-serif text-base font-bold text-white mb-1">Belum Ada Warta Ditemukan</h3>
+          <p class="text-xs text-slate-400 max-w-sm mx-auto mb-4">
+            Belum ada publikasi yang cocok atau pangkalan data masih kosong. Silakan gunakan tab "Tulis Warta" untuk mulai menerbitkan artikel warta baru.
           </p>
+          <button 
+            type="button" 
+            id="btn-goto-editor" 
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold hover:bg-gold-soft text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+          >
+            <span>Tulis Warta Baru &rarr;</span>
+          </button>
         </div>
 
-      </div>
+      </section>
 
-    </div>
-  </div>
-
-
-  <!-- =========================================================================
-       MODAL: SETTINGS & GOOGLE APPS SCRIPT API CONFIGURATION (macOS Window)
-       ========================================================================= -->
-  <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md">
-    <div class="ios-glass-card rounded-3xl w-full max-w-xl p-6 sm:p-8 border border-gold/30 shadow-2xl relative">
-      
-      <div class="flex items-center justify-between pb-4 border-b border-white/10 mb-6">
-        <div class="flex items-center gap-2 text-gold font-bold text-xs uppercase tracking-wider">
-          <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-          <span>Pengaturan Sistem &amp; Integrasi API</span>
-        </div>
-
-        <button 
-          id="btn-close-settings" 
-          type="button" 
-          class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold transition-colors"
-        >
-          &times;
-        </button>
-      </div>
-
-      <div class="space-y-4">
-        <div>
-          <label for="api-url-input" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-            URL Google Apps Script Web App
-          </label>
-          <input 
-            type="url" 
-            id="api-url-input" 
-            placeholder="https://script.google.com/macros/s/.../exec"
-            class="ios-glass-input w-full px-4 py-3.5 rounded-xl text-xs font-mono"
-          />
-        </div>
-
-        <div>
-          <label for="deploy-hook-input" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-            URL Vercel Deploy Hook (Auto Rebuild)
-          </label>
-          <input 
-            type="url" 
-            id="deploy-hook-input" 
-            placeholder="https://api.vercel.com/v1/integrations/deploy/..."
-            class="ios-glass-input w-full px-4 py-3.5 rounded-xl text-xs font-mono"
-          />
-          <p class="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
-            Sistem otomatis memicu Vercel me-rebuild website publik setiap kali warta baru diterbitkan atau dihapus.
-          </p>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 text-xs text-slate-300 space-y-2">
-          <div class="font-bold text-emerald-300 flex items-center gap-1.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <span>Informasi Integrasi Database</span>
-          </div>
-          <p class="leading-relaxed text-slate-400">
-            Endpoint ini menghubungkan form publikasi warta langsung dengan spreadsheet Google Sheets dan folder penyimpanan foto Google Drive resmi madrasah.
-          </p>
-        </div>
-      </div>
-
-      <div class="mt-8 pt-6 border-t border-white/10 flex items-center justify-end gap-3">
-        <button 
-          id="btn-cancel-settings" 
-          type="button" 
-          class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider transition-colors"
-        >
-          Batal
-        </button>
-        <button 
-          id="btn-save-api" 
-          type="button" 
-          class="px-6 py-2.5 rounded-xl bg-gold hover:bg-gold-soft text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md"
-        >
-          Simpan Pengaturan
-        </button>
-      </div>
-
-    </div>
+    </main>
   </div>
 
 
@@ -616,7 +852,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
   <div id="preview-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-xl">
     <div class="ios-glass-card rounded-3xl w-full max-w-3xl max-h-[88vh] overflow-y-auto preview-scrollbar border border-white/20 shadow-2xl relative">
 
-      <!-- Floating X Close Button -->
+      <!-- Floating Close Button -->
       <button 
         id="btn-close-preview" 
         type="button" 
@@ -648,7 +884,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
           <img id="pv-photo" src="" alt="Foto Berita" class="hidden w-full max-h-96 object-cover" />
         </div>
 
-        <div id="pv-body" class="text-sm sm:text-base text-slate-200 leading-[2.1] whitespace-pre-line font-normal tracking-wide pb-4"></div>
+        <div id="pv-body" class="prose-article prose-article-dark text-sm sm:text-base leading-[2.1] pb-4"></div>
       </div>
 
     </div>
@@ -656,7 +892,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
 
   <!-- =========================================================================
-       MODAL: DELETE CONFIRMATION
+       MODAL: DELETE CONFIRMATION (macOS Card)
        ========================================================================= -->
   <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
     <div class="ios-glass-card rounded-3xl w-full max-w-md p-6 sm:p-8 border border-rose-500/30 shadow-2xl text-center relative overflow-hidden">
@@ -671,7 +907,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
         <h3 class="font-serif text-xl font-bold text-white mb-2">Hapus Artikel Ini?</h3>
         <p class="text-xs text-slate-400 mb-6 leading-relaxed">
-          Artikel yang dihapus tidak akan ditampilkan lagi di halaman warta. Tindakan ini bersifat permanen.
+          Artikel yang dihapus tidak akan ditampilkan lagi di halaman warta publik. Tindakan ini bersifat permanen.
         </p>
 
         <div id="delete-confirm-title" class="text-xs font-semibold text-slate-300 bg-white/5 p-3 rounded-xl mb-6 line-clamp-2 border border-white/10"></div>
@@ -696,7 +932,6 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
       <!-- Loading State -->
       <div id="delete-loading-state" class="hidden py-6">
-        <!-- Animated spinner ring -->
         <div class="relative w-16 h-16 mx-auto mb-5">
           <svg class="w-16 h-16 animate-spin" viewBox="0 0 64 64" fill="none">
             <circle cx="32" cy="32" r="26" stroke="rgba(239,68,68,0.15)" stroke-width="5"/>
@@ -708,7 +943,6 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
               </linearGradient>
             </defs>
           </svg>
-          <!-- Trash icon in center -->
           <div class="absolute inset-0 flex items-center justify-center">
             <svg class="w-6 h-6 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -719,7 +953,6 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
         <p class="font-serif text-base font-bold text-white mb-1">Sedang Menghapus...</p>
         <p class="text-xs text-slate-400 mb-4">Menghubungi Google Sheets. Mohon tunggu sebentar.</p>
 
-        <!-- Animated progress dots -->
         <div class="flex items-center justify-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-bounce" style="animation-delay:0ms"></span>
           <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-bounce" style="animation-delay:150ms"></span>
@@ -734,15 +967,18 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
 <script is:inline>
   // =========================================================================
-  // JAVASCRIPT CONTROLLER FOR ADMIN PORTAL
+  // JAVASCRIPT CONTROLLER FOR COMPACT CMS ADMIN PORTAL
   // =========================================================================
   (function() {
     // DOM Elements
     const dashboardEl = document.getElementById('admin-dashboard');
     const loginScreen = document.getElementById('admin-login-screen');
-    const DEFAULT_API_URL = dashboardEl ? dashboardEl.getAttribute('data-api-url') : "";
-    const DEFAULT_DEPLOY_HOOK = dashboardEl ? dashboardEl.getAttribute('data-deploy-hook') : "https://api.vercel.com/v1/integrations/deploy/prj_umwjoNnXfJTjqzpiHS7qcLu3kVpH/rUwycrCtVI";
+    
+    // Backend API & Deploy Hook (Strictly pulled from data attributes / environment)
+    const API_URL = dashboardEl ? dashboardEl.getAttribute('data-api-url') : "";
+    const DEPLOY_HOOK = dashboardEl ? dashboardEl.getAttribute('data-deploy-hook') : "";
 
+    // Auth Elements
     const formLogin = document.getElementById('form-login');
     const adminPasswordInput = document.getElementById('admin-password');
     const loginError = document.getElementById('login-error');
@@ -755,17 +991,22 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
     const btnRebuildWeb = document.getElementById('btn-rebuild-web');
     const iconRebuild = document.getElementById('icon-rebuild');
 
-    // Settings Modal
-    const btnOpenSettings = document.getElementById('btn-open-settings');
-    const settingsModal = document.getElementById('settings-modal');
-    const btnCloseSettings = document.getElementById('btn-close-settings');
-    const btnCancelSettings = document.getElementById('btn-cancel-settings');
-    const apiUrlInput = document.getElementById('api-url-input');
-    const deployHookInput = document.getElementById('deploy-hook-input');
-    const btnSaveApi = document.getElementById('btn-save-api');
+    // Tab Navigation Elements
+    const tabBtnEditor = document.getElementById('tab-btn-editor');
+    const tabBtnArchives = document.getElementById('tab-btn-archives');
+    const tabBtnEditorMobile = document.getElementById('tab-btn-editor-mobile');
+    const tabBtnArchivesMobile = document.getElementById('tab-btn-archives-mobile');
+    const sectionEditor = document.getElementById('section-editor');
+    const sectionArchives = document.getElementById('section-archives');
+    const badgeArchiveCount = document.getElementById('badge-archive-count');
+    const badgeArchiveCountMobile = document.getElementById('badge-archive-count-mobile');
+    const btnGotoEditor = document.getElementById('btn-goto-editor');
 
-    // Form News
+    // Form News Elements
     const formNews = document.getElementById('form-news');
+    const judulInput = document.getElementById('judul');
+    const isiInput = document.getElementById('isi');
+    const editorCounter = document.getElementById('editor-counter');
     const tanggalHiddenInput = document.getElementById('tanggal');
     const penulisInput = document.getElementById('penulis');
     const fotoInput = document.getElementById('foto');
@@ -778,8 +1019,15 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
     const btnSpinner = document.getElementById('btn-spinner');
     const btnIcon = document.getElementById('btn-icon');
     const btnText = document.getElementById('btn-text');
+    const btnResetForm = document.getElementById('btn-reset-form');
 
-    // Custom Theme Calendar Elements
+    // Textarea Formatting Toolbar Buttons (now unused — toolbar uses data-command)
+    const btnFmtClear = document.getElementById('btn-fmt-clear');
+
+    // Author Preset Chips
+    const authorPresetBtns = document.querySelectorAll('.btn-author-preset');
+
+    // Custom Calendar Datepicker Elements
     const btnCustomDate = document.getElementById('btn-custom-date');
     const dateDisplayText = document.getElementById('date-display-text');
     const calPopover = document.getElementById('custom-calendar-popover');
@@ -790,28 +1038,32 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
     const calBtnToday = document.getElementById('cal-btn-today');
     const calBtnClose = document.getElementById('cal-btn-close');
 
-    // News List
+    // Archives Section Elements
     const newsListSkeleton = document.getElementById('news-list-skeleton');
     const newsListContainer = document.getElementById('news-list-container');
     const newsListEmpty = document.getElementById('news-list-empty');
     const btnRefreshList = document.getElementById('btn-refresh-list');
+    const iconRefreshNews = document.getElementById('icon-refresh-news');
+    const inputSearchNews = document.getElementById('input-search-news');
 
-    // Preview Modal
+    // Preview Modal Elements
     const previewModal = document.getElementById('preview-modal');
     const btnClosePreview = document.getElementById('btn-close-preview');
-    const btnClosePreviewFooter = document.getElementById('btn-close-preview-footer');
     const pvTitle = document.getElementById('pv-title');
     const pvDate = document.getElementById('pv-date');
     const pvPenulis = document.getElementById('pv-penulis');
     const pvPhoto = document.getElementById('pv-photo');
     const pvBody = document.getElementById('pv-body');
 
-    // Delete Modal
+    // Delete Modal Elements
     const deleteModal = document.getElementById('delete-modal');
     const deleteConfirmTitle = document.getElementById('delete-confirm-title');
     const btnCancelDelete = document.getElementById('btn-cancel-delete');
     const btnConfirmDelete = document.getElementById('btn-confirm-delete');
+    const deleteNormalState  = document.getElementById('delete-normal-state');
+    const deleteLoadingState = document.getElementById('delete-loading-state');
 
+    // App State
     let currentBase64Image = null;
     let currentImageName = "";
     let currentImageType = "";
@@ -843,14 +1095,207 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       return str;
     }
 
+    const FALLBACK_API_URL = "https://script.google.com/macros/s/AKfycbwboX_4labGuJ9412coI1JrXzpxb11B3xJOlmloGnEsTsRui-yIdssRFl8i2CGga1IF/exec";
+    const FALLBACK_DEPLOY_HOOK = "https://api.vercel.com/v1/integrations/deploy/prj_umwjoNnXfJTjqzpiHS7qcLu3kVpH/rUwycrCtVI";
+
     function getApiUrl() {
-      return localStorage.getItem('margajaya_api_url') || DEFAULT_API_URL || '';
+      return (localStorage.getItem('margajaya_api_url') || '').trim() || API_URL || FALLBACK_API_URL;
     }
 
     function getDeployHookUrl() {
-      return localStorage.getItem('margajaya_deploy_hook') || DEFAULT_DEPLOY_HOOK || '';
+      return (localStorage.getItem('margajaya_deploy_hook') || '').trim() || DEPLOY_HOOK || FALLBACK_DEPLOY_HOOK;
     }
 
+    // =========================================================================
+    // TAB SWITCHER — Animated Sliding Pill (Framer-Motion-like via CSS)
+    // =========================================================================
+    const tabIndicator = document.getElementById('tab-indicator');
+    const tabIndicatorMobile = document.getElementById('tab-indicator-mobile');
+    const tabNav = document.getElementById('tab-nav');
+    const tabNavMobile = document.getElementById('tab-nav-mobile');
+
+    function positionIndicator(activeBtn, indicator, nav) {
+      if (!indicator || !nav || !activeBtn) return;
+      const navRect = nav.getBoundingClientRect();
+      const btnRect = activeBtn.getBoundingClientRect();
+      indicator.style.width = btnRect.width + 'px';
+      indicator.style.left = (btnRect.left - navRect.left) + 'px';
+    }
+
+    function switchTab(tab) {
+      const isEditor = tab === 'editor';
+
+      // Show/hide sections
+      sectionEditor.classList.toggle('hidden', !isEditor);
+      sectionArchives.classList.toggle('hidden', isEditor);
+
+      // Desktop: update indicator position
+      positionIndicator(
+        isEditor ? tabBtnEditor : tabBtnArchives,
+        tabIndicator,
+        tabNav
+      );
+
+      // Desktop: update button text colors
+      tabBtnEditor?.setAttribute('aria-selected', isEditor ? 'true' : 'false');
+      tabBtnArchives?.setAttribute('aria-selected', isEditor ? 'false' : 'true');
+      tabBtnEditor?.classList.toggle('text-white', isEditor);
+      tabBtnEditor?.classList.toggle('text-slate-400', !isEditor);
+      tabBtnArchives?.classList.toggle('text-white', !isEditor);
+      tabBtnArchives?.classList.toggle('text-slate-400', isEditor);
+
+      // Mobile: update indicator position
+      positionIndicator(
+        isEditor ? tabBtnEditorMobile : tabBtnArchivesMobile,
+        tabIndicatorMobile,
+        tabNavMobile
+      );
+
+      // Mobile: update text colors
+      tabBtnEditorMobile?.classList.toggle('text-white', isEditor);
+      tabBtnEditorMobile?.classList.toggle('text-slate-400', !isEditor);
+      tabBtnArchivesMobile?.classList.toggle('text-white', !isEditor);
+      tabBtnArchivesMobile?.classList.toggle('text-slate-400', isEditor);
+
+      // Auto load news list on first open
+      if (!isEditor && allNewsItems.length === 0) {
+        loadNewsList();
+      }
+    }
+
+    // Init indicator after layout paint
+    function initTabIndicator() {
+      positionIndicator(tabBtnEditor, tabIndicator, tabNav);
+      positionIndicator(tabBtnEditorMobile, tabIndicatorMobile, tabNavMobile);
+    }
+    // Use requestAnimationFrame to ensure layout is computed
+    requestAnimationFrame(() => { requestAnimationFrame(initTabIndicator); });
+
+    if (tabBtnEditor) tabBtnEditor.addEventListener('click', () => switchTab('editor'));
+    if (tabBtnArchives) tabBtnArchives.addEventListener('click', () => switchTab('archives'));
+    if (tabBtnEditorMobile) tabBtnEditorMobile.addEventListener('click', () => switchTab('editor'));
+    if (tabBtnArchivesMobile) tabBtnArchivesMobile.addEventListener('click', () => switchTab('archives'));
+    if (btnGotoEditor) btnGotoEditor.addEventListener('click', () => switchTab('editor'));
+
+    // =========================================================================
+    // WYSIWYG RICH TEXT EDITOR (contenteditable + execCommand)
+    // =========================================================================
+    const isiEditor = document.getElementById('isi');         // contenteditable div
+    const isiHidden = document.getElementById('isi-hidden'); // hidden textarea
+
+    // Re-alias isiInput to isiEditor for word count and other consumers
+    const isiInput = isiEditor;
+
+    function updateWordCount() {
+      if (!isiEditor || !editorCounter) return;
+      const text = (isiEditor.innerText || '').trim();
+      const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+      const chars = text.length;
+      editorCounter.textContent = `${words} kata \u2022 ${chars} karakter`;
+    }
+
+    function syncHiddenTextarea() {
+      if (isiHidden && isiEditor) {
+        // Store the full innerHTML so rich formatting (bold, italic,
+        // underline, lists, blockquotes, headings) is preserved in Sheets
+        // and rendered correctly on the public article page.
+        const html = isiEditor.innerHTML;
+        isiHidden.value = html;
+        // Validate required: check visible text only
+        const hasText = (isiEditor.innerText || '').trim().length > 0;
+        isiHidden.required = !hasText;
+      }
+    }
+
+    // Toolbar execCommand dispatcher
+    function execFormat(command, value) {
+      isiEditor.focus();
+      document.execCommand(command, false, value || null);
+      updateWordCount();
+      updateToolbarState();
+    }
+
+    // Highlight active toolbar buttons based on current selection
+    function updateToolbarState() {
+      document.querySelectorAll('.toolbar-btn[data-command]').forEach(btn => {
+        const cmd = btn.getAttribute('data-command');
+        try {
+          const active = document.queryCommandState(cmd);
+          btn.classList.toggle('is-active', active);
+        } catch(e) {}
+      });
+    }
+
+    if (isiEditor) {
+      isiEditor.addEventListener('input', () => { updateWordCount(); syncHiddenTextarea(); });
+      isiEditor.addEventListener('keyup', updateToolbarState);
+      isiEditor.addEventListener('mouseup', updateToolbarState);
+      isiEditor.addEventListener('selectionchange', updateToolbarState);
+
+      // Keyboard shortcuts
+      isiEditor.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey)) {
+          const k = e.key.toLowerCase();
+          if (k === 'b') { e.preventDefault(); execFormat('bold'); }
+          if (k === 'i') { e.preventDefault(); execFormat('italic'); }
+          if (k === 'u') { e.preventDefault(); execFormat('underline'); }
+        }
+      });
+    }
+
+    // Bind all toolbar buttons with data-command attribute
+    document.querySelectorAll('.toolbar-btn[data-command]').forEach(btn => {
+      btn.addEventListener('mousedown', (e) => {
+        e.preventDefault(); // Prevent editor from losing focus
+        const cmd = btn.getAttribute('data-command');
+        const val = btn.getAttribute('data-value') || null;
+        execFormat(cmd, val);
+      });
+    });
+
+    // Clear formatting button
+    if (btnFmtClear) {
+      btnFmtClear.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        isiEditor.focus();
+        document.execCommand('removeFormat', false, null);
+        document.execCommand('formatBlock', false, 'p');
+        updateWordCount();
+        syncHiddenTextarea();
+        updateToolbarState();
+      });
+    }
+
+    // Author Preset ClickersClickers
+    authorPresetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-value');
+        if (penulisInput && val) {
+          penulisInput.value = val;
+          penulisInput.focus();
+        }
+      });
+    });
+
+    // Reset Form
+    if (btnResetForm) {
+      btnResetForm.addEventListener('click', () => {
+        if (confirm('Apakah Anda yakin ingin mengosongkan draf editor warta?')) {
+          formNews.reset();
+          if (isiEditor) isiEditor.innerHTML = ''; // Clear contenteditable
+          if (isiHidden) isiHidden.value = '';
+          updateSelectedDate(new Date());
+          if (penulisInput) penulisInput.value = 'Humas MA Margajaya';
+          if (btnRemovePhoto) btnRemovePhoto.click();
+          updateWordCount();
+          hideAlert();
+        }
+      });
+    }
+
+    // =========================================================================
+    // VERCEL REBUILD TRIGGER
+    // =========================================================================
     async function triggerVercelDeploy(isManual = false) {
       const hookUrl = getDeployHookUrl();
       if (!hookUrl) return false;
@@ -886,7 +1331,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
               </div>
               <div class="space-y-0.5">
                 <div class="font-bold text-sm text-white">Kendala Sinkronisasi Server</div>
-                <p class="text-xs text-rose-200/90 leading-relaxed font-normal">Gagal menghubungi layanan sinkronisasi otomatis: ${err.message}. Silakan periksa konfigurasi tautan webhook pada menu pengaturan.</p>
+                <p class="text-xs text-rose-200/90 leading-relaxed font-normal">Gagal menghubungi layanan sinkronisasi otomatis: ${err.message}. Silakan periksa jaringan.</p>
               </div>
             </div>
           `);
@@ -899,14 +1344,20 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       }
     }
 
+    if (btnRebuildWeb) {
+      btnRebuildWeb.addEventListener('click', () => {
+        triggerVercelDeploy(true);
+      });
+    }
+
     function showAlert(type, htmlContent) {
-      formAlert.className = 'mb-8 p-4 sm:p-5 rounded-2xl text-xs sm:text-sm leading-relaxed font-medium transition-all ' + 
+      formAlert.className = 'mb-6 p-4 sm:p-5 rounded-2xl text-xs sm:text-sm leading-relaxed font-medium transition-all ' + 
         (type === 'success' 
           ? 'bg-emerald-950/80 text-emerald-200 border border-emerald-500/40 shadow-lg shadow-emerald-950/40' 
           : 'bg-rose-950/80 text-rose-200 border border-rose-500/40 shadow-lg shadow-rose-950/40');
       formAlert.innerHTML = htmlContent;
       formAlert.classList.remove('hidden');
-      formAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      formAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     function hideAlert() {
@@ -917,7 +1368,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       btnSubmit.disabled = isLoading;
       btnSpinner.classList.toggle('hidden', !isLoading);
       btnIcon.classList.toggle('hidden', isLoading);
-      btnText.textContent = isLoading ? 'Mengunggah & Menyimpan...' : 'Kirim & Publikasikan Berita';
+      btnText.textContent = isLoading ? 'Menyimpan...' : 'Publikasikan';
     }
 
     // Toggle Password Visibility
@@ -958,14 +1409,12 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       const daysInMonth = new Date(currentCalYear, currentCalMonth + 1, 0).getDate();
       const today = new Date();
 
-      // Empty padding cells before 1st of month
       for (let i = 0; i < firstDay; i++) {
         const emptyCell = document.createElement('div');
-        emptyCell.className = 'h-8 w-8';
+        emptyCell.className = 'h-7 w-7';
         calDaysGrid.appendChild(emptyCell);
       }
 
-      // Day cells
       for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('button');
         cell.type = 'button';
@@ -980,11 +1429,11 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                         today.getFullYear() === currentCalYear;
 
         if (isSelected) {
-          cell.className = 'h-8 w-8 rounded-xl bg-gold text-slate-950 font-bold text-xs shadow-md shadow-gold/30 flex items-center justify-center transition-all scale-105';
+          cell.className = 'h-7 w-7 rounded-lg bg-gold text-slate-950 font-bold text-[11px] shadow-md shadow-gold/30 flex items-center justify-center transition-all scale-105';
         } else if (isToday) {
-          cell.className = 'h-8 w-8 rounded-xl border border-gold text-gold font-bold text-xs flex items-center justify-center hover:bg-emerald-500/20 transition-all';
+          cell.className = 'h-7 w-7 rounded-lg border border-gold text-gold font-bold text-[11px] flex items-center justify-center hover:bg-emerald-500/20 transition-all';
         } else {
-          cell.className = 'h-8 w-8 rounded-xl text-slate-200 hover:bg-emerald-500/20 hover:text-white text-xs font-medium flex items-center justify-center transition-all';
+          cell.className = 'h-7 w-7 rounded-lg text-slate-200 hover:bg-emerald-500/20 hover:text-white text-[11px] font-medium flex items-center justify-center transition-all';
         }
 
         cell.addEventListener('click', () => {
@@ -1057,46 +1506,8 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       }
     });
 
-    // Initialize date with today
+    // Initialize with today
     updateSelectedDate(new Date());
-
-
-    // =========================================================================
-    // SETTINGS MODAL LOGIC
-    // =========================================================================
-    function openSettings() {
-      if (apiUrlInput) apiUrlInput.value = getApiUrl();
-      if (deployHookInput) deployHookInput.value = getDeployHookUrl();
-      if (settingsModal) settingsModal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeSettings() {
-      if (settingsModal) settingsModal.classList.add('hidden');
-      document.body.style.overflow = '';
-    }
-
-    if (btnOpenSettings) btnOpenSettings.addEventListener('click', openSettings);
-    if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeSettings);
-    if (btnCancelSettings) btnCancelSettings.addEventListener('click', closeSettings);
-
-    if (btnSaveApi) {
-      btnSaveApi.addEventListener('click', () => {
-        const val = apiUrlInput.value.trim();
-        const hookVal = deployHookInput ? deployHookInput.value.trim() : '';
-        if (val) localStorage.setItem('margajaya_api_url', val);
-        if (hookVal) localStorage.setItem('margajaya_deploy_hook', hookVal);
-        closeSettings();
-        showAlert('success', '✓ Pengaturan API & Vercel Deploy Hook berhasil disimpan!');
-        loadNewsList();
-      });
-    }
-
-    if (btnRebuildWeb) {
-      btnRebuildWeb.addEventListener('click', () => {
-        triggerVercelDeploy(true);
-      });
-    }
 
     // =========================================================================
     // AUTHENTICATION CONTROLLER
@@ -1127,7 +1538,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
         if (!apiUrl) {
           loginError.classList.remove('hidden');
           const errorMsgSpan = loginError.querySelector('span');
-          if (errorMsgSpan) errorMsgSpan.textContent = 'URL Google Apps Script belum disetel.';
+          if (errorMsgSpan) errorMsgSpan.textContent = 'Konfigurasi Google Apps Script URL tidak ditemukan di environment.';
           return;
         }
 
@@ -1160,7 +1571,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
         } catch (err) {
           loginError.classList.remove('hidden');
           const errorMsgSpan = loginError.querySelector('span');
-          if (errorMsgSpan) errorMsgSpan.textContent = 'Gagal menghubungi server Apps Script: ' + err.message;
+          if (errorMsgSpan) errorMsgSpan.textContent = 'Gagal menghubungi server database: ' + err.message;
         } finally {
           if (btnLoginSubmit) {
             btnLoginSubmit.disabled = false;
@@ -1178,23 +1589,27 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       });
     }
 
-
     // Initialize Dashboard Data
     function initDashboard() {
       if (penulisInput && !penulisInput.value) penulisInput.value = 'Humas MA Margajaya';
+      updateWordCount();
       loadNewsList();
     }
 
-    // Load News Feed
+    // =========================================================================
+    // NEWS ARCHIVES CONTROLLER (Fetch, Search, Render, Preview, Delete)
+    // =========================================================================
     function loadNewsList() {
       const apiUrl = getApiUrl();
       newsListSkeleton.classList.remove('hidden');
       newsListContainer.classList.add('hidden');
       newsListEmpty.classList.add('hidden');
+      if (iconRefreshNews) iconRefreshNews.classList.add('animate-spin');
 
       if (!apiUrl) {
         newsListSkeleton.classList.add('hidden');
         newsListEmpty.classList.remove('hidden');
+        if (iconRefreshNews) iconRefreshNews.classList.remove('animate-spin');
         return;
       }
 
@@ -1212,20 +1627,40 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
               return idB - idA;
             });
 
+            // Update Archive Badge Counters
+            const totalCount = allNewsItems.length;
+            if (badgeArchiveCount) badgeArchiveCount.textContent = String(totalCount);
+            if (badgeArchiveCountMobile) badgeArchiveCountMobile.textContent = String(totalCount);
+
             renderNewsList(allNewsItems);
           } else {
             newsListEmpty.classList.remove('hidden');
+            if (badgeArchiveCount) badgeArchiveCount.textContent = '0';
+            if (badgeArchiveCountMobile) badgeArchiveCountMobile.textContent = '0';
           }
         })
         .catch(err => {
           console.warn("Gagal memuat berita:", err);
           newsListSkeleton.classList.add('hidden');
           newsListEmpty.classList.remove('hidden');
+        })
+        .finally(() => {
+          if (iconRefreshNews) {
+            setTimeout(() => iconRefreshNews.classList.remove('animate-spin'), 600);
+          }
         });
     }
 
     function renderNewsList(items) {
       newsListContainer.innerHTML = '';
+
+      if (items.length === 0) {
+        newsListContainer.classList.add('hidden');
+        newsListEmpty.classList.remove('hidden');
+        return;
+      }
+
+      newsListEmpty.classList.add('hidden');
       newsListContainer.classList.remove('hidden');
 
       items.forEach((item, idx) => {
@@ -1235,15 +1670,15 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
         const photoUrl = formatDriveImageUrl(item.url_foto);
         const imgBlock = photoUrl
-          ? `<img src="${photoUrl}" alt="${item.judul}" referrerpolicy="no-referrer" class="w-14 h-14 rounded-xl object-cover border border-white/10 shrink-0 bg-slate-900" />`
-          : `<div class="w-14 h-14 rounded-xl bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center text-gold font-bold font-serif text-xs shrink-0">MA</div>`;
+          ? `<img src="${photoUrl}" alt="${item.judul}" referrerpolicy="no-referrer" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10 shrink-0 bg-slate-900" />`
+          : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center text-gold font-bold font-serif text-xs shrink-0">MA</div>`;
 
         card.innerHTML = `
           <div class="flex items-center gap-3.5 min-w-0 flex-1">
             ${imgBlock}
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2 mb-1">
-                ${isFirst ? '<span class="px-2 py-0.5 rounded-md bg-gold/15 border border-gold/30 text-[10px] font-bold text-gold uppercase tracking-wider">Headline Utama</span>' : ''}
+                ${isFirst ? '<span class="px-2 py-0.5 rounded-md bg-gold/15 border border-gold/30 text-[9px] font-bold text-gold uppercase tracking-wider">Headline</span>' : ''}
                 <span class="text-[11px] text-slate-400 font-medium">${formatDate(item.tanggal)}</span>
                 <span class="text-slate-500">&bull;</span>
                 <span class="text-[11px] text-slate-400 truncate">${item.penulis || 'Humas'}</span>
@@ -1257,7 +1692,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
           <div class="flex items-center gap-2 shrink-0 self-end sm:self-center">
             <button 
               type="button" 
-              data-idx="${idx}" 
+              data-id="${item.id || ''}" 
               class="btn-preview-item inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/15 transition-all"
             >
               <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -1284,15 +1719,16 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
         newsListContainer.appendChild(card);
       });
 
-      // Bind Preview
+      // Bind Preview Buttons
       newsListContainer.querySelectorAll('.btn-preview-item').forEach(btn => {
         btn.addEventListener('click', () => {
-          const idx = parseInt(btn.getAttribute('data-idx'));
-          openPreview(allNewsItems[idx]);
+          const id = btn.getAttribute('data-id');
+          const item = allNewsItems.find(x => x.id === id);
+          if (item) openPreview(item);
         });
       });
 
-      // Bind Delete
+      // Bind Delete Buttons
       newsListContainer.querySelectorAll('.btn-delete-item').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-id');
@@ -1302,28 +1738,42 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       });
     }
 
-    if (btnRefreshList) btnRefreshList.addEventListener('click', loadNewsList);
-
-    // Preview Modal Logic
-    const previewModalCard = previewModal?.querySelector('.preview-scrollbar');
-    let previewScrollTimer = null;
-
-    if (previewModalCard) {
-      previewModalCard.addEventListener('scroll', () => {
-        previewModalCard.classList.add('is-scrolling');
-        clearTimeout(previewScrollTimer);
-        previewScrollTimer = setTimeout(() => {
-          previewModalCard.classList.remove('is-scrolling');
-        }, 800);
+    // Instant Search Filter for News
+    if (inputSearchNews) {
+      inputSearchNews.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        if (!query) {
+          renderNewsList(allNewsItems);
+          return;
+        }
+        const filtered = allNewsItems.filter(item => {
+          const titleMatch = (item.judul || '').toLowerCase().includes(query);
+          const authorMatch = (item.penulis || '').toLowerCase().includes(query);
+          const contentMatch = (item.isi || '').toLowerCase().includes(query);
+          return titleMatch || authorMatch || contentMatch;
+        });
+        renderNewsList(filtered);
       });
     }
 
+    if (btnRefreshList) btnRefreshList.addEventListener('click', loadNewsList);
+
+    // =========================================================================
+    // PREVIEW MODAL LOGIC
+    // =========================================================================
     function openPreview(item) {
       if (!item) return;
       pvTitle.textContent = item.judul || '';
       pvDate.textContent = formatDate(item.tanggal);
       pvPenulis.textContent = item.penulis || 'Humas MA Margajaya';
-      pvBody.textContent = item.isi || '';
+      // Render HTML if content looks like HTML, otherwise plain text
+      const isiContent = item.isi || '';
+      if (isiContent.trim().startsWith('<')) {
+        pvBody.innerHTML = isiContent;
+      } else {
+        // Legacy plain text: convert newlines to <br> for display
+        pvBody.innerHTML = isiContent.replace(/\n/g, '<br>');
+      }
 
       const photoUrl = formatDriveImageUrl(item.url_foto);
       if (photoUrl) {
@@ -1335,11 +1785,6 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
       previewModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
-      // Reset scroll position when opening
-      if (previewModalCard) {
-        previewModalCard.scrollTop = 0;
-        previewModalCard.classList.remove('is-scrolling');
-      }
     }
 
     function closePreview() {
@@ -1349,7 +1794,9 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
     if (btnClosePreview) btnClosePreview.addEventListener('click', closePreview);
 
-    // Delete Modal Logic
+    // =========================================================================
+    // DELETE MODAL LOGIC
+    // =========================================================================
     function openDeleteModal(id, title) {
       pendingDeleteId = id;
       if (deleteConfirmTitle) deleteConfirmTitle.textContent = `"${title}"`;
@@ -1364,9 +1811,6 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
     }
 
     if (btnCancelDelete) btnCancelDelete.addEventListener('click', closeDeleteModal);
-
-    const deleteNormalState  = document.getElementById('delete-normal-state');
-    const deleteLoadingState = document.getElementById('delete-loading-state');
 
     function showDeleteLoading(show) {
       if (show) {
@@ -1385,12 +1829,11 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
         if (!pendingDeleteId) return;
         const apiUrl = getApiUrl();
         if (!apiUrl) {
-          showAlert('error', 'URL Google Apps Script belum disetel.');
+          showAlert('error', 'URL database Google Apps Script belum disetel.');
           closeDeleteModal();
           return;
         }
 
-        // Show loading state
         showDeleteLoading(true);
 
         try {
@@ -1403,9 +1846,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
           const result = await response.json();
           if (result.status === 'success') {
-            // Brief pause so user sees the loading state completed
             await new Promise(r => setTimeout(r, 400));
-            // Trigger automatic Vercel Rebuild
             triggerVercelDeploy(false);
             showAlert('success', `
               <div class="flex items-start sm:items-center gap-3.5">
@@ -1416,7 +1857,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                 </div>
                 <div class="space-y-0.5">
                   <div class="font-serif font-bold text-sm sm:text-base text-white tracking-wide">Warta Berhasil Dihapus dari Arsip</div>
-                  <p class="text-xs text-emerald-200/90 leading-relaxed font-normal">Data artikel telah dieliminasi dari pangkalan data. Pembaruan laman publik sedang berlangsung dan akan terefleksi dalam ~45 detik.</p>
+                  <p class="text-xs text-emerald-200/90 leading-relaxed font-normal">Data artikel telah dihapus dari pangkalan data. Pembaruan laman publik sedang berlangsung.</p>
                 </div>
               </div>
             `);
@@ -1430,7 +1871,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
             }
           }
         } catch (err) {
-          showAlert('error', 'Gagal terhubung ke API Apps Script: ' + err.message);
+          showAlert('error', 'Gagal terhubung ke API database: ' + err.message);
         } finally {
           showDeleteLoading(false);
           closeDeleteModal();
@@ -1438,7 +1879,9 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       });
     }
 
-    // Photo Upload and Base64 Handler
+    // =========================================================================
+    // COVER IMAGE UPLOAD HANDLER
+    // =========================================================================
     if (fotoInput) {
       fotoInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
@@ -1476,14 +1919,15 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       });
     }
 
-    // News Form Submit Handler
+    // =========================================================================
+    // NEWS FORM SUBMISSION (Publish Article)
+    // =========================================================================
     if (formNews) {
       formNews.addEventListener('submit', async (e) => {
         e.preventDefault();
         const apiUrl = getApiUrl();
         if (!apiUrl) {
-          showAlert('error', 'URL Google Apps Script belum disetel. Klik tombol "⚙️ Pengaturan" di navigasi atas.');
-          openSettings();
+          showAlert('error', 'URL Google Apps Script tidak terkonfigurasi pada environment.');
           return;
         }
 
@@ -1491,12 +1935,14 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
         hideAlert();
 
         const token = sessionStorage.getItem('margajaya_admin_token') || '';
+        // Sync rich-text HTML before reading from hidden textarea
+        syncHiddenTextarea();
         const payload = {
           token: token,
-          judul: document.getElementById('judul').value.trim(),
+          judul: judulInput.value.trim(),
           tanggal: tanggalHiddenInput.value.trim(),
-          penulis: document.getElementById('penulis').value.trim(),
-          isi: document.getElementById('isi').value.trim(),
+          penulis: penulisInput.value.trim(),
+          isi: isiHidden.value,   // HTML content
           image_base64: currentBase64Image ? currentBase64Image.split(',')[1] : null,
           image_name: currentImageName,
           image_type: currentImageType
@@ -1512,7 +1958,6 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
           const result = await response.json();
 
           if (result.status === 'success') {
-            // Trigger automatic Vercel Rebuild
             triggerVercelDeploy(false);
 
             showAlert('success', `
@@ -1525,45 +1970,162 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                   </div>
                   <div class="space-y-0.5">
                     <div class="font-serif font-bold text-base text-white tracking-wide">Warta Berhasil Diterbitkan</div>
-                    <p class="text-xs text-emerald-200/90 leading-relaxed font-normal">Artikel telah tersimpan di pangkalan data resmi madrasah. Pembaruan laman publik sedang berlangsung dan akan tayang dalam ~45 detik.</p>
+                    <p class="text-xs text-emerald-200/90 leading-relaxed font-normal">Artikel telah tersimpan di pangkalan data resmi madrasah. Pembaruan laman publik sedang diproses (~45 detik).</p>
                   </div>
                 </div>
-                <a href="/berita" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gold hover:bg-gold-soft text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shrink-0 self-start sm:self-auto">
-                  <span>Lihat di Halaman Berita &rarr;</span>
-                </a>
+                <div class="flex items-center gap-2">
+                  <a href="/berita" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-gold hover:bg-gold-soft text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shrink-0">
+                    <span>Lihat di Halaman Berita &rarr;</span>
+                  </a>
+                </div>
               </div>
             `);
 
             formNews.reset();
+            if (isiEditor) isiEditor.innerHTML = ''; // Clear rich-text editor
+            if (isiHidden) isiHidden.value = '';
             updateSelectedDate(new Date());
             if (penulisInput) penulisInput.value = 'Humas MA Margajaya';
             if (btnRemovePhoto) btnRemovePhoto.click();
+            updateWordCount();
             setTimeout(loadNewsList, 1500);
           } else {
             if (result.message && result.message.includes('Token')) {
               showAlert('error', 'Sesi login telah kedaluwarsa. Silakan login kembali.');
               setTimeout(() => { if (btnLogout) btnLogout.click(); }, 1800);
             } else {
-              showAlert('error', 'Gagal mempublikasikan berita: ' + (result.message || 'Terjadi kesalahan sistem.'));
+              showAlert('error', 'Gagal mempublikasikan warta: ' + (result.message || 'Terjadi kesalahan sistem.'));
             }
           }
         } catch (err) {
-          showAlert('error', 'Gagal menghubungi API Google Apps Script: ' + err.message);
+          showAlert('error', 'Gagal menghubungi server database: ' + err.message);
         } finally {
           setLoading(false);
         }
       });
     }
 
-    // Keyboard Shortcuts
+    // Keyboard Shortcuts (Esc to close open popups)
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         if (!previewModal.classList.contains('hidden')) closePreview();
         if (!deleteModal.classList.contains('hidden')) closeDeleteModal();
-        if (!settingsModal.classList.contains('hidden')) closeSettings();
         if (calPopover && !calPopover.classList.contains('hidden')) calPopover.classList.add('hidden');
       }
     });
 
   })();
 </script>
+
+<style>
+  /* =========================================================================
+     WYSIWYG EDITOR — Live rich-text styling inside the contenteditable div
+     ========================================================================= */
+  [contenteditable="true"].wysiwyg-editor p,
+  [contenteditable="true"].wysiwyg-editor div {
+    margin-bottom: 0.75rem;
+  }
+
+  [contenteditable="true"].wysiwyg-editor strong,
+  [contenteditable="true"].wysiwyg-editor b {
+    font-weight: 700;
+    color: #f8fafc;
+  }
+
+  [contenteditable="true"].wysiwyg-editor em,
+  [contenteditable="true"].wysiwyg-editor i {
+    font-style: italic;
+    color: #cbd5e1;
+  }
+
+  [contenteditable="true"].wysiwyg-editor u {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  [contenteditable="true"].wysiwyg-editor s,
+  [contenteditable="true"].wysiwyg-editor strike {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  [contenteditable="true"].wysiwyg-editor h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 1.5rem 0 0.75rem;
+    line-height: 1.3;
+    border-left: 3px solid #34d399;
+    padding-left: 0.875rem;
+  }
+
+  [contenteditable="true"].wysiwyg-editor ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0.75rem 0;
+  }
+
+  [contenteditable="true"].wysiwyg-editor ul li {
+    position: relative;
+    padding-left: 1.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  [contenteditable="true"].wysiwyg-editor ul li::before {
+    content: '';
+    position: absolute;
+    left: 0.25rem;
+    top: 0.65em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #34d399;
+  }
+
+  [contenteditable="true"].wysiwyg-editor ol {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin: 0.75rem 0;
+  }
+
+  [contenteditable="true"].wysiwyg-editor ol li {
+    margin-bottom: 0.4rem;
+    padding-left: 0.25rem;
+  }
+
+  [contenteditable="true"].wysiwyg-editor ol li::marker {
+    color: #34d399;
+    font-weight: 700;
+  }
+
+  [contenteditable="true"].wysiwyg-editor blockquote {
+    border-left: 3px solid #d4a01b;
+    background: rgba(212, 160, 27, 0.08);
+    padding: 0.75rem 1.25rem;
+    margin: 1rem 0;
+    border-radius: 0 0.625rem 0.625rem 0;
+    font-style: italic;
+    color: #e2c97e;
+  }
+
+  [contenteditable="true"].wysiwyg-editor hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    margin: 1.5rem 0;
+  }
+
+  /* Empty placeholder */
+  [contenteditable="true"].wysiwyg-editor:empty::before,
+  [contenteditable="true"].wysiwyg-editor:has(br:only-child)::before {
+    content: attr(data-placeholder);
+    color: rgba(148, 163, 184, 0.5);
+    pointer-events: none;
+  }
+
+  /* Active toolbar button state */
+  .toolbar-btn.is-active {
+    background-color: rgba(52, 211, 153, 0.15) !important;
+    color: #34d399 !important;
+  }
+</style>
