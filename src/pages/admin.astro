@@ -1,6 +1,7 @@
 ---
 import AdminLayout from '../layouts/AdminLayout.astro';
 const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
+const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://api.vercel.com/v1/integrations/deploy/prj_umwjoNnXfJTjqzpiHS7qcLu3kVpH/rUwycrCtVI';
 ---
 
 <AdminLayout title="Admin Portal — MA Margajaya Sukadana">
@@ -137,7 +138,7 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
   <!-- =========================================================================
        2. MAIN ADMIN DASHBOARD (SINGLE PAGE SCROLL: FORM + ARCHIVES)
        ========================================================================= -->
-  <div id="admin-dashboard" class="hidden min-h-screen flex-1 flex flex-col" data-api-url={newsApiUrl}>
+  <div id="admin-dashboard" class="hidden min-h-screen flex-1 flex flex-col" data-api-url={newsApiUrl} data-deploy-hook={vercelDeployHook}>
     
     <!-- macOS Floating Frosted Navbar Header (Ultra Clean & Minimal) -->
     <header class="ios-glass-nav sticky top-0 z-40">
@@ -171,6 +172,19 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
             </svg>
             <span class="hidden sm:inline">Lihat Web</span>
           </a>
+
+          <!-- Trigger Rebuild / Sync Web to Vercel -->
+          <button 
+            id="btn-rebuild-web" 
+            type="button" 
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-200 text-xs font-semibold border border-emerald-500/30 transition-all shadow-sm"
+            title="Kirim sinyal ke Vercel untuk build & sinkronkan website publik sekarang"
+          >
+            <svg id="icon-rebuild" class="w-3.5 h-3.5 text-emerald-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <span class="hidden sm:inline">Sync Web</span>
+          </button>
 
           <!-- Settings Button (Opens macOS Settings Dialog) -->
           <button 
@@ -547,6 +561,21 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
           />
         </div>
 
+        <div>
+          <label for="deploy-hook-input" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+            URL Vercel Deploy Hook (Auto Rebuild)
+          </label>
+          <input 
+            type="url" 
+            id="deploy-hook-input" 
+            placeholder="https://api.vercel.com/v1/integrations/deploy/..."
+            class="ios-glass-input w-full px-4 py-3.5 rounded-xl text-xs font-mono"
+          />
+          <p class="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+            Sistem otomatis memicu Vercel me-rebuild website publik setiap kali warta baru diterbitkan atau dihapus.
+          </p>
+        </div>
+
         <div class="p-4 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 text-xs text-slate-300 space-y-2">
           <div class="font-bold text-emerald-300 flex items-center gap-1.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -712,6 +741,7 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
     const dashboardEl = document.getElementById('admin-dashboard');
     const loginScreen = document.getElementById('admin-login-screen');
     const DEFAULT_API_URL = dashboardEl ? dashboardEl.getAttribute('data-api-url') : "";
+    const DEFAULT_DEPLOY_HOOK = dashboardEl ? dashboardEl.getAttribute('data-deploy-hook') : "https://api.vercel.com/v1/integrations/deploy/prj_umwjoNnXfJTjqzpiHS7qcLu3kVpH/rUwycrCtVI";
 
     const formLogin = document.getElementById('form-login');
     const adminPasswordInput = document.getElementById('admin-password');
@@ -721,12 +751,17 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
     const eyeClosed = document.getElementById('eye-closed');
     const btnLogout = document.getElementById('btn-logout');
 
+    // Header Quick Rebuild Button
+    const btnRebuildWeb = document.getElementById('btn-rebuild-web');
+    const iconRebuild = document.getElementById('icon-rebuild');
+
     // Settings Modal
     const btnOpenSettings = document.getElementById('btn-open-settings');
     const settingsModal = document.getElementById('settings-modal');
     const btnCloseSettings = document.getElementById('btn-close-settings');
     const btnCancelSettings = document.getElementById('btn-cancel-settings');
     const apiUrlInput = document.getElementById('api-url-input');
+    const deployHookInput = document.getElementById('deploy-hook-input');
     const btnSaveApi = document.getElementById('btn-save-api');
 
     // Form News
@@ -810,6 +845,34 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
 
     function getApiUrl() {
       return localStorage.getItem('margajaya_api_url') || DEFAULT_API_URL || '';
+    }
+
+    function getDeployHookUrl() {
+      return localStorage.getItem('margajaya_deploy_hook') || DEFAULT_DEPLOY_HOOK || '';
+    }
+
+    async function triggerVercelDeploy(isManual = false) {
+      const hookUrl = getDeployHookUrl();
+      if (!hookUrl) return false;
+
+      if (iconRebuild) iconRebuild.classList.add('animate-spin');
+      try {
+        await fetch(hookUrl, { method: 'POST' });
+        if (isManual) {
+          showAlert('success', '🚀 Sinyal deploy berhasil dikirim ke Vercel! Website sedang diperbarui otomatis (proses build selesai dalam ~40–60 detik).');
+        }
+        return true;
+      } catch (err) {
+        console.warn('Gagal memicu Vercel Deploy Hook:', err);
+        if (isManual) {
+          showAlert('error', 'Gagal menghubungi Vercel Deploy Hook: ' + err.message);
+        }
+        return false;
+      } finally {
+        if (iconRebuild) {
+          setTimeout(() => iconRebuild.classList.remove('animate-spin'), 1500);
+        }
+      }
     }
 
     function showAlert(type, htmlContent) {
@@ -979,6 +1042,7 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
     // =========================================================================
     function openSettings() {
       if (apiUrlInput) apiUrlInput.value = getApiUrl();
+      if (deployHookInput) deployHookInput.value = getDeployHookUrl();
       if (settingsModal) settingsModal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
@@ -995,12 +1059,18 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
     if (btnSaveApi) {
       btnSaveApi.addEventListener('click', () => {
         const val = apiUrlInput.value.trim();
-        if (val) {
-          localStorage.setItem('margajaya_api_url', val);
-          closeSettings();
-          showAlert('success', '✓ URL Google Apps Script Endpoint berhasil disimpan!');
-          loadNewsList();
-        }
+        const hookVal = deployHookInput ? deployHookInput.value.trim() : '';
+        if (val) localStorage.setItem('margajaya_api_url', val);
+        if (hookVal) localStorage.setItem('margajaya_deploy_hook', hookVal);
+        closeSettings();
+        showAlert('success', '✓ Pengaturan API & Vercel Deploy Hook berhasil disimpan!');
+        loadNewsList();
+      });
+    }
+
+    if (btnRebuildWeb) {
+      btnRebuildWeb.addEventListener('click', () => {
+        triggerVercelDeploy(true);
       });
     }
 
@@ -1311,7 +1381,9 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
           if (result.status === 'success') {
             // Brief pause so user sees the loading state completed
             await new Promise(r => setTimeout(r, 400));
-            showAlert('success', '✓ Warta berhasil dihapus dari database. Perubahan akan diterapkan di website dalam 1–2 menit.');
+            // Trigger automatic Vercel Rebuild
+            triggerVercelDeploy(false);
+            showAlert('success', '✓ Warta berhasil dihapus dari database & deploy otomatis Vercel telah dipicu! Perubahan akan tayang di website dalam ~45 detik.');
             loadNewsList();
           } else {
             if (result.message && result.message.includes('Token')) {
@@ -1404,11 +1476,14 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || '';
           const result = await response.json();
 
           if (result.status === 'success') {
+            // Trigger automatic Vercel Rebuild
+            triggerVercelDeploy(false);
+
             showAlert('success', `
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <div class="font-bold text-sm text-emerald-300">🎉 Warta Berhasil Disimpan ke Sistem!</div>
-                  <p class="text-xs text-slate-300 mt-0.5">Warta telah tersimpan di database. Perubahan akan tayang di website dalam 1–2 menit setelah proses build selesai.</p>
+                  <div class="font-bold text-sm text-emerald-300">🎉 Warta Berhasil Disimpan &amp; Deploy Otomatis Dimulai!</div>
+                  <p class="text-xs text-slate-300 mt-0.5">Warta telah tersimpan di database dan Vercel sedang me-rebuild website secara otomatis. Perubahan akan tayang dalam ~45 detik.</p>
                 </div>
                 <a href="/berita" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold hover:bg-gold-soft text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shrink-0">
                   <span>Lihat di Halaman Berita &rarr;</span>
