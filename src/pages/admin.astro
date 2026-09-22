@@ -178,12 +178,12 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
             id="btn-rebuild-web" 
             type="button" 
             class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-200 text-xs font-semibold border border-emerald-500/30 transition-all shadow-sm"
-            title="Kirim sinyal ke Vercel untuk build & sinkronkan website publik sekarang"
+            title="Sinkronkan pembaruan data terkini ke portal publik madrasah"
           >
             <svg id="icon-rebuild" class="w-3.5 h-3.5 text-emerald-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>
-            <span class="hidden sm:inline">Sync Web</span>
+            <span class="hidden sm:inline">Sinkronkan Web</span>
           </button>
 
           <!-- Settings Button (Opens macOS Settings Dialog) -->
@@ -859,13 +859,37 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       try {
         await fetch(hookUrl, { method: 'POST' });
         if (isManual) {
-          showAlert('success', '🚀 Sinyal deploy berhasil dikirim ke Vercel! Website sedang diperbarui otomatis (proses build selesai dalam ~40–60 detik).');
+          showAlert('success', `
+            <div class="flex items-start sm:items-center gap-3.5">
+              <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+              </div>
+              <div class="space-y-0.5">
+                <div class="font-serif font-bold text-sm sm:text-base text-white tracking-wide">Sinkronisasi Portal Berhasil Diinisiasi</div>
+                <p class="text-xs text-emerald-200/90 leading-relaxed font-normal">Sistem sedang memperbarui kompilasi data publik. Perubahan terkini akan terefleksi pada website madrasah dalam kurun waktu 40–60 detik.</p>
+              </div>
+            </div>
+          `);
         }
         return true;
       } catch (err) {
         console.warn('Gagal memicu Vercel Deploy Hook:', err);
         if (isManual) {
-          showAlert('error', 'Gagal menghubungi Vercel Deploy Hook: ' + err.message);
+          showAlert('error', `
+            <div class="flex items-start gap-3">
+              <div class="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0 border border-rose-500/30">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+              </div>
+              <div class="space-y-0.5">
+                <div class="font-bold text-sm text-white">Kendala Sinkronisasi Server</div>
+                <p class="text-xs text-rose-200/90 leading-relaxed font-normal">Gagal menghubungi layanan sinkronisasi otomatis: ${err.message}. Silakan periksa konfigurasi tautan webhook pada menu pengaturan.</p>
+              </div>
+            </div>
+          `);
         }
         return false;
       } finally {
@@ -1383,7 +1407,19 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
             await new Promise(r => setTimeout(r, 400));
             // Trigger automatic Vercel Rebuild
             triggerVercelDeploy(false);
-            showAlert('success', '✓ Warta berhasil dihapus dari database & deploy otomatis Vercel telah dipicu! Perubahan akan tayang di website dalam ~45 detik.');
+            showAlert('success', `
+              <div class="flex items-start sm:items-center gap-3.5">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </div>
+                <div class="space-y-0.5">
+                  <div class="font-serif font-bold text-sm sm:text-base text-white tracking-wide">Warta Berhasil Dihapus dari Arsip</div>
+                  <p class="text-xs text-emerald-200/90 leading-relaxed font-normal">Data artikel telah dieliminasi dari pangkalan data. Pembaruan laman publik sedang berlangsung dan akan terefleksi dalam ~45 detik.</p>
+                </div>
+              </div>
+            `);
             loadNewsList();
           } else {
             if (result.message && result.message.includes('Token')) {
@@ -1480,12 +1516,19 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
             triggerVercelDeploy(false);
 
             showAlert('success', `
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <div class="font-bold text-sm text-emerald-300">🎉 Warta Berhasil Disimpan &amp; Deploy Otomatis Dimulai!</div>
-                  <p class="text-xs text-slate-300 mt-0.5">Warta telah tersimpan di database dan Vercel sedang me-rebuild website secara otomatis. Perubahan akan tayang dalam ~45 detik.</p>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-start sm:items-center gap-3.5">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <div class="space-y-0.5">
+                    <div class="font-serif font-bold text-base text-white tracking-wide">Warta Berhasil Diterbitkan</div>
+                    <p class="text-xs text-emerald-200/90 leading-relaxed font-normal">Artikel telah tersimpan di pangkalan data resmi madrasah. Pembaruan laman publik sedang berlangsung dan akan tayang dalam ~45 detik.</p>
+                  </div>
                 </div>
-                <a href="/berita" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold hover:bg-gold-soft text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shrink-0">
+                <a href="/berita" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gold hover:bg-gold-soft text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md shrink-0 self-start sm:self-auto">
                   <span>Lihat di Halaman Berita &rarr;</span>
                 </a>
               </div>
