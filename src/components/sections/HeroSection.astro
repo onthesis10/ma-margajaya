@@ -1,0 +1,83 @@
+---
+import Button from "../ui/Button.astro";
+import { schoolConfig } from "../../config/school.config";
+import { fetchNewsArticles, formatIndonesianDate } from "../../lib/news";
+
+const articles = await fetchNewsArticles();
+const heroNews = articles.slice(0, 3);
+---
+
+<section class="relative overflow-hidden min-h-[860px] lg:min-h-[900px] flex items-end bg-[#075B2A] text-white pb-24 pt-48 lg:pt-56">
+  <div class="absolute inset-0 bg-[url('/images/hero-bg-2.png')] bg-cover bg-center bg-no-repeat scale-[1.01] transform transition-transform duration-1000 ease-out filter contrast-[1.03] brightness-[1.05]"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-[#075B2A]/85 via-[#075B2A]/35 to-transparent"></div>
+  <div class="absolute inset-0 bg-gradient-to-r from-[#075B2A]/70 via-[#075B2A]/25 to-transparent"></div>
+  <div class="absolute inset-0 bg-black/10"></div>
+  
+  <!-- Subtle Soft Radiant Glow Orb behind Hero -->
+  <div class="absolute -top-24 -left-24 w-[600px] h-[600px] bg-radial from-gold/20 via-emerald-500/10 to-transparent blur-[100px] pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto px-6 relative w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+    <div class="lg:col-span-8">
+      <div id="hero-badge" class="flex items-center gap-3 mb-6">
+        <span class="w-7 h-[1.5px] bg-gold drop-shadow pulse-glow"></span>
+        <span class="text-xs sm:text-[13px] font-bold tracking-[0.28em] uppercase text-gold drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+          Penerimaan Santri &amp; Siswa Baru &middot; MA Margajaya
+        </span>
+      </div>
+      <h1 id="hero-title" class="text-5xl sm:text-7xl md:text-[92px] lg:text-[110px] font-serif leading-[0.92] tracking-[-0.03em] drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] mb-8">
+        Berakhlak.<br/>
+        <em class="italic text-gold text-shimmer-gold drop-shadow-[0_4px_24px_rgba(232,185,35,0.4)]">Berprestasi.</em>
+      </h1>
+      <p id="hero-subtitle" class="text-base sm:text-lg text-white max-w-[580px] leading-relaxed mb-10 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)] font-medium">
+        {schoolConfig.name} mendidik generasi cerdas, berkarakter mulia, dan berdaya saing global melalui perpaduan kurikulum nasional dan kultur Pondok Pesantren Darul Muawanah.
+      </p>
+      <div id="hero-actions" class="flex flex-wrap items-center gap-4">
+        <Button href="/ppdb" variant="primary" size="lg" className="glow-button shadow-xl shadow-gold/20 font-semibold tracking-wider hover:shadow-[0_0_30px_rgba(232,185,35,0.4)]">
+          Daftar PPDB Sekarang &rarr;
+        </Button>
+        <Button href="/profil" variant="glass" size="lg" className="glow-button backdrop-blur-md border-white/30 hover:bg-white/15 hover:border-gold/50">
+          Pelajari Profil Madrasah &rarr;
+        </Button>
+      </div>
+    </div>
+
+    <!-- Right Column: Warta & Agenda Terkini -->
+    <div class="lg:col-span-4 border-l border-white/20 pl-8 hidden md:block glow-card glow-card-dark p-6 rounded-2xl bg-white/[0.03] backdrop-blur-sm">
+      <div class="text-[10px] tracking-[0.32em] uppercase text-gold-soft font-bold mb-6 flex items-center gap-2">
+        <span class="w-4 h-[1.5px] bg-gold pulse-glow"></span>
+        <span>Warta &amp; Agenda Terkini</span>
+      </div>
+
+      <!-- Live list rendered at build time -->
+      <div class="divide-y divide-white/10">
+        {heroNews.map(item => (
+          <a 
+            href={`/berita/${item.slug}`}
+            class="py-4 first:pt-0 last:border-b-0 group cursor-pointer transition-all duration-200 hover:pl-1 block"
+          >
+            <div class="text-[11px] tracking-[0.18em] uppercase text-gold-soft font-bold group-hover:text-white transition-colors mb-1 flex items-center gap-1.5">
+              <svg class="w-2.5 h-2.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{formatIndonesianDate(item.tanggal)}</span>
+            </div>
+            <div class="font-serif text-lg leading-snug text-white/90 group-hover:text-white transition-colors line-clamp-2">
+              {item.judul}
+            </div>
+            <div class="mt-1.5 text-[10px] text-white/50 group-hover:text-emerald-300 font-bold uppercase tracking-widest transition-colors flex items-center gap-1">
+              <span>Baca Selengkapnya</span>
+              <span>&rarr;</span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <!-- Footer link -->
+      <div class="mt-5 pt-4 border-t border-white/15">
+        <a href="/berita" class="text-[11px] font-bold uppercase tracking-widest text-gold-soft hover:text-white transition-all flex items-center gap-1.5 hover:translate-x-1">
+          Lihat Semua Warta &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

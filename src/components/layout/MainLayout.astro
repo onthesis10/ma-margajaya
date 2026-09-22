@@ -1,0 +1,31 @@
+---
+import { schoolConfig } from '../../config/school.config';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import SEO from '../seo/SEO.astro';
+import '../../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title, 
+  description
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <SEO title={title} description={description} />
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <Header />
+    <main class="flex-grow">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

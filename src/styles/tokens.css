@@ -1,0 +1,97 @@
+:root {
+  /* MA Margajaya Modern Islamic Palette */
+  
+  /* Accent: Premium Gold */
+  --color-gold: #E8B923;
+  --color-gold-soft: #F2CA4C; /* slightly lighter for hover/text */
+  
+  /* Primary & Secondary: Green Identity & Dark Green Elegant */
+  --color-blue: #087A35; /* Primary Identity (Green) */
+  --color-blue-deep: #075B2A; /* Elegant / Dark Green */
+  --color-blue-ink: #05411D; /* Headings matched to Dark */
+  
+  /* Backgrounds */
+  --color-paper: #F8FAF9; /* Main Website Background */
+  --color-paper-warm: #EAF6EE; /* Soft Background */
+  
+  /* Text */
+  --color-ink: #111827;
+  --color-ink-soft: #374151;
+  --color-ink-muted: #64748B;
+  
+  /* Borders */
+  --color-hair: #E2E8F0;
+  --color-hair-strong: #CBD5E1;
+  
+  /* Utilities / Highlights */
+  --color-red: #E8B923;
+  --color-red-soft: #F2CA4C;
+
+  --font-serif: 'Instrument Serif', serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Hide Google Translate top banner, tooltips, and prevent body margin push */
+.goog-te-banner-frame.skiptranslate,
+.goog-te-banner-frame,
+iframe.goog-te-banner-frame,
+.skiptranslate iframe,
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+.goog-tooltip,
+.goog-tooltip:hover {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   Modern Aesthetic Custom Scrollbar
+   ========================================================================== */
+
+/* Smooth Scrolling */
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #087A35 #F8FAF9;
+}
+
+/* Chrome, Edge, Safari WebKit Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F8FAF9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #087A35;
+  border-radius: 9999px;
+  border: 1.5px solid #F8FAF9;
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #075B2A;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #E8B923;
+}

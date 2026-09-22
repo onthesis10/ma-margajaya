@@ -1,0 +1,258 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Container from '../components/ui/Container.astro';
+
+const breadcrumbs = [{ label: "Galeri", href: "/galeri" }];
+
+const galleryItems = [
+  { id: "gal-1",  title: "Gedung & Kampus Terpadu MA Margajaya",            category: "Kampus",     date: "2026",            location: "Sukadana, Ciamis",    image: "/images/gedung-ma-margajaya.jpg" },
+  { id: "gal-2",  title: "Praktikum TIK di Studio Komputer Madrasah",       category: "Akademik",   date: "Semester Genap",  location: "Lab Komputer",         image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=900&q=80" },
+  { id: "gal-3",  title: "Pengajian Kitab Kuning Pesantren Ramadhan",        category: "Tradisi",    date: "Bulan Ramadhan",  location: "Masjid Darul Muawanah",image: "https://images.unsplash.com/photo-1542838132-92c53300491e?w=900&q=80" },
+  { id: "gal-4",  title: "Latihan Memanah Al-Ramyi Santri",                  category: "Kesiswaan",  date: "Mingguan",        location: "Area Terbuka",         image: "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=900&q=80" },
+  { id: "gal-5",  title: "Penampilan Seni Hadrah Marawis Al-Muawanah",       category: "Tradisi",    date: "Pentas Kreasi",   location: "Panggung Utama",       image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=900&q=80" },
+  { id: "gal-6",  title: "Perhelatan Akbar Gebyar MA Margajaya",             category: "Prestasi",   date: "November",        location: "Kompleks Madrasah",    image: "https://images.unsplash.com/photo-1511629091441-ee46146481b6?w=900&q=80" },
+  { id: "gal-7",  title: "Suasana Pembelajaran Interaktif Kelas",            category: "Akademik",   date: "KBM Formal",      location: "Ruang Kelas",          image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=900&q=80" },
+  { id: "gal-8",  title: "Seremoni Wisuda Santri Kelas XII",                 category: "Prestasi",   date: "Juni",            location: "Aula Pertemuan",       image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=900&q=80" },
+  { id: "gal-9",  title: "Latihan Kepanduan Pramuka Madrasah",               category: "Kesiswaan",  date: "Perkemahan",      location: "Bumi Perkemahan",      image: "https://images.unsplash.com/photo-1609234656388-0ff363383899?w=900&q=80" },
+  { id: "gal-10", title: "Karya Seni Kaligrafi Arab Santri",                 category: "Tradisi",    date: "Studio Seni",     location: "Studio Kaligrafi",     image: "https://images.unsplash.com/photo-1577083552431-6e5fd01988ec?w=900&q=80" },
+  { id: "gal-11", title: "Pojok Riset & Literasi Perpustakaan",              category: "Akademik",   date: "Aktivitas Literasi", location: "Perpustakaan",      image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=900&q=80" },
+  { id: "gal-12", title: "Penghargaan Santri Berprestasi Tingkat Nasional",  category: "Prestasi",   date: "Kemenag RI",      location: "Seremonial",           image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=900&q=80" },
+  { id: "gal-13", title: "Latihan Bela Diri Pencak Silat",                   category: "Kesiswaan",  date: "Latihan Rutin",   location: "Halaman Madrasah",     image: "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=900&q=80" },
+  { id: "gal-14", title: "Halal Bihalal & Tradisi Kakaren Syawal",           category: "Tradisi",    date: "Bulan Syawal",    location: "Darul Muawanah",       image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=900&q=80" },
+  { id: "gal-15", title: "Kompetisi Futsal Antar Kelas Santri",              category: "Kesiswaan",  date: "Porseni Santri",  location: "Lapangan Olahraga",    image: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=900&q=80" },
+  { id: "gal-16", title: "Upacara Bendera Hari Senin",                       category: "Kampus",     date: "Mingguan",        location: "Lapangan Utama",       image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=900&q=80" },
+  { id: "gal-17", title: "Diskusi Ilmiah Kelompok Belajar Santri",           category: "Akademik",   date: "KBM Mandiri",     location: "Ruang Diskusi",        image: "https://images.unsplash.com/photo-1453733190371-0a9bedd82893?w=900&q=80" },
+  { id: "gal-18", title: "Lomba OMI Olimpiade Mata Pelajaran Islam",         category: "Prestasi",   date: "Tingkat Provinsi", location: "Jawa Barat",          image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=900&q=80" },
+  { id: "gal-19", title: "Shalat Berjamaah di Masjid Darul Muawanah",        category: "Tradisi",    date: "Harian",          location: "Masjid Darul Muawanah",image: "https://images.unsplash.com/photo-1564769625905-50e93615e769?w=900&q=80" },
+  { id: "gal-20", title: "Lomba Orasi Hari Kartini Siswi Berbaju Kebaya",    category: "Kesiswaan",  date: "April",           location: "Aula Utama",           image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80" },
+];
+
+const categories = ["Semua", "Kampus", "Akademik", "Kesiswaan", "Tradisi", "Prestasi"];
+---
+
+<PageLayout 
+  title="Galeri Dokumentasi" 
+  description="Kumpulan dokumentasi visual kegiatan santri, agenda madrasah, seni pesantren, dan momen berharga di MA Margajaya Sukadana."
+  breadcrumbs={breadcrumbs}
+>
+  <section class="py-14 sm:py-20 bg-white relative overflow-hidden" data-motion-section>
+
+    <!-- Subtle Ambient Glow -->
+    <div class="glow-blob w-[500px] h-[500px] bg-emerald-500/8 -top-32 -left-32 pointer-events-none"></div>
+    <div class="glow-blob w-[550px] h-[550px] bg-gold/10 top-1/2 -right-40 pointer-events-none" style="animation-delay:-3s"></div>
+
+    <Container>
+
+      <!-- ══ HEADER ══ -->
+      <div class="text-center max-w-3xl mx-auto mb-12" data-motion-title>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+          Dokumentasi
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em]">
+          Merekam Jejak, <em class="italic text-gold text-shimmer-gold">Merayakan Tradisi.</em>
+        </h1>
+      </div>
+
+      <!-- ══ PHOTO GRID ══ -->
+      <div 
+        id="gallery-grid"
+        class="columns-2 sm:columns-3 lg:columns-4 gap-[3px] space-y-0 mb-20"
+      >
+        {galleryItems.map((item, idx) => (
+          <div
+            class="gallery-item group relative overflow-hidden mb-[3px] cursor-pointer break-inside-avoid transition-all duration-500 bg-neutral-900"
+            data-category={item.category}
+            data-img={item.image}
+            data-title={item.title}
+            data-cat={item.category}
+            data-date={item.date}
+            data-loc={item.location}
+            data-index={idx}
+            data-motion-item
+          >
+            <!-- Photo -->
+            <img
+              src={item.image}
+              alt={item.title}
+              loading="lazy"
+              class="w-full block object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+
+            <!-- Hover Gradient Overlay & Caption Slide Up -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex flex-col justify-end p-4">
+              <div class="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-400 ease-out">
+                <!-- Category Pill -->
+                <span class="inline-block px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-gold text-slate-950 mb-1.5">
+                  {item.category}
+                </span>
+                <!-- Title -->
+                <h3 class="font-serif text-sm sm:text-base font-bold text-white leading-snug line-clamp-2">
+                  {item.title}
+                </h3>
+                <!-- Meta -->
+                <p class="text-[10px] text-white/60 mt-1 font-light">
+                  {item.date} · {item.location}
+                </p>
+              </div>
+            </div>
+
+          </div>
+        ))}
+      </div>
+
+      <!-- ══ CTA ══ -->
+      <div class="mb-12" data-motion-visual>
+        <div class="p-8 sm:p-12 lg:p-14 rounded-3xl bg-gradient-to-r from-emerald-950 via-[#075B2A] to-slate-950 text-white shadow-2xl pure-glow-card pure-glow-gold flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 max-w-6xl mx-auto border border-white/15 relative overflow-hidden text-left">
+          <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-gold/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="space-y-3 max-w-xl text-left">
+            <span class="inline-block px-3 py-1 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-soft">
+              Bergabung Bersama Kami
+            </span>
+            <div class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-snug">
+              Jadilah Bagian dari Cerita Gemilang MA Margajaya
+            </div>
+            <p class="text-white/80 text-sm sm:text-base leading-relaxed font-light">
+              Daftarkan putra-putri Anda dalam lingkungan pendidikan islami yang unggul, beradab, dan berdaya saing.
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 lg:ml-auto shrink-0 w-full sm:w-auto">
+            <a href="/ppdb" class="glow-button inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-gradient-to-r from-gold via-amber-400 to-gold text-blue-deep font-bold text-xs uppercase tracking-widest shadow-xl shadow-gold/25 hover:shadow-[0_0_30px_rgba(232,185,35,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-gold-soft/60">
+              <span>Daftar PPDB Sekarang</span>
+              <span class="text-sm font-bold">&rarr;</span>
+            </a>
+            <a href="/kontak" class="brutal-glass-card inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-white hover:text-gold font-semibold text-xs uppercase tracking-widest transition-all duration-300">
+              <span>Hubungi Kami</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </Container>
+  </section>
+
+  <!-- ══ LIGHTBOX MODAL ══ -->
+  <div id="gallery-lightbox" class="hidden fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col justify-between p-4 sm:p-8">
+    <div class="flex items-center justify-between text-white max-w-5xl mx-auto w-full z-10 pb-4">
+      <div class="flex items-center gap-3">
+        <span id="lb-counter" class="text-xs font-mono text-gold px-2.5 py-1 rounded bg-white/10 border border-white/20">-- / --</span>
+        <span id="lb-category" class="text-xs font-bold uppercase tracking-wider text-emerald-300 hidden sm:inline">--</span>
+      </div>
+      <button id="btn-close-gallery-lb" type="button" class="w-10 h-10 rounded-full bg-white/10 text-white hover:text-gold hover:bg-white/20 border border-white/20 flex items-center justify-center text-2xl transition-colors">&times;</button>
+    </div>
+
+    <div class="relative flex-1 flex items-center justify-center max-w-5xl mx-auto w-full overflow-hidden my-2">
+      <button id="btn-prev-photo" type="button" class="absolute left-2 sm:left-4 z-10 w-11 h-11 rounded-full bg-black/50 text-white hover:text-gold border border-white/20 flex items-center justify-center transition-all hover:scale-110">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+      </button>
+      <img id="gallery-lb-img" src="" alt="Dokumentasi MA Margajaya" class="max-h-[70vh] sm:max-h-[75vh] w-auto max-w-full object-contain rounded-2xl shadow-2xl transition-all duration-300" />
+      <button id="btn-next-photo" type="button" class="absolute right-2 sm:right-4 z-10 w-11 h-11 rounded-full bg-black/50 text-white hover:text-gold border border-white/20 flex items-center justify-center transition-all hover:scale-110">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+
+    <div class="max-w-5xl mx-auto w-full text-center text-white pt-3 border-t border-white/10 z-10">
+      <h3 id="gallery-lb-title" class="font-serif text-lg sm:text-2xl font-bold text-white"></h3>
+      <div id="gallery-lb-meta" class="text-xs text-white/60 mt-1 font-light"></div>
+    </div>
+  </div>
+
+</PageLayout>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function () {
+    var filterBtns = document.querySelectorAll('#gallery-filters .gal-filter-btn');
+    var items = document.querySelectorAll('#gallery-grid .gallery-item');
+
+    // ── Filter Logic ──
+    if (filterBtns.length && items.length) {
+      filterBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var filter = btn.getAttribute('data-filter');
+
+          filterBtns.forEach(function (b) {
+            b.classList.remove('bg-blue-ink', 'text-white', 'border-blue-ink', 'shadow-sm');
+            b.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+          });
+          btn.classList.add('bg-blue-ink', 'text-white', 'border-blue-ink', 'shadow-sm');
+          btn.classList.remove('bg-white', 'text-slate-600', 'border-slate-200');
+
+          items.forEach(function (item) {
+            var cat = item.getAttribute('data-category');
+            if (filter === 'all' || cat === filter) {
+              item.style.display = '';
+              item.style.opacity = '0';
+              setTimeout(function () { item.style.opacity = '1'; item.style.transition = 'opacity 0.35s'; }, 20);
+            } else {
+              item.style.display = 'none';
+            }
+          });
+        });
+      });
+    }
+
+    // ── Lightbox Logic ──
+    var lightbox = document.getElementById('gallery-lightbox');
+    var lbImg = document.getElementById('gallery-lb-img');
+    var lbTitle = document.getElementById('gallery-lb-title');
+    var lbMeta = document.getElementById('gallery-lb-meta');
+    var lbCounter = document.getElementById('lb-counter');
+    var lbCategory = document.getElementById('lb-category');
+    var btnCloseLb = document.getElementById('btn-close-gallery-lb');
+    var btnPrev = document.getElementById('btn-prev-photo');
+    var btnNext = document.getElementById('btn-next-photo');
+
+    var currentIdx = 0;
+    var visibleItems = [];
+
+    function updateVisible() {
+      visibleItems = Array.from(items).filter(function (i) { return i.style.display !== 'none'; });
+    }
+
+    function showPhoto(idx) {
+      updateVisible();
+      if (!visibleItems.length) return;
+      if (idx < 0) idx = visibleItems.length - 1;
+      if (idx >= visibleItems.length) idx = 0;
+      currentIdx = idx;
+      var el = visibleItems[currentIdx];
+      if (lbImg) lbImg.src = el.getAttribute('data-img');
+      if (lbTitle) lbTitle.textContent = el.getAttribute('data-title');
+      if (lbMeta) lbMeta.textContent = el.getAttribute('data-date') + ' · ' + el.getAttribute('data-loc');
+      if (lbCategory) lbCategory.textContent = el.getAttribute('data-cat');
+      if (lbCounter) lbCounter.textContent = (currentIdx + 1) + ' / ' + visibleItems.length;
+      lightbox.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      if (!lightbox) return;
+      lightbox.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    items.forEach(function (item) {
+      item.addEventListener('click', function () {
+        updateVisible();
+        var i = visibleItems.indexOf(item);
+        if (i !== -1) showPhoto(i);
+      });
+    });
+
+    if (btnCloseLb) btnCloseLb.addEventListener('click', closeLightbox);
+    if (btnPrev) btnPrev.addEventListener('click', function () { showPhoto(currentIdx - 1); });
+    if (btnNext) btnNext.addEventListener('click', function () { showPhoto(currentIdx + 1); });
+    window.addEventListener('keydown', function (e) {
+      if (!lightbox || lightbox.classList.contains('hidden')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showPhoto(currentIdx - 1);
+      if (e.key === 'ArrowRight') showPhoto(currentIdx + 1);
+    });
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+  });
+</script>
+
+<script>
+  import '../scripts/beranda-motion';
+</script>

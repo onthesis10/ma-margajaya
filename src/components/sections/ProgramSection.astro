@@ -1,0 +1,45 @@
+---
+import Container from '../ui/Container.astro';
+import SectionTitle from '../ui/SectionTitle.astro';
+import { programs } from '../../data/programs';
+---
+
+<section id="program-section" class="bg-white py-24 relative overflow-hidden" data-motion-section>
+  <Container>
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6" data-motion-title>
+      <SectionTitle 
+        kicker="Empat Pilar Belajar" 
+        title="Program"
+        titleHighlight="unggulan" 
+        className="mb-0"
+      />
+      <a href="/akademik" class="glow-button text-xs font-bold tracking-[0.18em] uppercase text-blue hover:text-blue-deep transition-colors inline-flex items-center gap-1.5 py-1.5 px-3 rounded hover:bg-emerald-50">
+        Lihat kurikulum lengkap &rarr;
+      </a>
+    </div>
+  </Container>
+  
+  <div class="border-y border-hair-strong">
+    <div id="program-grid" class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 lg:divide-x divide-hair">
+      {programs.map((prog) => (
+        <div 
+          class="bg-white hover:bg-paper/80 transition-all duration-300 p-8 lg:p-10 min-h-[360px] flex flex-col group glow-card glow-card-emerald glow-hover-lift cursor-pointer relative"
+          data-motion-item
+        >
+          <div class="font-serif text-[80px] leading-none text-gold mb-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:text-gold-soft transition-all duration-300 transform origin-left">
+            {prog.num}
+          </div>
+          <h3 class="font-serif text-[28px] leading-[1.1] text-blue-ink mb-4 group-hover:text-blue transition-colors">
+            {prog.title}
+          </h3>
+          <p class="text-[13.5px] text-ink-soft leading-relaxed mb-8">
+            {prog.description}
+          </p>
+          <a href={prog.href} class="mt-auto inline-flex items-center gap-1 text-xs font-bold tracking-[0.18em] uppercase text-blue group-hover:translate-x-1.5 transition-transform duration-300">
+            Pelajari Lebih Lanjut &rarr;
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

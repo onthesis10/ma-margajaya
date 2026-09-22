@@ -1,0 +1,57 @@
+---
+import { schoolConfig } from '../../config/school.config';
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-paper border-t border-hair pt-16 pb-8">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <div class="col-span-1">
+        <img src={schoolConfig.logo} alt="Logo" class="h-12 mb-4" />
+        <p class="font-serif text-xl italic text-blue-deep mb-4">{schoolConfig.name}</p>
+        <p class="text-sm text-ink-soft leading-relaxed">{schoolConfig.description}</p>
+      </div>
+      
+      <div>
+        <h4 class="font-bold tracking-widest uppercase text-xs text-blue-deep mb-4">Jelajahi</h4>
+        <ul class="space-y-3 text-sm text-ink-soft">
+          <li><a href="/profil" class="hover:text-blue">Profil Sekolah</a></li>
+          <li><a href="/akademik" class="hover:text-blue">Akademik</a></li>
+          <li><a href="/kesiswaan" class="hover:text-blue">Kesiswaan</a></li>
+          <li><a href="/berita" class="hover:text-blue">Berita</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold tracking-widest uppercase text-xs text-blue-deep mb-4">PPDB</h4>
+        <ul class="space-y-3 text-sm text-ink-soft">
+          <li><a href="/ppdb" class="hover:text-blue">Informasi Pendaftaran</a></li>
+          <li><a href="/ppdb" class="hover:text-blue">Persyaratan</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold tracking-widest uppercase text-xs text-blue-deep mb-4">Kontak & Lokasi</h4>
+        <ul class="space-y-3 text-sm text-ink-soft">
+          <li>
+            <a href={schoolConfig.mapsUrl} target="_blank" rel="noopener noreferrer" class="hover:text-blue transition-colors flex items-start gap-1">
+              <span>{schoolConfig.address}</span>
+              <span class="text-blue text-xs font-bold shrink-0">&nearr;</span>
+            </a>
+          </li>
+          <li><a href={`https://wa.me/${schoolConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" class="hover:text-blue">{schoolConfig.phone}</a></li>
+          <li><a href={`mailto:${schoolConfig.email}`} class="hover:text-blue">{schoolConfig.email}</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="pt-8 border-t border-hair-strong flex flex-col md:flex-row justify-between items-center text-xs text-ink-muted">
+      <p>&copy; {year} {schoolConfig.name}. All rights reserved.</p>
+      <div class="flex gap-4 mt-4 md:mt-0">
+        <a href={schoolConfig.social.instagram} target="_blank" rel="noopener noreferrer" class="hover:text-blue">Instagram (@ma_margajaya13)</a>
+        <span>&bull;</span>
+        <a href={schoolConfig.social.facebook} target="_blank" rel="noopener noreferrer" class="hover:text-blue">Facebook</a>
+      </div>
+    </div>
+  </div>
+</footer>

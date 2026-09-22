@@ -1,0 +1,50 @@
+---
+import Container from '../ui/Container.astro';
+import SectionTitle from '../ui/SectionTitle.astro';
+import { facilities } from '../../data/facilities';
+---
+
+<section id="facilities-section" class="bg-white py-24 relative overflow-hidden" data-motion-section>
+  <Container>
+    <div class="text-center mb-16" data-motion-title>
+      <SectionTitle 
+        kicker="Fasilitas Unggulan" 
+        title="Ruang eksplorasi"
+        titleHighlight="tanpa batas." 
+        className="mb-0 mx-auto"
+      />
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {facilities.map((fac) => (
+        <div 
+          class="tilt-card-wrapper cursor-pointer"
+          data-motion-item
+        >
+          <div class="tilt-card-inner p-4 rounded-xl border border-hair glow-card glow-card-emerald glow-hover-lift group bg-white h-full flex flex-col">
+            <div class="aspect-[4/3] bg-paper mb-5 overflow-hidden rounded-lg relative">
+              <img 
+                src={fac.image} 
+                alt={fac.title} 
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" 
+              />
+              <div class="absolute inset-0 bg-emerald-950/20 group-hover:bg-transparent transition-colors duration-300"></div>
+              <div class="absolute top-2 right-2 px-2 py-0.5 bg-black/40 backdrop-blur-md rounded text-[10px] text-white font-bold tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity">
+                MA Margajaya
+              </div>
+            </div>
+            <h3 class="font-serif text-2xl text-blue-ink mb-2 group-hover:text-blue transition-colors">{fac.title}</h3>
+            <p class="text-[13.5px] text-ink-soft leading-relaxed mt-auto">{fac.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+    
+    <div class="text-center mt-12">
+      <a href="/fasilitas" class="glow-button inline-flex items-center text-xs font-bold tracking-[0.18em] uppercase text-blue hover:text-blue-deep transition-colors py-2 px-4 rounded-full border border-blue/20 hover:bg-emerald-50">
+        Lihat semua fasilitas &rarr;
+      </a>
+    </div>
+  </Container>
+</section>

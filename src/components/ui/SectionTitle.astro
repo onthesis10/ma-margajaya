@@ -1,0 +1,15 @@
+---
+interface Props {
+  kicker?: string;
+  title: string;
+  titleHighlight?: string;
+  className?: string;
+}
+const { kicker, title, titleHighlight, className = '' } = Astro.props;
+---
+<div class:list={["mb-12", className]}>
+  {kicker && <div class="text-[11px] font-bold tracking-[0.22em] uppercase text-ink-muted mb-4">{kicker}</div>}
+  <h2 class="text-4xl md:text-5xl lg:text-[56px] leading-[1.05] tracking-[-0.02em] font-serif text-blue-ink max-w-[720px]">
+    {title} {titleHighlight && <em class="italic text-red">{titleHighlight}</em>}
+  </h2>
+</div>

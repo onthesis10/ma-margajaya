@@ -1,0 +1,27 @@
+---
+import Container from './Container.astro';
+
+interface Props {
+  items: { label: string; href: string }[];
+}
+const { items } = Astro.props;
+---
+<div class="border-b border-hair">
+  <Container>
+    <nav class="flex text-[11px] font-bold tracking-[0.2em] uppercase text-ink-muted py-4">
+      <ol class="flex items-center space-x-2">
+        <li><a href="/" class="hover:text-blue">Beranda</a></li>
+        {items.map((item, index) => (
+          <li class="flex items-center space-x-2">
+            <span>/</span>
+            {index === items.length - 1 ? (
+              <span class="text-blue-deep">{item.label}</span>
+            ) : (
+              <a href={item.href} class="hover:text-blue">{item.label}</a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  </Container>
+</div>

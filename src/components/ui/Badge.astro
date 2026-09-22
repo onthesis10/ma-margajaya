@@ -1,0 +1,16 @@
+---
+interface Props {
+  variant?: 'blue' | 'red' | 'red' | 'default';
+  className?: string;
+}
+const { variant = 'default', className = '' } = Astro.props;
+const variants = {
+  blue: "bg-blue/10 text-blue",
+  red: "bg-red text-blue-deep",
+  red: "bg-red/10 text-red",
+  default: "bg-hair text-ink-muted"
+};
+---
+<span class:list={["inline-block px-2 py-1 text-[10px] font-bold tracking-[0.16em] uppercase", variants[variant], className]}>
+  <slot />
+</span>

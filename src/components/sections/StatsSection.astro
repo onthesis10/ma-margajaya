@@ -1,0 +1,37 @@
+---
+import Container from '../ui/Container.astro';
+import { stats } from '../../data/stats';
+---
+
+<section id="stats-section" class="bg-blue-deep py-24 relative overflow-hidden text-white" data-motion-section>
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,_rgba(232,185,35,0.18),_transparent_55%)] pointer-events-none"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_90%_100%,_rgba(52,211,153,0.15),_transparent_60%)] pointer-events-none"></div>
+  
+  <Container className="relative z-10">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8" data-motion-title>
+      <h2 class="font-serif text-5xl md:text-[56px] leading-[1.1] tracking-[-0.02em] max-w-[720px]">
+        Bukan janji. <em class="italic text-gold text-shimmer-gold">Catatan.</em><br/>
+        Dedikasi madrasah dalam angka nyata.
+      </h2>
+      <div class="text-[11px] tracking-[0.2em] uppercase text-gold-soft/80 font-bold whitespace-nowrap px-3 py-1.5 rounded-full border border-gold/20 bg-gold/5">
+        Kemenag Kab. Ciamis · Yayasan MPP PUI
+      </div>
+    </div>
+    
+    <div id="stats-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 border-t border-white/20">
+      {stats.map((stat, i) => (
+        <div 
+          class={`p-8 lg:p-10 min-h-[220px] border-b sm:border-b-0 ${i % 2 === 0 ? 'sm:border-r' : ''} ${i !== 3 ? 'lg:border-r' : ''} border-white/10 glow-card glow-card-dark glow-hover-lift-dark cursor-pointer group transition-all duration-300`}
+          data-motion-item
+        >
+          <div class="font-serif text-[80px] md:text-[100px] leading-[0.85] tracking-[-0.03em] mb-6 text-white group-hover:text-gold-soft transition-colors duration-300 flex items-baseline">
+            <span data-counter-target={stat.number}>{stat.number}</span>
+            {stat.suffix && <em class="text-gold not-italic text-[50px] align-top ml-1 group-hover:scale-110 transition-transform">{stat.suffix}</em>}
+          </div>
+          <div class="text-[13px] font-bold mb-2 group-hover:text-white transition-colors">{stat.label}</div>
+          <div class="text-[12px] text-white/65 group-hover:text-white/85 leading-relaxed transition-colors">{stat.subLabel}</div>
+        </div>
+      ))}
+    </div>
+  </Container>
+</section>

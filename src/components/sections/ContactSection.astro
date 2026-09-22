@@ -1,0 +1,153 @@
+---
+import Container from '../ui/Container.astro';
+import { schoolConfig } from '../../config/school.config';
+
+// Koordinat MA Margajaya Sukadana, Ciamis
+// Google Maps embed via search — no API key required
+const searchEmbedUrl = `https://maps.google.com/maps?q=MA+Margajaya+Sukadana+Ciamis&output=embed&z=16&hl=id`;
+---
+
+<section id="kontak-section" class="bg-white border-t border-hair relative overflow-hidden" data-motion-section>
+  <Container>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center py-24">
+
+      <!-- ══ SISI KIRI: GOOGLE MAPS EMBED PREMIUM ══ -->
+      <div class="order-2 lg:order-1" data-motion-visual>
+
+        <!-- Map Container -->
+        <div class="relative group rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-hair-strong" style="aspect-ratio: 4/3;">
+
+          <!-- Google Maps iframe - fully clickable & navigable -->
+          <iframe
+            src={searchEmbedUrl}
+            width="100%"
+            height="100%"
+            style="border:0; width:100%; height:100%; display:block; position:absolute; inset:0;"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Lokasi MA Margajaya Sukadana Ciamis"
+          ></iframe>
+
+          <!-- Top-right floating badge — "Buka di Google Maps" -->
+          <div class="absolute top-3 right-3 z-10 pointer-events-none">
+            <a
+              href={schoolConfig.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_24px_rgba(8,122,53,0.5)]"
+              style="background: linear-gradient(135deg, #087A35 0%, #065c28 100%); backdrop-filter: blur(12px);"
+            >
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
+              </svg>
+              Buka Google Maps
+              <svg class="w-3 h-3 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Bottom left — coordinate/address pin chip -->
+          <div class="absolute bottom-3 left-3 z-10 pointer-events-none">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-[11px] font-semibold text-white/95 shadow-lg max-w-[240px]"
+              style="background: rgba(4, 30, 20, 0.82); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18);"
+            >
+              <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
+              </svg>
+              <span class="truncate">Sukadana, Kab. Ciamis · 46272</span>
+            </div>
+          </div>
+
+          <!-- Subtle green corner accent glow -->
+          <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/35 transition-colors duration-500"></div>
+
+        </div>
+
+        <!-- Caption row -->
+        <div class="text-[11px] text-ink-muted uppercase tracking-[0.18em] font-semibold mt-3 flex items-center justify-between px-1">
+          <span class="flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+            </svg>
+            Petunjuk Arah &amp; Navigasi
+          </span>
+          <a href={schoolConfig.mapsUrl} target="_blank" rel="noopener noreferrer" class="text-blue hover:text-emerald-700 font-bold transition-colors">
+            Buka di Maps &rarr;
+          </a>
+        </div>
+
+      </div>
+
+      <!-- ══ SISI KANAN: INFO KONTAK ══ -->
+      <div class="order-1 lg:order-2" data-motion-title>
+        <div class="text-[11px] font-bold tracking-[0.22em] uppercase text-ink-muted mb-4">Lokasi &amp; Kontak</div>
+        <h2 class="font-serif text-5xl md:text-[56px] leading-[1.05] tracking-[-0.02em] text-blue-ink mb-6">
+          Kunjungi Kampus <br/>
+          <em class="italic text-blue">MA Margajaya.</em>
+        </h2>
+        <p class="text-ink-soft text-[14.5px] leading-relaxed max-w-[480px] mb-10">
+          Kunjungan silaturahmi, calon siswa santri, dan konsultasi pendaftaran dilayani setiap hari kerja. Anda dapat langsung mengunjungi lokasi melalui peta interaktif di samping.
+        </p>
+
+        <div class="flex flex-col space-y-1">
+          <div class="grid grid-cols-[110px_1fr] gap-5 py-4 border-b border-hair glow-card glow-card-emerald px-3 rounded-lg hover:bg-emerald-50/50 transition-colors" data-motion-item>
+            <div class="text-[11px] font-bold tracking-[0.22em] uppercase text-blue">Alamat</div>
+            <div class="text-[14.5px] text-ink-soft leading-relaxed">
+              <a href={schoolConfig.mapsUrl} target="_blank" rel="noopener noreferrer" class="hover:text-blue transition-colors group inline-flex items-start gap-1 font-medium">
+                <span>{schoolConfig.address}, {schoolConfig.city} {schoolConfig.postalCode}</span>
+                <span class="text-blue text-xs font-bold shrink-0 mt-0.5">&nearr;</span>
+              </a>
+            </div>
+          </div>
+          <div class="grid grid-cols-[110px_1fr] gap-5 py-4 border-b border-hair glow-card glow-card-emerald px-3 rounded-lg hover:bg-emerald-50/50 transition-colors" data-motion-item>
+            <div class="text-[11px] font-bold tracking-[0.22em] uppercase text-blue">Telepon/WA</div>
+            <div class="text-[14.5px] text-ink-soft leading-relaxed">
+              <a href={`https://wa.me/${schoolConfig.whatsapp}`} target="_blank" rel="noopener noreferrer" class="hover:text-blue font-semibold">
+                {schoolConfig.phone}
+              </a>
+            </div>
+          </div>
+          <div class="grid grid-cols-[110px_1fr] gap-5 py-4 border-b border-hair glow-card glow-card-emerald px-3 rounded-lg hover:bg-emerald-50/50 transition-colors" data-motion-item>
+            <div class="text-[11px] font-bold tracking-[0.22em] uppercase text-blue">Surel</div>
+            <div class="text-[14.5px] text-ink-soft leading-relaxed">
+              <a href={`mailto:${schoolConfig.email}`} class="hover:text-blue font-semibold">
+                {schoolConfig.email}
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick action buttons -->
+          <div class="flex flex-wrap gap-3 pt-6" data-motion-item>
+            <a
+              href={schoolConfig.mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-5 py-3 bg-blue text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-emerald-800 shadow-md shadow-blue/20 hover:shadow-lg hover:shadow-blue/30 transition-all hover:scale-[1.02]"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
+              </svg>
+              Petunjuk Arah
+            </a>
+            <a
+              href={`https://wa.me/${schoolConfig.whatsapp}?text=Assalamu'alaikum, saya ingin bertanya tentang MA Margajaya.`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-5 py-3 text-xs font-bold uppercase tracking-wider rounded-xl border border-hair hover:bg-paper hover:border-emerald-700 hover:text-emerald-800 transition-all text-ink"
+            >
+              <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.555 4.116 1.528 5.845L.057 23.428c-.083.332.246.629.57.494l5.793-2.28A11.938 11.938 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.806 9.806 0 01-5.007-1.372l-.356-.212-3.694 1.453 1.481-3.602-.233-.371A9.818 9.818 0 012.182 12C2.182 6.567 6.567 2.182 12 2.182S21.818 6.567 21.818 12 17.433 21.818 12 21.818z"/>
+              </svg>
+              Chat WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </Container>
+</section>

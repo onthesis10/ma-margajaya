@@ -1,0 +1,510 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Container from '../components/ui/Container.astro';
+
+const breadcrumbs = [{ label: "Kesiswaan", href: "/kesiswaan" }];
+
+// === DATA ORGANISASI & EKSKUL ===
+const orgsEkskul = [
+  {
+    id: "osis",
+    handle: "osis.margajaya",
+    name: "OSIS",
+    label: "Organisasi Resmi",
+    fullName: "Organisasi Siswa Intra Sekolah",
+    desc: "Wadah kepemimpinan dan koordinasi kegiatan santri dalam membentuk karakter pemimpin tangguh.",
+    tag: "Kepemimpinan",
+    color: "gold",
+    heightClass: "h-[340px] sm:h-[370px] md:h-[390px]",
+    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=900&q=80"
+  },
+  {
+    id: "mpk",
+    handle: "mpk.dewan",
+    name: "MPK",
+    label: "Organisasi Resmi",
+    fullName: "Majelis Perwakilan Kelas",
+    desc: "Lembaga legislatif santri penampung aspirasi kelas dan pengawas program kerja organisasi.",
+    tag: "Parlemen",
+    color: "emerald",
+    heightClass: "h-[430px] sm:h-[470px] md:h-[500px]",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900&q=80"
+  },
+  {
+    id: "pmr",
+    handle: "pmr.relawan",
+    name: "PMR",
+    label: "Sosial & Medis",
+    fullName: "Palang Merah Remaja",
+    desc: "Kesiapsiagaan pertolongan pertama (P3K), tanggap darurat, dan aksi kepedulian donor darah.",
+    tag: "Kemanusiaan",
+    color: "cyan",
+    heightClass: "h-[540px] sm:h-[600px] md:h-[640px]",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&q=80"
+  },
+  {
+    id: "pramuka",
+    handle: "pramuka.scout",
+    name: "Pramuka",
+    label: "Ekskul Wajib",
+    fullName: "Gerakan Pramuka Madrasah",
+    desc: "Kemandirian, survival alam terbuka, dan kepedulian sosial melalui kepanduan berstandar nasional.",
+    tag: "Kepanduan",
+    color: "emerald",
+    heightClass: "h-[380px] sm:h-[410px] md:h-[430px]",
+    image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=900&q=80"
+  },
+  {
+    id: "paskibra",
+    handle: "paskibra.garuda",
+    name: "Paskibra",
+    label: "Bela Negara",
+    fullName: "Pasukan Pengibar Bendera",
+    desc: "Ketegasan baris berbaris, kedisiplinan tinggi, dan pengabdian menjaga kehormatan sang saka.",
+    tag: "Kebangsaan",
+    color: "emerald",
+    heightClass: "h-[500px] sm:h-[560px] md:h-[590px]",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=80"
+  },
+  {
+    id: "memanah",
+    handle: "alramyi.archery",
+    name: "Memanah",
+    label: "Olahraga Sunnah",
+    fullName: "Unit Memanah Al-Ramyi",
+    desc: "Sunnah Nabi yang mengasah ketenangan batin, fokus konsentrasi, dan presisi akurasi busur.",
+    tag: "Sunnah",
+    color: "gold",
+    heightClass: "h-[350px] sm:h-[380px] md:h-[400px]",
+    image: "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=900&q=80"
+  },
+  {
+    id: "futsal",
+    handle: "futsal.champs",
+    name: "Futsal",
+    label: "Olahraga",
+    fullName: "Tim Futsal MA Margajaya",
+    desc: "Ketangkasan teknik kaki, strategi lapangan cepat, dan kekompakan squad juara antar madrasah.",
+    tag: "Sport",
+    color: "cyan",
+    heightClass: "h-[490px] sm:h-[540px] md:h-[570px]",
+    image: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=900&q=80"
+  },
+  {
+    id: "voli",
+    handle: "volleyball.spikers",
+    name: "Bola Voli",
+    label: "Olahraga",
+    fullName: "Tim Voli Putra & Putri",
+    desc: "Passing presisi, spike mematikan di atas net, dan soliditas kerjasama tim tanpa kenal lelah.",
+    tag: "Sport",
+    color: "cyan",
+    heightClass: "h-[420px] sm:h-[450px] md:h-[470px]",
+    image: "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=900&q=80"
+  }
+];
+
+// === DATA TRADISI TAHUNAN ===
+const traditions = [
+  {
+    num: "01",
+    title: "Gebyar MA Margajaya",
+    icon: "trophy",
+    month: "November",
+    desc: "Ajang kompetisi akademik & unjuk kreativitas tahunan antarsiswa SMP/MTs se-Eks Kewadanaan Rancah Ciamis, mempererat silaturahmi antargenerasi muda.",
+    highlight: "Kompetisi Antar Madrasah"
+  },
+  {
+    num: "02",
+    title: "Pesantren Ramadhan & Santunan",
+    icon: "mosque",
+    month: "Ramadhan",
+    desc: "Program intensif pengkajian fiqih, akhlak, dan tadarus Al-Qur'an bersama KUA Sukadana yang ditutup pembagian parcel untuk dhuafa & yatim.",
+    highlight: "Program Sosial Keagamaan"
+  },
+  {
+    num: "03",
+    title: "Halal Bihalal & Kakaren Lebaran",
+    icon: "handshake",
+    month: "Syawal",
+    desc: "Silaturahmi Syawal bersama Pengasuh Ponpes Darul Muawanah (Ustaz Ajidin), dewan guru, dan santri untuk memperkokoh ukhuwah islamiyah.",
+    highlight: "Tradisi Ukhuwah Islamiyah"
+  },
+  {
+    num: "04",
+    title: "Lomba Orasi Hari Kartini",
+    icon: "mic",
+    month: "April",
+    desc: "Wadah ekspresi pemikiran siswi berpakaian kebaya adat guna melatih keberanian berbicara di depan publik (public speaking).",
+    highlight: "Pemberdayaan Siswi"
+  },
+  {
+    num: "05",
+    title: "Wisuda & Pelepasan Kelas XII",
+    icon: "graduation",
+    month: "Juni",
+    desc: "Seremoni kelulusan penuh khidmat dihadiri Camat Sukadana, Kepala Desa Margajaya, perwakilan MUI, dan tokoh masyarakat.",
+    highlight: "Seremonial Akademik"
+  }
+];
+---
+
+<PageLayout 
+  title="Kesiswaan & Kegiatan" 
+  description="Organisasi, ekstrakurikuler, dan tradisi kegiatan santri di MA Margajaya Sukadana — membangun karakter, kepemimpinan, dan prestasi."
+  breadcrumbs={breadcrumbs}
+>
+  <section class="py-16 md:py-24 bg-white relative overflow-hidden" data-motion-section>
+
+    <!-- Ambient Background Blobs -->
+    <div class="glow-blob w-[500px] h-[500px] bg-emerald-500/8 -top-32 -left-32"></div>
+    <div class="glow-blob w-[600px] h-[600px] bg-gold/10 top-1/3 -right-40" style="animation-delay:-4s"></div>
+    <div class="glow-blob w-[550px] h-[550px] bg-cyan-400/8 -bottom-40 left-1/4" style="animation-delay:-2s"></div>
+
+    <Container>
+
+      <!-- ══ INTRO EDITORIAL BANNER ══ -->
+      <div class="mb-24" data-motion-visual>
+        <div class="p-8 sm:p-14 lg:p-16 rounded-3xl bg-gradient-to-br from-[#06281D] via-[#075B2A] to-[#043317] text-white shadow-2xl pure-glow-card pure-glow-gold relative overflow-hidden text-center max-w-5xl mx-auto">
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(232,185,35,0.15),transparent_60%)] pointer-events-none"></div>
+          
+          <div class="relative z-10 space-y-6 max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold uppercase tracking-[0.25em] text-gold-soft">
+              Kehidupan Santri & Siswa
+            </div>
+
+            <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-normal leading-[1.15] text-white">
+              Tumbuh Bersama, <span class="text-gold font-bold text-shimmer-gold">Berprestasi Bermartabat</span>
+            </h2>
+
+            <p class="text-white/80 text-sm sm:text-base leading-relaxed font-light max-w-2xl mx-auto">
+              MA Margajaya menghadirkan ekosistem kesiswaan yang kaya — dari organisasi kepemimpinan dan ekstra bela diri hingga seni Islam dan penelitian ilmiah — semua dalam nafas pendidikan pesantren modern.
+            </p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/15">
+              <div class="brutal-glass-card p-5 text-center group cursor-default">
+                <div class="font-serif text-3xl font-bold text-gold mb-1">12+</div>
+                <div class="text-[11px] text-white/70 uppercase tracking-wider font-light">Unit Ekskul</div>
+              </div>
+              <div class="brutal-glass-card p-5 text-center group cursor-default">
+                <div class="font-serif text-3xl font-bold text-emerald-300 mb-1">2</div>
+                <div class="text-[11px] text-white/70 uppercase tracking-wider font-light">Organisasi Resmi</div>
+              </div>
+              <div class="brutal-glass-card p-5 text-center group cursor-default">
+                <div class="font-serif text-3xl font-bold text-cyan-300 mb-1">6</div>
+                <div class="text-[11px] text-white/70 uppercase tracking-wider font-light">Tradisi Tahunan</div>
+              </div>
+              <div class="brutal-glass-card p-5 text-center group cursor-default">
+                <div class="font-serif text-3xl font-bold text-gold mb-1">∞</div>
+                <div class="text-[11px] text-white/70 uppercase tracking-wider font-light">Potensi Santri</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </Container>
+
+    <!-- ══ SECTION 1: ORGANISASI & EKSTRAKURIKULER (Editorial 1:1 Horizontal Gallery) ══ -->
+    <div class="mb-28 scroll-mt-28" id="ekskul" data-motion-section>
+      
+      <!-- Section Header Inside Container -->
+      <Container>
+        <div class="text-center max-w-3xl mx-auto mb-12" data-motion-title>
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+            Pengembangan Diri
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em]">
+            Organisasi &amp; <em class="italic text-gold text-shimmer-gold">Ekstrakurikuler.</em>
+          </h2>
+          <p class="text-ink-soft text-base mt-3 leading-relaxed">
+            Eksplorasi setiap unit kegiatan santri dengan gaya editorial interaktif — geser atau drag ke samping untuk melihat seluruh ragam potensi santri MA Margajaya.
+          </p>
+        </div>
+      </Container>
+
+      <!-- ── EDITORIAL GRID SHOWCASE (Ultra-Clean & Premium 1:1) ── -->
+      <div class="w-full bg-white relative">
+
+        <!-- Horizontal Scrollable Track Container -->
+        <div 
+          id="ekskul-gallery-track" 
+          class="w-full overflow-x-auto select-none cursor-grab active:cursor-grabbing border-t border-b border-neutral-200/90 bg-white scroll-smooth"
+          style="scrollbar-width: none; -ms-overflow-style: none;"
+        >
+          <div class="flex items-end min-w-max">
+            {orgsEkskul.map((item) => (
+              <div class="w-[290px] sm:w-[330px] md:w-[360px] lg:w-[390px] border-r border-neutral-200/90 px-5 sm:px-7 pt-12 pb-10 flex flex-col justify-end shrink-0 transition-colors duration-300 hover:bg-neutral-50/60 group/column">
+                
+                <!-- Clean Name Header (No @, No Tags) -->
+                <div class="mb-3">
+                  <span class="text-xs sm:text-[13px] font-sans font-medium text-neutral-800 tracking-tight">
+                    {item.name}
+                  </span>
+                </div>
+
+                <!-- Rounded Image Card with Distinct Staggered Height -->
+                <div 
+                  class={`relative w-full ${item.heightClass} rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-sm group hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 ease-out bg-neutral-900`}
+                >
+                  <!-- Background Image -->
+                  <img 
+                    src={item.image} 
+                    alt={item.name} 
+                    loading="lazy" 
+                    class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out pointer-events-none"
+                  />
+
+                  <!-- Smooth Hover Gradient Overlay (Clean & Minimal) -->
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out flex flex-col justify-end p-6 text-white">
+                    <div class="transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                      <h3 class="font-serif text-2xl font-bold text-white leading-tight mb-1">
+                        {item.name}
+                      </h3>
+                      <p class="text-xs text-white/70 line-clamp-1 mb-2 font-medium">
+                        {item.fullName}
+                      </p>
+                      <p class="text-xs text-white/90 line-clamp-3 leading-relaxed font-light">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <Container>
+
+      <!-- ══ SECTION 2: TRADISI KEGIATAN TAHUNAN ══ -->
+      <div class="mb-24 scroll-mt-28" id="tradisi" data-motion-section>
+        
+        <div class="text-center max-w-3xl mx-auto mb-14" data-motion-title>
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue/10 border border-blue/20 text-blue text-xs font-bold uppercase tracking-[0.25em] mb-4">
+            Kalender Kegiatan
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em]">
+            Tradisi &amp; <em class="italic text-gold text-shimmer-gold">Agenda Tahunan.</em>
+          </h2>
+          <p class="text-ink-soft text-base mt-3 leading-relaxed">
+            Enam agenda besar yang menjadi penanda ritme kehidupan akademik, sosial, dan spiritual di MA Margajaya sepanjang tahun.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {traditions.map((item) => (
+            <div 
+              class="p-7 rounded-2xl bg-paper/90 border border-hair-strong hover:border-gold/60 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group text-left pure-glow-card pure-glow-emerald cursor-default"
+              data-motion-item
+            >
+              <div>
+                <!-- Number + Month Header -->
+                <div class="flex items-center justify-between mb-5">
+                  <span class="font-serif text-4xl font-bold text-gold/50 group-hover:text-gold transition-colors duration-300 leading-none">
+                    {item.num}
+                  </span>
+                  <div class="flex flex-col items-end">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-ink-muted">{item.month}</span>
+                    <span class="inline-block mt-1 px-2.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-100">
+                      {item.highlight}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- SVG Icon -->
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-emerald-100 transition-all duration-300">
+                  {item.icon === 'trophy' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 21h8m-4-4v4m-7-9V5a1 1 0 011-1h14a1 1 0 011 1v7M3 8h1m16 0h1M7 8h10"/>
+                    </svg>
+                  )}
+                  {item.icon === 'mosque' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 21h18M9 3h6M12 3v4M7 21V10M17 21V10M7 10a5 5 0 0110 0"/>
+                    </svg>
+                  )}
+                  {item.icon === 'handshake' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
+                    </svg>
+                  )}
+                  {item.icon === 'mic' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                    </svg>
+                  )}
+                  {item.icon === 'leaf' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2C6.477 2 2 6.477 2 12c0 3.314 1.686 6.236 4.264 7.965C7.382 17.65 9.513 16 12 16c2.487 0 4.618 1.65 5.736 3.965C20.314 18.236 22 15.314 22 12c0-5.523-4.477-10-10-10z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2v14"/>
+                    </svg>
+                  )}
+                  {item.icon === 'graduation' && (
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                    </svg>
+                  )}
+                </div>
+
+                <h3 class="font-serif text-xl font-bold text-blue-ink group-hover:text-blue transition-colors mb-2">
+                  {item.title}
+                </h3>
+                <p class="text-xs sm:text-[13px] text-ink-muted leading-relaxed font-light">
+                  {item.desc}
+                </p>
+              </div>
+              <div class="pt-5 mt-5 border-t border-hair flex items-center justify-between text-[11px] text-ink-soft">
+                <span>Agenda Tetap</span>
+                <span class="text-gold font-semibold group-hover:translate-x-1 transition-transform">&rarr;</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- ══ SECTION 3: PRESTASI & PENGHARGAAN Highlight ══ -->
+      <div class="mb-24 scroll-mt-28" id="prestasi" data-motion-section>
+        <div class="p-8 sm:p-14 rounded-3xl bg-paper-warm/70 border border-hair-strong pure-glow-card pure-glow-gold shadow-sm max-w-6xl mx-auto" data-motion-visual>
+          <div class="max-w-2xl mx-auto text-center mb-12">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/10 border border-gold/20 text-amber-800 text-xs font-bold uppercase tracking-wider mb-3">
+              Jejak Prestasi
+            </div>
+            <h3 class="font-serif text-3xl sm:text-4xl font-bold text-blue-ink">
+              Santri Berprestasi &amp; Kebanggaan Madrasah
+            </h3>
+            <p class="text-xs sm:text-sm text-ink-muted mt-2 leading-relaxed">
+              Sebagian capaian gemilang santri MA Margajaya di berbagai ajang kompetisi akademik, seni, dan olahraga.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-6 rounded-2xl bg-white shadow-sm border border-hair hover:border-gold/60 hover:shadow-md transition-all duration-300 group text-center" data-motion-item>
+              <div class="w-12 h-12 rounded-xl bg-gold/10 text-amber-700 border border-gold/20 flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                </svg>
+              </div>
+              <h4 class="font-serif text-lg font-bold text-blue-ink mb-2 group-hover:text-blue transition-colors">Olimpiade Sains Madrasah</h4>
+              <p class="text-xs text-ink-muted leading-relaxed">Meraih peringkat terbaik dalam OSM tingkat Kab. Ciamis pada rumpun Matematika dan IPS Terpadu.</p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white shadow-sm border border-hair hover:border-gold/60 hover:shadow-md transition-all duration-300 group text-center" data-motion-item>
+              <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                </svg>
+              </div>
+              <h4 class="font-serif text-lg font-bold text-blue-ink mb-2 group-hover:text-blue transition-colors">Lomba OMI Tingkat Provinsi</h4>
+              <p class="text-xs text-ink-muted leading-relaxed">Santri MA Margajaya meraih prestasi membanggakan dalam Olimpiade Mata pelajaran Islam (OMI) tingkat Provinsi Jawa Barat.</p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white shadow-sm border border-hair hover:border-gold/60 hover:shadow-md transition-all duration-300 group text-center" data-motion-item>
+              <div class="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-700 border border-cyan-100 flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                </svg>
+              </div>
+              <h4 class="font-serif text-lg font-bold text-blue-ink mb-2 group-hover:text-blue transition-colors">Santri Berprestasi Nasional</h4>
+              <p class="text-xs text-ink-muted leading-relaxed">Sri Naila Utami meraih penghargaan bergengsi sebagai Santri Berprestasi tingkat Nasional dari Kemenag RI.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CTA CONCLUSION ══ -->
+      <div class="mb-12" data-motion-visual>
+        <div class="p-8 sm:p-12 lg:p-14 rounded-3xl bg-gradient-to-r from-emerald-950 via-[#075B2A] to-slate-950 text-white shadow-2xl pure-glow-card pure-glow-gold flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 max-w-6xl mx-auto border border-white/15 relative overflow-hidden text-left">
+          
+          <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-gold/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="space-y-3 max-w-xl text-left">
+            <span class="inline-block px-3 py-1 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-soft">
+              Bergabung & Berkembang
+            </span>
+            <div class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-snug">
+              Temukan Passionmu di MA Margajaya
+            </div>
+            <p class="text-white/80 text-sm sm:text-base leading-relaxed font-light">
+              Lebih dari sekadar kelas — MA Margajaya adalah komunitas hidup yang merayakan semangat belajar, kreativitas, dan keberanian untuk bertumbuh.
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 lg:ml-auto shrink-0 w-full sm:w-auto">
+            <a 
+              href="/ppdb" 
+              class="glow-button inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-gradient-to-r from-gold via-amber-400 to-gold text-blue-deep font-bold text-xs uppercase tracking-widest shadow-xl shadow-gold/25 hover:shadow-[0_0_30px_rgba(232,185,35,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-gold-soft/60"
+            >
+              <span>Daftar PPDB Sekarang</span>
+              <span class="text-sm font-bold">&rarr;</span>
+            </a>
+            <a 
+              href="/kontak" 
+              class="brutal-glass-card inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-white hover:text-gold font-semibold text-xs uppercase tracking-widest transition-all duration-300"
+            >
+              <span>Info Lebih Lanjut</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </Container>
+  </section>
+</PageLayout>
+
+<script>
+  import '../scripts/beranda-motion';
+
+  // Smooth Horizontal Gallery Drag & Controls
+  const track = document.getElementById('ekskul-gallery-track');
+  const btnPrev = document.getElementById('btn-ekskul-prev');
+  const btnNext = document.getElementById('btn-ekskul-next');
+
+  if (track) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    track.addEventListener('mousedown', (e) => {
+      isDown = true;
+      track.classList.add('cursor-grabbing');
+      track.classList.remove('cursor-grab', 'scroll-smooth');
+      startX = e.pageX - track.offsetLeft;
+      scrollLeft = track.scrollLeft;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!isDown) return;
+      isDown = false;
+      track.classList.remove('cursor-grabbing');
+      track.classList.add('cursor-grab', 'scroll-smooth');
+    });
+
+    track.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - track.offsetLeft;
+      const walk = (x - startX) * 1.5; // Drag sensitivity
+      track.scrollLeft = scrollLeft - walk;
+    });
+
+    if (btnPrev) {
+      btnPrev.addEventListener('click', () => {
+        track.classList.add('scroll-smooth');
+        track.scrollBy({ left: -360, behavior: 'smooth' });
+      });
+    }
+
+    if (btnNext) {
+      btnNext.addEventListener('click', () => {
+        track.classList.add('scroll-smooth');
+        track.scrollBy({ left: 360, behavior: 'smooth' });
+      });
+    }
+  }
+</script>

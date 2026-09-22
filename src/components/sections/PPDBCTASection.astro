@@ -1,0 +1,41 @@
+---
+import Container from '../ui/Container.astro';
+import Button from '../ui/Button.astro';
+---
+
+<section id="ppdb-cta-section" class="bg-blue-deep text-white py-24 relative overflow-hidden" data-motion-section>
+  <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=2400&q=80')] bg-cover bg-center opacity-15"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-blue-deep/60 to-blue-deep/95"></div>
+  
+  <!-- Subtle Soft Glowing Ambient Radial Orb -->
+  <div class="absolute -bottom-32 -right-32 w-[550px] h-[550px] bg-radial from-gold/25 via-emerald-500/15 to-transparent blur-[100px] pointer-events-none"></div>
+
+  <Container className="relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div data-motion-title>
+        <div class="flex items-center gap-3 mb-6">
+          <span class="w-6 h-[1.5px] bg-gold-soft pulse-glow"></span>
+          <span class="text-xs font-bold tracking-[0.25em] uppercase text-gold-soft">
+            PPDB MA Margajaya · Sukadana Ciamis
+          </span>
+        </div>
+        <h2 class="font-serif text-5xl md:text-[88px] leading-[0.98] tracking-[-0.02em] mb-6">
+          Mulai langkahmu<br/>
+          <em class="italic text-gold text-shimmer-gold">bersama MA Margajaya.</em>
+        </h2>
+        <p class="text-white/80 text-lg leading-relaxed max-w-[580px]">
+          Penerimaan Peserta Didik Baru telah dibuka. Mari bertumbuh bersama dalam ilmu pengetahuan, wawasan sosial, dan nilai-nilai luhur kepesantrenan.
+        </p>
+      </div>
+      
+      <div class="flex flex-col gap-4 sm:max-w-md lg:ml-auto w-full" data-motion-item>
+        <Button href="/ppdb" variant="primary" size="lg" className="glow-button w-full justify-between shadow-xl shadow-gold/20 hover:shadow-[0_0_30px_rgba(232,185,35,0.5)]">
+          Mulai pendaftaran <span>&rarr;</span>
+        </Button>
+        <Button href="/ppdb" variant="glass" size="lg" className="glow-button w-full justify-between backdrop-blur-md border-white/30 hover:border-gold/50 hover:bg-white/15">
+          Unduh prospektus PDF <span>&darr;</span>
+        </Button>
+      </div>
+    </div>
+  </Container>
+</section>

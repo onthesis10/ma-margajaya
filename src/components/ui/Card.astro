@@ -1,0 +1,16 @@
+---
+interface Props {
+  variant?: 'default' | 'elevated' | 'soft' | 'bordered';
+  className?: string;
+}
+const { variant = 'default', className = '' } = Astro.props;
+const variants = {
+  default: "bg-white border border-hair",
+  elevated: "bg-white shadow-[0_24px_60px_-20px_rgba(4,13,36,0.25)]",
+  soft: "bg-paper",
+  bordered: "bg-transparent border border-hair-strong"
+};
+---
+<div class:list={["overflow-hidden transition-all", variants[variant], className]}>
+  <slot />
+</div>

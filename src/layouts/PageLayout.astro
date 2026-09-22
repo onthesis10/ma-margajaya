@@ -1,0 +1,27 @@
+---
+import MainLayout from '../components/layout/MainLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import ContactSection from '../components/sections/ContactSection.astro';
+import PPDBCTASection from '../components/sections/PPDBCTASection.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  breadcrumbs: { label: string; href: string }[];
+  showContact?: boolean;
+  showPPDBCTA?: boolean;
+}
+
+const { title, description, breadcrumbs, showContact = true, showPPDBCTA = true } = Astro.props;
+---
+
+<MainLayout title={title} description={description}>
+  <PageHeader title={title} description={description} />
+  <Breadcrumb items={breadcrumbs} />
+  
+  <slot />
+  
+  {showPPDBCTA && <PPDBCTASection />}
+  {showContact && <ContactSection />}
+</MainLayout>

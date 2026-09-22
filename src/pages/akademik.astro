@@ -1,0 +1,2584 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Container from '../components/ui/Container.astro';
+import { programs } from '../data/programs';
+import { schoolConfig } from '../config/school.config';
+
+const breadcrumbs = [{ label: "Akademik", href: "/akademik" }];
+
+const semuaMapel = [
+  // Rumpun Umum & Bahasa
+  { name: "Bahasa Indonesia", alokasi: "5 JP / Minggu", kategori: "Umum & Bahasa", desc: "Penguasaan literasi, retorika penulisan ilmiah, teks prosedur, dan komunikasi publik berbasis Kurikulum Merdeka." },
+  { name: "Bahasa Inggris", alokasi: "3 JP / Minggu", kategori: "Umum & Bahasa", desc: "Grammar, speaking fluently, writing skills, dan literasi global lintas budaya." },
+  { name: "Basa Sunda", alokasi: "2 JP / Minggu", kategori: "Umum & Bahasa", desc: "Pelestarian bahasa dan sastra Sunda, kakawen, dan kearifan lokal Tatar Galuh Ciamis." },
+
+  // Rumpun Sains, Logika & Teknologi
+  { name: "Matematika", alokasi: "4 JP / Minggu", kategori: "Sains & Logika", desc: "Logika analitis, aljabar, statistika, dan pemecahan masalah kontekstual berbasis Kurikulum Merdeka." },
+  { name: "IPA Terpadu", alokasi: "4 JP / Minggu", kategori: "Sains & Logika", desc: "Integrasi konsep fisika, kimia, dan biologi dalam pendekatan saintifik dan literasi lingkungan." },
+  { name: "Informatika", alokasi: "2 JP / Minggu", kategori: "Sains & Logika", desc: "Literasi digital, komputasi, berpikir algoritma, dan praktik software produktivitas." },
+  { name: "PJOK", alokasi: "2 JP / Minggu", kategori: "Sains & Logika", desc: "Kesehatan jasmani, olahraga permainan, kebugaran fisik, dan gaya hidup sehat Islami." },
+
+  // Rumpun Sosial Humaniora (IPS)
+  { name: "IPS Terpadu", alokasi: "4 JP / Minggu", kategori: "Sosial IPS", desc: "Integrasi sejarah, geografi, ekonomi, dan sosiologi dalam analisis fenomena sosial aktual." },
+  { name: "Sosiologi", alokasi: "4 JP / Minggu", kategori: "Sosial IPS", desc: "Dinamika sosial kemasyarakatan, struktur sosial, riset lapangan, dan pemecahan masalah sosial." },
+  { name: "Geografi", alokasi: "4 JP / Minggu", kategori: "Sosial IPS", desc: "Analisis geosfer, mitigasi kebencanaan, pemetaan SIG, dan dinamika kependudukan." },
+  { name: "Sejarah Indonesia", alokasi: "2 JP / Minggu", kategori: "Sosial IPS", desc: "Napak tilas perjuangan bangsa, nasionalisme, dan memori historis kemerdekaan RI." },
+  { name: "Sejarah Peminatan", alokasi: "4 JP / Minggu", kategori: "Sosial IPS", desc: "Analisis mendalam sejarah dunia, peradaban global, dan dinamika lintas zaman." },
+  { name: "Ekonomi & Akuntansi", alokasi: "4 JP / Minggu", kategori: "Sosial IPS", desc: "Mekanisme pasar, akuntansi jasa dan dagang, manajemen keuangan, serta literasi ekonomi syariah." },
+  { name: "Kewarganegaraan (PPKn)", alokasi: "2 JP / Minggu", kategori: "Sosial IPS", desc: "Wawasan kebangsaan, Pancasila, hukum ketatanegaraan, dan etika bernegara demokratis." },
+  { name: "Seni Budaya", alokasi: "2 JP / Minggu", kategori: "Sosial IPS", desc: "Apresiasi dan eksplorasi seni rupa, musik, tari, dan teater sebagai ekspresi budaya bangsa." },
+
+  // Rumpun Keagamaan & Pesantren
+  { name: "Al-Qur'an Hadis", alokasi: "2 JP / Minggu", kategori: "Keagamaan & Diniyah", desc: "Kaidah tajwid mutqin, terjemah lafziyah, asbabun nuzul, dan hafalan hadits pilihan Nabi SAW." },
+  { name: "Akidah Akhlak", alokasi: "2 JP / Minggu", kategori: "Keagamaan & Diniyah", desc: "Penguatan tauhid ahlussunnah wal jama'ah, tazkiyatun nafs, adab santri, dan keluhuran budi pekerti." },
+  { name: "Fiqih", alokasi: "2 JP / Minggu", kategori: "Keagamaan & Diniyah", desc: "Panduan ibadah amaliyah harian, fiqih muamalah kontemporer, dan hukum Islam praktis." },
+  { name: "Sejarah Kebudayaan Islam (SKI)", alokasi: "2 JP / Minggu", kategori: "Keagamaan & Diniyah", desc: "Napak tilas sirah nabawiyah, khulafaur rasyidin, dan perkembangan peradaban Islam Nusantara." },
+  { name: "Bahasa Arab", alokasi: "4 JP / Minggu", kategori: "Keagamaan & Diniyah", desc: "Muthala'ah, muhadatsah aktif harian, kaidah nahwu-sharaf, dan kemampuan membaca kitab kuning." },
+  { name: "TTQ (Tahsin & Tahfidz)", alokasi: "1 JP / Minggu", kategori: "Keagamaan & Diniyah", desc: "Bimbingan tilawah berstandar sanad, tahsin bacaan Al-Qur'an, dan program tahfidz Juz 30." },
+];
+
+const temaP5 = [
+  {
+    iconType: "leaf",
+    tema: "Gaya Hidup Berkelanjutan",
+    projek: "Madrasah Hijau & Bank Sampah",
+    desc: "Aksi nyata konservasi lingkungan Kompleks Ponpes Darul Muawanah, budidaya tanaman obat keluarga, dan daur ulang limbah."
+  },
+  {
+    iconType: "briefcase",
+    tema: "Kewirausahaan Mandiri",
+    projek: "Inkubasi Bisnis Produk Halal",
+    desc: "Pelatihan pembuatan olahan pangan khas Ciamis, manajemen packaging, pembukuan syariah, dan bazar mandiri santri."
+  },
+  {
+    iconType: "landmark",
+    tema: "Kearifan Lokal Tatar Galuh",
+    projek: "Eksplorasi Budaya & Seni Sunda",
+    desc: "Mendokumentasikan seni hadrah marawis, tradisi keagamaan lokal, dan pelestarian bahasa sastra Sunda yang santun."
+  },
+  {
+    iconType: "heart-handshake",
+    tema: "Bhinneka Tunggal Ika",
+    projek: "Duta Moderasi Beragama",
+    desc: "Penguatan literasi toleransi, seminar kerukunan umat beragama bersama Kemenag Ciamis, dan advokasi persaudaraan."
+  }
+];
+
+const jadwalHarian = [
+  {
+    waktu: "04.00 - 06.00 WIB",
+    fase: "Spiritual Fajar",
+    kegiatan: "Qiyamul Lail, Shalat Subuh Berjamaah, Dzikir Al-Ma'tsurat, dan Sorogan Al-Qur'an / Kitab Ba'da Subuh.",
+    tag: "Pesantren"
+  },
+  {
+    waktu: "07.00 - 12.00 WIB",
+    fase: "KBM Sesi Pagi",
+    kegiatan: "Pembiasaan Shalat Dhuha bersama, Tadarus Al-Qur'an 15 menit, dilanjutkan KBM Kurikulum Nasional & Kemenag.",
+    tag: "Formal"
+  },
+  {
+    waktu: "12.00 - 13.00 WIB",
+    fase: "Istirahat & Ibadah",
+    kegiatan: "Shalat Zhuhur Berjamaah di Masjid Darul Muawanah, makan siang bersama, dan rehat sejenak.",
+    tag: "Terpadu"
+  },
+  {
+    waktu: "13.00 - 15.00 WIB",
+    fase: "KBM Sesi Siang",
+    kegiatan: "Pendalaman materi praktikum, laboratorium komputer/TIK, literasi perpustakaan, dan evaluasi harian.",
+    tag: "Formal"
+  },
+  {
+    waktu: "15.30 - 17.30 WIB",
+    fase: "Pengembangan Diri",
+    kegiatan: "Shalat Ashar Berjamaah, Bimbingan KSM/Olimpiade, Latihan Seni Hadrah Marawis, Pramuka, dan Olahraga.",
+    tag: "Ekstrakurikuler"
+  },
+  {
+    waktu: "18.00 - 21.00 WIB",
+    fase: "Kajian Malam & Mandiri",
+    kegiatan: "Shalat Maghrib & Isya Berjamaah, Mudzakarah Kitab Diniyah, Bimbingan Belajar, dan Muroja'ah Hafalan.",
+    tag: "Pesantren"
+  }
+];
+
+const standarLulusan = [
+  {
+    num: "01",
+    title: "Akidah Shahihah & Adab Santri",
+    desc: "Memiliki keteguhan akidah ahlussunnah, istiqamah dalam ibadah, serta menjunjung tinggi takzim kepada guru dan orang tua."
+  },
+  {
+    num: "02",
+    title: "Hafalan Al-Qur'an & Hadits Pilihan",
+    desc: "Lulus dengan capaian mutqin minimal Juz 30 (Juz 'Amma), bacaan berstandar sanad tajwid, dan menguasai Hadits Arba'in."
+  },
+  {
+    num: "03",
+    title: "Kompetensi Akademik Masuk PTN/PTKIN",
+    desc: "Menguasai capaian Kurikulum Merdeka yang siap bersaing dalam SNBP, SNBT, SPAN-PTKIN, hingga beasiswa luar negeri."
+  },
+  {
+    num: "04",
+    title: "Kecakapan Bahasa & Literasi Digital",
+    desc: "Cakap berkomunikasi dalam Bahasa Arab dan Bahasa Inggris, serta menguasai software produktivitas dan etika digital."
+  }
+];
+---
+
+<PageLayout 
+  title="Akademik & Kurikulum" 
+  description="Struktur kurikulum nasional terpadu, pendalaman keagamaan madrasah, dan ekosistem belajar berakar nilai pesantren di MA Margajaya."
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Main Content Container with Ambient Color Blobs -->
+  <section class="py-16 md:py-24 bg-white relative overflow-hidden" data-motion-section>
+    
+    <!-- Ambient Background Blobs -->
+    <div class="glow-blob w-[500px] h-[500px] bg-emerald-500/10 -top-32 -left-32"></div>
+    <div class="glow-blob w-[550px] h-[550px] bg-gold/12 top-1/3 -right-40" style="animation-delay: -5s;"></div>
+    <div class="glow-blob w-[600px] h-[600px] bg-cyan-500/10 -bottom-40 left-1/4" style="animation-delay: -3s;"></div>
+
+    <Container>
+      
+      <!-- 6. KALENDER AKADEMIK & JADWAL PELAJARAN REAL-TIME (macOS Glassmorphism + Live Guru & Jam Switcher) -->
+      <div class="mb-24 scroll-mt-28 relative" id="kalender-akademik" data-motion-section>
+        
+        <!-- Ambient Glass Glows -->
+        <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-[600px] h-48 bg-gradient-to-r from-emerald-400/10 via-gold/15 to-teal-400/10 blur-3xl pointer-events-none rounded-full"></div>
+
+        <!-- Section Header -->
+        <div class="text-center max-w-3xl mx-auto mb-10 relative z-10" data-motion-title>
+          <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-800 text-xs font-bold uppercase tracking-[0.2em] mb-4 shadow-sm backdrop-blur-md">
+            Jadwal Pelajaran &amp; Guru Real-time
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em]">
+            Kalender &amp; Guru <em class="italic text-gold text-shimmer-gold">Sedang Mengajar</em>
+          </h2>
+        </div>
+
+        <!-- REALTIME MACOS LIVE TEACHER & SCHEDULE BANNER -->
+        <div class="max-w-4xl mx-auto mb-8 px-4 relative z-10" id="kaldik-status-wrap">
+          <!-- Injected dynamically by real-time JS engine with auto-switcher -->
+        </div>
+
+        <!-- SINGLE REAL-TIME TODAY HERO CARD (Auto-switches every day) -->
+        <div class="max-w-lg mx-auto px-4 relative z-10 mb-8">
+          
+          <!-- Top Clock & Status -->
+          <div class="flex items-center justify-between mb-3 px-2">
+            <div class="flex items-center gap-2">
+              <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+              <span id="live-clock-kaldik" class="font-mono text-xs font-bold text-emerald-900 tracking-wider">--:--:-- WIB</span>
+            </div>
+            <span class="text-[11px] text-slate-400 font-medium">Jadwal Real-Time Harian</span>
+          </div>
+
+          <!-- Centered Single Card Container -->
+          <div id="kaldik-today-container">
+            <!-- Rendered dynamically for today -->
+          </div>
+
+        </div>
+
+
+
+      </div>
+
+      <!-- Realtime Schedule & Live Teacher Switcher Engine -->
+      <script is:inline define:vars={{ googleCalId: schoolConfig.googleCalendarId || '', googleCalApiKey: schoolConfig.googleCalendarApiKey || '' }}>
+        (function() {
+          // ─── 1. BASE KALDIK & STANDARD WEEKLY TIMETABLE ───────────────────
+          var defaultEvents = [
+            { id: '1',  start: '2026-07-13', end: null,         title: 'Awal Masuk Tahun Ajaran 2026/2027', desc: 'Hari pertama masuk madrasah tahun ajaran baru 2026/2027.', semester: 'gasal', isHoliday: false, category: 'Awal Semester' },
+            { id: '2',  start: '2026-07-13', end: '2026-07-18', title: 'Masa Taaruf Siswa Madrasah (MATSAMA)', desc: 'Pengenalan lingkungan madrasah, budaya pesantren, dan tata tertib.', semester: 'gasal', isHoliday: false, category: 'Orientasi Siswa' },
+            { id: '3',  start: '2026-08-17', end: null,         title: 'HUT Kemerdekaan RI ke-81', desc: 'Peringatan Hari Kemerdekaan Republik Indonesia. Libur Nasional.', semester: 'gasal', isHoliday: true, category: 'Libur Nasional' },
+            { id: '4',  start: '2026-08-25', end: null,         title: 'Maulid Nabi Muhammad SAW', desc: 'Peringatan kelahiran baginda Rasulullah SAW 12 Rabiul Awal 1448 H.', semester: 'gasal', isHoliday: true, category: 'Hari Besar Islam' },
+            { id: '5',  start: '2026-11-23', end: '2026-12-05', title: 'ASAS Gasal (Asesmen Sumatif Akhir Semester)', desc: 'Pelaksanaan ujian asesmen sumatif akhir semester gasal berbasis CBT.', semester: 'gasal', isHoliday: false, category: 'Ujian & Asesmen' },
+            { id: '6',  start: '2026-12-18', end: '2026-12-19', title: 'Pembagian Rapor Semester Gasal', desc: 'Penyerahan Laporan Hasil Belajar (Rapor) kepada orang tua/wali murid.', semester: 'gasal', isHoliday: false, category: 'Evaluasi Hasil Belajar' },
+            { id: '7',  start: '2026-12-25', end: null,         title: 'Hari Raya Natal', desc: 'Peringatan Hari Raya Natal. Libur Nasional.', semester: 'gasal', isHoliday: true, category: 'Libur Nasional' },
+            { id: '8',  start: '2026-12-21', end: '2027-01-02', title: 'Libur Semester Gasal', desc: 'Libur pembelajaran akhir semester gasal tahun ajaran 2026/2027.', semester: 'gasal', isHoliday: true, category: 'Libur Semester' },
+            { id: '9',  start: '2027-01-01', end: null,         title: 'Tahun Baru Masehi 2027', desc: 'Peringatan Tahun Baru 2027 Masehi. Libur Nasional.', semester: 'genap', isHoliday: true, category: 'Libur Nasional' },
+            { id: '10', start: '2027-01-03', end: null,         title: 'Hari Amal Bakti (HAB) Kemenag RI', desc: 'Peringatan Hari Lahir Kementerian Agama Republik Indonesia ke-81.', semester: 'genap', isHoliday: false, category: 'Peringatan Kemenag' },
+            { id: '11', start: '2027-01-04', end: null,         title: 'Awal Masuk Semester Genap', desc: 'Hari pertama Kegiatan Belajar Mengajar (KBM) Semester Genap.', semester: 'genap', isHoliday: false, category: 'Awal Semester' },
+            { id: '12', start: '2027-01-05', end: null,         title: "Isra Mi'raj Nabi Muhammad SAW", desc: "Peringatan perjalanan suci Isra Mi'raj 27 Rajab 1448 H. Libur Nasional.", semester: 'genap', isHoliday: true, category: 'Hari Besar Islam' },
+            { id: '13', start: '2027-02-06', end: null,         title: 'Tahun Baru Imlek 2578', desc: 'Peringatan Tahun Baru Imlek 2578 Kongzili. Libur Nasional.', semester: 'genap', isHoliday: true, category: 'Libur Nasional' },
+            { id: '14', start: '2027-03-06', end: '2027-03-13', title: 'Libur Hari Raya Idulfitri 1448 H', desc: 'Libur seputar Idulfitri 1448 H & cuti bersama hari raya umat Islam.', semester: 'genap', isHoliday: true, category: 'Libur Hari Raya' },
+            { id: '15', start: '2027-03-09', end: null,         title: 'Hari Suci Nyepi Saka 1949', desc: 'Peringatan Tahun Baru Saka 1949. Libur Nasional.', semester: 'genap', isHoliday: true, category: 'Libur Nasional' },
+            { id: '16', start: '2027-03-26', end: null,         title: 'Wafat Yesus Kristus', desc: 'Peringatan Wafat Isa Almasih (Jumat Agung). Libur Nasional.', semester: 'genap', isHoliday: true, category: 'Libur Nasional' },
+            { id: '17', start: '2027-03-29', end: '2027-05-15', title: 'Rentang Ujian Madrasah (UM)', desc: 'Pelaksanaan asesmen akhir jenjang dan Ujian Madrasah MA Margajaya.', semester: 'genap', isHoliday: false, category: 'Ujian Akhir Jenjang' },
+            { id: '18', start: '2027-05-06', end: null,         title: 'Kenaikan Yesus Kristus', desc: 'Peringatan Kenaikan Isa Almasih. Libur Nasional.', semester: 'genap', isHoliday: true, category: 'Libur Nasional' },
+            { id: '19', start: '2027-05-24', end: '2027-06-05', title: 'ASAS Genap (Asesmen Akhir Tahun)', desc: 'Asesmen Sumatif Akhir Semester Genap / Kenaikan Kelas.', semester: 'genap', isHoliday: false, category: 'Ujian & Asesmen' },
+            { id: '20', start: '2027-06-01', end: null,         title: 'Hari Lahir Pancasila', desc: 'Peringatan Hari Lahir Pancasila 1 Juni. Libur Nasional.', semester: 'genap', isHoliday: true, category: 'Libur Nasional' },
+            { id: '21', start: '2027-06-18', end: '2027-06-19', title: 'Pembagian Rapor Semester Genap', desc: 'Penyerahan Laporan Hasil Belajar (Kenaikan Kelas) & Kelulusan.', semester: 'genap', isHoliday: false, category: 'Evaluasi Hasil Belajar' },
+            { id: '22', start: '2027-06-21', end: '2027-07-10', title: 'Libur Akhir Tahun Ajaran', desc: 'Libur panjang akhir tahun ajaran 2026/2027 sebelum masuk TP 2027/2028.', semester: 'genap', isHoliday: true, category: 'Libur Kenaikan Kelas' }
+          ];
+
+          // Jadwal Pelajaran Otentik MA Margajaya (Sesuai jadwal_pelajaran_semua_kelas_master.csv)
+          var weeklyBaseTimetable = {
+  "1": [
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Upacara Bendera (X IPS)",
+      "teacher": "Tim Kesiswaan",
+      "room": "Lapang Upacara"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Fiqih (X IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Fiqih (X IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Bahasa Indonesia (X IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Bahasa Indonesia (X IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Bahasa Indonesia (X IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Seni Budaya (X IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Seni Budaya (X IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Upacara Bendera (XI IPS)",
+      "teacher": "Tim Kesiswaan",
+      "room": "Lapang Upacara"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Kewarganegaraan (XI IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Kewarganegaraan (XI IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Sosiologi (XI IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Sosiologi (XI IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "PJOK (XI IPS)",
+      "teacher": "ELA NURLAELA",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "PJOK (XI IPS)",
+      "teacher": "ELA NURLAELA",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "PJOK (XI IPS)",
+      "teacher": "ELA NURLAELA",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "TTQ (XI IPS)",
+      "teacher": "JAHRUDIN, S.Pd.I.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Upacara Bendera (XII IPS)",
+      "teacher": "Tim Kesiswaan",
+      "room": "Lapang Upacara"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "PJOK (XII IPS)",
+      "teacher": "ELA NURLAELA",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "PJOK (XII IPS)",
+      "teacher": "ELA NURLAELA",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "PJOK (XII IPS)",
+      "teacher": "ELA NURLAELA",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Ekonomi/Akuntansi (XII IPS)",
+      "teacher": "SINCI YOANA, S.E.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Ekonomi/Akuntansi (XII IPS)",
+      "teacher": "SINCI YOANA, S.E.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Bahasa Indonesia (XII IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Bahasa Indonesia (XII IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Bahasa Indonesia (XII IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XII IPS"
+    }
+  ],
+  "2": [
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Akidah Ahlak (X IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Akidah Ahlak (X IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "IPA (X IPS)",
+      "teacher": "ELA NURLAELA, S.T, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "IPA (X IPS)",
+      "teacher": "ELA NURLAELA, S.T, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Sejarah Kebudayaan Islam (X IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Sejarah Kebudayaan Islam (X IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "IPS (X IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "IPS (X IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Bahasa Indonesia (X IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Bahasa Indonesia (X IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Geografi (XI IPS)",
+      "teacher": "INEU YUNI ANDINI, S.Sos",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Geografi (XI IPS)",
+      "teacher": "INEU YUNI ANDINI, S.Sos",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Fiqih (XI IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Fiqih (XI IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Sosiologi (XI IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Sosiologi (XI IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Akidah Ahlak (XI IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Akidah Ahlak (XI IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Ekonomi/Akuntansi (XI IPS)",
+      "teacher": "SINCI YOANA, S.E.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Ekonomi/Akuntansi (XI IPS)",
+      "teacher": "SINCI YOANA, S.E.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Matematika (XII IPS)",
+      "teacher": "ELA NURLAELA, S.T, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Matematika (XII IPS)",
+      "teacher": "ELA NURLAELA, S.T, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Geografi (XII IPS)",
+      "teacher": "INEU YUNI ANDINI, S.Sos",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Geografi (XII IPS)",
+      "teacher": "INEU YUNI ANDINI, S.Sos",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Basa Sunda (XII IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Basa Sunda (XII IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Ekonomi/Akuntansi (XII IPS)",
+      "teacher": "SINCI YOANA, S.E.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Ekonomi/Akuntansi (XII IPS)",
+      "teacher": "SINCI YOANA, S.E.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Sosiologi (XII IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Sosiologi (XII IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    }
+  ],
+  "3": [
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Matematika (X IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Matematika (X IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Sejarah (X IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Sejarah (X IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Kewarganegaraan (X IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Kewarganegaraan (X IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "IPS (X IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "IPS (X IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Basa Sunda (X IPS)",
+      "teacher": "ATIK FARHAT KAMILAH, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Basa Sunda (X IPS)",
+      "teacher": "ATIK FARHAT KAMILAH, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Sejarah Peminatan (XI IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Sejarah Peminatan (XI IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Sejarah Kebudayaan Islam (XI IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Sejarah Kebudayaan Islam (XI IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Matematika (XI IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Matematika (XI IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Basa Sunda (XI IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Basa Sunda (XI IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Ekonomi/Akuntansi (XI IPS)",
+      "teacher": "SINCI YOANA, S.E.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Ekonomi/Akuntansi (XI IPS)",
+      "teacher": "SINCI YOANA, S.E.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Sejarah Kebudayaan Islam (XII IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Sejarah Kebudayaan Islam (XII IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Seni Budaya (XII IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Seni Budaya (XII IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Sosiologi (XII IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Sosiologi (XII IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Informatika (XII IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Informatika (XII IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Sejarah Peminatan (XII IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Sejarah Peminatan (XII IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    }
+  ],
+  "4": [
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "IPA (X IPS)",
+      "teacher": "ELA NURLAELA, S.T, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "IPA (X IPS)",
+      "teacher": "ELA NURLAELA, S.T, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Informatika (X IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Informatika (X IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Bahasa Arab (X IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Bahasa Arab (X IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "TTQ (X IPS)",
+      "teacher": "JAHRUDIN, S.Pd.I.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Bahasa Inggris (X IPS)",
+      "teacher": "EKA NURBAHARI, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Bahasa Inggris (X IPS)",
+      "teacher": "EKA NURBAHARI, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Bahasa Inggris (X IPS)",
+      "teacher": "EKA NURBAHARI, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Matematika (XI IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Matematika (XI IPS)",
+      "teacher": "WAHYUDIN, S.Pd",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Bahasa Arab (XI IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Bahasa Arab (XI IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Bahasa Inggris (XI IPS)",
+      "teacher": "EKA NURBAHARI, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Bahasa Inggris (XI IPS)",
+      "teacher": "EKA NURBAHARI, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Bahasa Inggris (XI IPS)",
+      "teacher": "EKA NURBAHARI, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Bahasa Indonesia (XI IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Bahasa Indonesia (XI IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Bahasa Indonesia (XI IPS)",
+      "teacher": "MAMAH MARYAMAH, S.Pd",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Bahasa Inggris (XII IPS)",
+      "teacher": "EKA NURBAHARI, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Bahasa Inggris (XII IPS)",
+      "teacher": "EKA NURBAHARI, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Bahasa Inggris (XII IPS)",
+      "teacher": "EKA NURBAHARI, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "TTQ (XII IPS)",
+      "teacher": "JAHRUDIN, S.Pd.I.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Matematika (XII IPS)",
+      "teacher": "ELA NURLAELA, S.T, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Matematika (XII IPS)",
+      "teacher": "ELA NURLAELA, S.T, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Al-Qur'an Hadis (XII IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Al-Qur'an Hadis (XII IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Fiqih (XII IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Fiqih (XII IPS)",
+      "teacher": "HAMID BILLAH, S.Pd.I.",
+      "room": "Ruang Kelas XII IPS"
+    }
+  ],
+  "5": [
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "PJOK (X IPS)",
+      "teacher": "ELA NURLAELA",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "PJOK (X IPS)",
+      "teacher": "ELA NURLAELA",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Al-Qur'an Hadis (X IPS)",
+      "teacher": "ROHMAT HASANAH, M.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Al-Qur'an Hadis (X IPS)",
+      "teacher": "ROHMAT HASANAH, M.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Bahasa Arab (X IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Bahasa Arab (X IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (X IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "IPS (X IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "IPS (X IPS)",
+      "teacher": "CHANDRA NURHIDAYAT, S.Pd.",
+      "room": "Ruang Kelas X IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Al-Qur'an Hadis (XI IPS)",
+      "teacher": "ROHMAT HASANAH, M.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Al-Qur'an Hadis (XI IPS)",
+      "teacher": "ROHMAT HASANAH, M.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Seni Budaya (XI IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Seni Budaya (XI IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Sejarah Peminatan (XI IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Sejarah Peminatan (XI IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XI IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Geografi (XI IPS)",
+      "teacher": "INEU YUNI ANDINI, S.Sos",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Geografi (XI IPS)",
+      "teacher": "INEU YUNI ANDINI, S.Sos",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Sejarah (XI IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Sejarah (XI IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XI IPS"
+    },
+    {
+      "start": "07:00",
+      "end": "07:45",
+      "subject": "Sejarah Peminatan (XII IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "07:45",
+      "end": "08:30",
+      "subject": "Sejarah Peminatan (XII IPS)",
+      "teacher": "ASEP MAULANA SIDIK, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "08:30",
+      "end": "09:15",
+      "subject": "Geografi (XII IPS)",
+      "teacher": "INEU YUNI ANDINI, S.Sos",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "09:15",
+      "end": "10:00",
+      "subject": "Geografi (XII IPS)",
+      "teacher": "INEU YUNI ANDINI, S.Sos",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "10:00",
+      "end": "10:15",
+      "subject": "☕ Istirahat 1 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "10:15",
+      "end": "11:00",
+      "subject": "Kewarganegaraan (XII IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:00",
+      "end": "11:45",
+      "subject": "Kewarganegaraan (XII IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "11:45",
+      "end": "12:15",
+      "subject": "🍱 Istirahat 2 (XII IPS)",
+      "teacher": "Waktu Istirahat",
+      "room": "Area Sekolah / Kantin"
+    },
+    {
+      "start": "12:15",
+      "end": "13:00",
+      "subject": "Bahasa Arab (XII IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:00",
+      "end": "13:45",
+      "subject": "Bahasa Arab (XII IPS)",
+      "teacher": "SOPAN SOPARI, M.Pd.I.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "13:45",
+      "end": "14:30",
+      "subject": "Akidah Ahlak (XII IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    },
+    {
+      "start": "14:30",
+      "end": "15:15",
+      "subject": "Akidah Ahlak (XII IPS)",
+      "teacher": "HAMDAN, S.Pd.",
+      "room": "Ruang Kelas XII IPS"
+    }
+  ]
+};
+
+          var activeEvents = defaultEvents;
+          var dailyItems = [];
+          var todayIndex = 0;
+          var customGoogleScheduleMap = {}; // Key: 'YYYY-MM-DD' -> Array of slot objects
+
+          var DAYS_ID = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+          var DAYS_SHORT = ['MIN', 'SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB'];
+          var MONTHS_ID = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+          var MONTHS_SHORT = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGS', 'SEP', 'OKT', 'NOV', 'DES'];
+
+          function parseDate(str) {
+            if (!str) return new Date();
+            var p = str.split('-');
+            return new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
+          }
+
+          function formatDateKey(d) {
+            var y = d.getFullYear();
+            var m = String(d.getMonth() + 1).padStart(2, '0');
+            var day = String(d.getDate()).padStart(2, '0');
+            return y + '-' + m + '-' + day;
+          }
+
+          function formatDateFull(d) {
+            return DAYS_ID[d.getDay()] + ', ' + d.getDate() + ' ' + MONTHS_ID[d.getMonth()] + ' ' + d.getFullYear();
+          }
+
+          function timeToMinutes(tStr) {
+            if (!tStr) return 0;
+            var parts = tStr.split(':');
+            return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+          }
+
+          // ─── 2. EVALUATE DAY DATA & TIMETABLE ─────────────────────────────
+          function evaluateDay(d, todayMidnight) {
+            var dayOfWeek = d.getDay(); // 0: Min, 6: Sab
+            var isToday = d.getTime() === todayMidnight.getTime();
+            var isPast = d.getTime() < todayMidnight.getTime();
+            var isFuture = d.getTime() > todayMidnight.getTime();
+            var dateKey = formatDateKey(d);
+
+            var matchedHoliday = null;
+            var matchedEvent = null;
+
+            for (var i = 0; i < activeEvents.length; i++) {
+              var ev = activeEvents[i];
+              var s = parseDate(ev.start);
+              var e = ev.end ? parseDate(ev.end) : parseDate(ev.start);
+              e = new Date(e.getFullYear(), e.getMonth(), e.getDate());
+
+              if (d >= s && d <= e) {
+                if (ev.isHoliday) {
+                  matchedHoliday = ev;
+                } else if (!matchedEvent) {
+                  matchedEvent = ev;
+                }
+              }
+            }
+
+            var month = d.getMonth();
+            var semester = (month >= 6) ? 'gasal' : 'genap';
+
+            // Get day's schedule slots (from Google Calendar override or baseline weekly schedule)
+            var daySlots = [];
+            if (customGoogleScheduleMap[dateKey] && customGoogleScheduleMap[dateKey].length > 0) {
+              daySlots = customGoogleScheduleMap[dateKey];
+            } else if (weeklyBaseTimetable[dayOfWeek] && !matchedHoliday) {
+              daySlots = weeklyBaseTimetable[dayOfWeek];
+            }
+
+            if (matchedHoliday) {
+              return {
+                date: d,
+                isToday: isToday,
+                isPast: isPast,
+                isFuture: isFuture,
+                type: 'holiday',
+                title: matchedHoliday.title,
+                desc: matchedHoliday.desc || 'Libur resmi madrasah / nasional.',
+                tagText: 'Libur Resmi',
+                tagClass: 'bg-rose-500/15 text-rose-900',
+                badgeClass: 'bg-rose-500 text-white',
+                timeText: 'Libur Seharian',
+                semester: semester,
+                pulseColor: 'bg-rose-500',
+                slots: []
+              };
+            }
+
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+              var dayName = dayOfWeek === 0 ? 'Minggu' : 'Sabtu';
+              return {
+                date: d,
+                isToday: isToday,
+                isPast: isPast,
+                isFuture: isFuture,
+                type: 'weekend',
+                title: 'Libur Akhir Pekan (' + dayName + ')',
+                desc: 'Libur rutin akhir pekan santri & dewan guru (Sistem 5 Hari Sekolah / Full Day School).',
+                tagText: 'Full Day School',
+                tagClass: 'bg-rose-500/12 text-rose-800',
+                badgeClass: 'bg-slate-700 text-white',
+                timeText: 'Libur Akhir Pekan',
+                semester: semester,
+                pulseColor: 'bg-rose-500',
+                slots: []
+              };
+            }
+
+            if (matchedEvent) {
+              return {
+                date: d,
+                isToday: isToday,
+                isPast: isPast,
+                isFuture: isFuture,
+                type: 'event',
+                title: matchedEvent.title,
+                desc: matchedEvent.desc || 'Agenda khusus pembelajaran & evaluasi madrasah.',
+                tagText: matchedEvent.category || 'Agenda Khusus',
+                tagClass: 'bg-amber-500/15 text-amber-900',
+                badgeClass: 'bg-amber-600 text-white',
+                timeText: '07.00 – 15.00 WIB',
+                semester: semester,
+                pulseColor: 'bg-amber-500',
+                slots: daySlots
+              };
+            }
+
+            return {
+              date: d,
+              isToday: isToday,
+              isPast: isPast,
+              isFuture: isFuture,
+              type: 'normal',
+              title: 'Jadwal Pembelajaran Terpadu',
+              desc: 'Shalat Dhuha berjamaah, tadarus Al-Qur\'an, dan KBM Kurikulum Merdeka bersama Dewan Guru.',
+              tagText: 'KBM Aktif',
+              tagClass: 'bg-emerald-500/15 text-emerald-900',
+              badgeClass: 'bg-emerald-700 text-white',
+              timeText: '07.00 – 15.00 WIB',
+              semester: semester,
+              pulseColor: 'bg-emerald-500',
+              slots: daySlots
+            };
+          }
+
+          // ─── 3. REALTIME ACTIVE SLOT FINDER (AUTO SWITCHER) ───────────────
+          function getLiveSlotStatus(slots) {
+            if (!slots || slots.length === 0) return { activeSlots: [], statusState: 'none' };
+
+            var now = new Date();
+            var currentMins = now.getHours() * 60 + now.getMinutes();
+
+            var activeSlots = [];
+            var firstSlotMins = 9999;
+            var lastSlotMins = 0;
+
+            for (var i = 0; i < slots.length; i++) {
+              var sMins = timeToMinutes(slots[i].start);
+              var eMins = timeToMinutes(slots[i].end);
+
+              if (sMins < firstSlotMins) firstSlotMins = sMins;
+              if (eMins > lastSlotMins) lastSlotMins = eMins;
+
+              if (currentMins >= sMins && currentMins < eMins) {
+                activeSlots.push(slots[i]);
+              }
+            }
+
+            var statusState = 'active';
+            if (activeSlots.length === 0) {
+              if (currentMins < firstSlotMins) {
+                statusState = 'before_school';
+              } else if (currentMins >= lastSlotMins) {
+                statusState = 'after_school';
+              } else {
+                statusState = 'break_period';
+              }
+            }
+
+            return {
+              activeSlots: activeSlots,
+              statusState: statusState
+            };
+          }
+
+          // ─── 4. GENERATE CONTINUOUS DAILY LIST ────────────────────────────
+          function generateDailyList() {
+            var now = new Date();
+            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            var items = [];
+            var daysBefore = 7;
+            var daysAfter = 35;
+
+            for (var offset = -daysBefore; offset <= daysAfter; offset++) {
+              var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset);
+              var dayData = evaluateDay(d, today);
+              items.push(dayData);
+            }
+
+            dailyItems = items;
+            todayIndex = daysBefore;
+          }
+
+          // Helper to extract clean class label and subject
+          function parseSlotDetails(slot) {
+            var rawSub = (slot.subject || '').replace(/[\r\n]+/g, ' ').trim();
+            var rawTeacher = (slot.teacher || '').replace(/[\r\n]+/g, ' ').trim();
+            var cls = '';
+            var cleanSub = rawSub;
+
+            // Prioritize XII, then XI, then X with word boundaries
+            var match = rawSub.match(/\b(XII|XI|X)\b/i);
+            if (!match && slot.room) {
+              match = slot.room.match(/\b(XII|XI|X)\b/i);
+            }
+            if (match) {
+              cls = match[1].toUpperCase();
+            }
+
+            cleanSub = rawSub.replace(/\s*\([^\)]*\)/g, '').trim();
+
+            return {
+              cls: cls,
+              subject: cleanSub,
+              teacher: rawTeacher,
+              room: slot.room || 'Ruang Kelas',
+              start: slot.start,
+              end: slot.end
+            };
+          }
+
+          // ─── 5. RENDER REALTIME MACOS LIVE BANNER WITH TEACHER SWITCHER ───
+          function renderStatusBanner() {
+            var wrap = document.getElementById('kaldik-status-wrap');
+            if (!wrap) return;
+
+            var todayData = dailyItems[todayIndex] || evaluateDay(new Date(), new Date());
+            var todayStr = formatDateFull(todayData.date);
+            var live = getLiveSlotStatus(todayData.slots);
+
+            var bannerHtml = '';
+
+            if (todayData.type === 'holiday' || todayData.type === 'weekend') {
+              bannerHtml = 
+                '<div class="relative overflow-hidden rounded-[32px] p-6 sm:p-7 text-left transition-all duration-300" style="background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.05), inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.6);">' +
+                  '<div class="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">' +
+                    '<div class="space-y-2 max-w-2xl">' +
+                      '<div class="flex items-center gap-2.5 flex-wrap">' +
+                        '<span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span></span>' +
+                        '<span class="px-3 py-1 rounded-full text-[11px] font-bold tracking-wide ' + todayData.tagClass + '">' + (todayData.type === 'weekend' ? 'Libur Akhir Pekan' : 'Hari Libur Resmi') + '</span>' +
+                        '<span class="text-xs text-slate-400 font-medium">• ' + todayStr + '</span>' +
+                      '</div>' +
+                      '<div class="font-serif text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">' + todayData.title + '</div>' +
+                      '<p class="text-xs sm:text-sm text-slate-500 leading-relaxed font-light">' + todayData.desc + '</p>' +
+                    '</div>' +
+                    '<div class="shrink-0 flex items-center gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-100">' +
+                      '<div class="px-4 py-2.5 rounded-2xl bg-white/80 shadow-sm text-center border border-white/60">' +
+                        '<div class="text-[10px] uppercase tracking-widest text-slate-400 font-medium">Status KBM</div>' +
+                        '<div class="text-xs font-bold text-rose-800 mt-0.5">' + todayData.timeText + '</div>' +
+                      '</div>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+            } else if (live.statusState === 'active' && live.activeSlots.length > 0) {
+              // Active slots across all classes
+              var timeStr = live.activeSlots[0].start + ' – ' + live.activeSlots[0].end + ' WIB';
+              
+              var classCards = '';
+              live.activeSlots.forEach(function(slot) {
+                var p = parseSlotDetails(slot);
+                var tagBg = p.cls === 'X' 
+                  ? 'background: rgba(16,185,129,0.12); color: #047857; border: 1px solid rgba(16,185,129,0.2);' 
+                  : (p.cls === 'XI' 
+                    ? 'background: rgba(59,130,246,0.12); color: #1d4ed8; border: 1px solid rgba(59,130,246,0.2);' 
+                    : (p.cls === 'XII' 
+                      ? 'background: rgba(245,158,11,0.12); color: #b45309; border: 1px solid rgba(245,158,11,0.2);' 
+                      : 'background: rgba(100,116,139,0.12); color: #475569; border: 1px solid rgba(100,116,139,0.2);'));
+                
+                classCards += 
+                  '<div class="p-4 rounded-2xl flex flex-col justify-between transition-all duration-200 hover:-translate-y-0.5" style="background: rgba(255,255,255,0.78); backdrop-filter: blur(20px); box-shadow: 0 4px 15px -3px rgba(0,0,0,0.03), inset 0 1px 1px 0 rgba(255,255,255,0.9), inset 0 0 0 1px rgba(226,232,240,0.6);">' +
+                    '<div>' +
+                      '<div class="flex items-center justify-between gap-2 mb-2">' +
+                        (p.cls ? '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide" style="' + tagBg + '">Kelas ' + p.cls + '</span>' : '') +
+                        '<span class="text-[10px] text-slate-400 font-medium truncate">' + p.room + '</span>' +
+                      '</div>' +
+                      '<div class="font-serif text-base font-bold text-slate-800 leading-snug mb-1.5">' + p.subject + '</div>' +
+                    '</div>' +
+                    '<div class="flex items-center gap-1.5 text-xs text-slate-600 font-medium pt-2 border-t border-slate-100/80 mt-2 truncate">' +
+                      '<svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+                      '<span class="truncate">' + p.teacher + '</span>' +
+                    '</div>' +
+                  '</div>';
+              });
+
+              bannerHtml = 
+                '<div class="relative overflow-hidden rounded-[32px] p-6 sm:p-7 text-left transition-all duration-300" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(45px) saturate(210%); -webkit-backdrop-filter: blur(45px) saturate(210%); box-shadow: 0 35px 80px -20px rgba(5,150,70,0.12), 0 0 0 1px rgba(255,255,255,0.8), inset 0 1.5px 1px 0 rgba(255,255,255,1);">' +
+                  '<div style="position:absolute;inset:0;background:radial-gradient(ellipse at 0% 0%,rgba(5,150,70,0.06),transparent 60%), radial-gradient(ellipse at 100% 100%,rgba(234,179,8,0.04),transparent 50%);pointer-events:none;"></div>' +
+                  '<div class="relative z-10 space-y-4">' +
+                    '<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100/80 pb-3">' +
+                      '<div class="flex items-center gap-2.5">' +
+                        '<div class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span></div>' +
+                        '<span class="text-[11px] font-bold tracking-widest uppercase text-emerald-700">Sedang Berlangsung Sekarang</span>' +
+                        '<span class="text-[11px] text-slate-400 font-medium hidden sm:inline">• ' + todayStr + '</span>' +
+                      '</div>' +
+                      '<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold text-emerald-900 bg-emerald-50/80 border border-emerald-200/60 self-start sm:self-auto backdrop-blur-sm shadow-sm">' +
+                        '<svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline stroke-linecap="round" points="12,6 12,12 16,14"/></svg>' +
+                        timeStr +
+                      '</div>' +
+                    '</div>' +
+                    '<div class="grid grid-cols-1 sm:grid-cols-' + Math.min(live.activeSlots.length, 3) + ' gap-3.5">' +
+                      classCards +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+            } else if (live.statusState === 'before_school') {
+              bannerHtml = 
+                '<div class="relative overflow-hidden rounded-[32px] p-6 sm:p-7 text-left" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); box-shadow: 0 25px 60px -15px rgba(0,0,0,0.06), inset 0 1.5px 1px 0 rgba(255,255,255,0.95);">' +
+                  '<div class="flex items-center gap-5">' +
+                    '<div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm" style="background: linear-gradient(135deg,rgba(37,99,235,0.14),rgba(37,99,235,0.06)); border: 1px solid rgba(37,99,235,0.15);">' +
+                      '<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline stroke-linecap="round" points="12,6 12,12 16,14"/></svg>' +
+                    '</div>' +
+                    '<div>' +
+                      '<div class="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-1">Persiapan KBM · ' + todayStr + '</div>' +
+                      '<div class="font-serif text-xl sm:text-2xl font-bold text-slate-800">KBM Belum Dimulai</div>' +
+                      '<p class="text-xs text-slate-400 mt-1">Shalat Dhuha berjamaah &amp; KBM dimulai pukul 07.00 WIB.</p>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+            } else if (live.statusState === 'break_period') {
+              bannerHtml = 
+                '<div class="relative overflow-hidden rounded-[32px] p-6 sm:p-7 text-left" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); box-shadow: 0 25px 60px -15px rgba(0,0,0,0.06), inset 0 1.5px 1px 0 rgba(255,255,255,0.95);">' +
+                  '<div class="flex items-center gap-5">' +
+                    '<div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm" style="background: linear-gradient(135deg,rgba(217,119,6,0.14),rgba(217,119,6,0.06)); border: 1px solid rgba(217,119,6,0.15);">' +
+                      '<svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" d="M18 8h1a4 4 0 0 1 0 8h-1"/><path stroke-linecap="round" d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line stroke-linecap="round" x1="6" y1="2" x2="6" y2="5"/><line stroke-linecap="round" x1="10" y1="2" x2="10" y2="5"/><line stroke-linecap="round" x1="14" y1="2" x2="14" y2="5"/></svg>' +
+                    '</div>' +
+                    '<div>' +
+                      '<div class="text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-1">Jam Istirahat · ' + todayStr + '</div>' +
+                      '<div class="font-serif text-xl sm:text-2xl font-bold text-slate-800">Waktu Istirahat Santri</div>' +
+                      '<p class="text-xs text-slate-400 mt-1">KBM dijeda untuk istirahat &amp; shalat. Pelajaran berikutnya segera dimulai.</p>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+            } else {
+              // After school
+              bannerHtml = 
+                '<div class="relative overflow-hidden rounded-[32px] p-6 sm:p-7 text-left" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%); box-shadow: 0 25px 60px -15px rgba(0,0,0,0.05), inset 0 1.5px 1px 0 rgba(255,255,255,0.95);">' +
+                  '<div class="flex flex-col md:flex-row md:items-center justify-between gap-5">' +
+                    '<div class="flex items-center gap-5">' +
+                      '<div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 bg-slate-100 border border-slate-200/70">' +
+                        '<svg class="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>' +
+                      '</div>' +
+                      '<div>' +
+                        '<div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">KBM Selesai · ' + todayStr + '</div>' +
+                        '<div class="font-serif text-xl sm:text-2xl font-bold text-slate-800">KBM Formal Madrasah Selesai</div>' +
+                        '<p class="text-xs text-slate-400 mt-1">Dilanjutkan ekskul, kajian kitab, dan ibadah mandiri di asrama.</p>' +
+                      '</div>' +
+                    '</div>' +
+                    '<div class="shrink-0 px-5 py-3 rounded-2xl text-center bg-slate-50/80 border border-slate-200/60 shadow-sm">' +
+                      '<div class="text-[10px] uppercase tracking-widest text-slate-400 font-medium">Selesai pukul</div>' +
+                      '<div class="font-mono text-xl font-bold text-slate-700 mt-0.5">15.15</div>' +
+                      '<div class="text-[10px] text-slate-400">WIB</div>' +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+            }
+
+            wrap.innerHTML = bannerHtml;
+          }
+
+          // ─── 6. RENDER TODAY'S SINGLE HERO REALTIME CARD (iOS LUXURY BRUTAL GLASS) ───
+          function renderTodayHeroCard() {
+            var container = document.getElementById('kaldik-today-container');
+            if (!container) return;
+
+            var now = new Date();
+            var currentMins = now.getHours() * 60 + now.getMinutes();
+
+            // Evaluate today
+            var item = dailyItems[todayIndex] || evaluateDay(now, now);
+            var d = item.date;
+            var dayNum = d.getDate();
+            var dayNameShort = DAYS_SHORT[d.getDay()];
+            var monthShort = MONTHS_SHORT[d.getMonth()];
+            var dayFullName = DAYS_ID[d.getDay()];
+
+            // Determine slots to render
+            var slotsToRender = [];
+            var badgeText = 'Jadwal Hari Ini';
+            var badgeGrad = 'background: rgba(100,116,139,0.08); color: #64748b; border: 1px solid rgba(100,116,139,0.15);';
+            var timeSlotText = item.timeText;
+            var isLive = false;
+
+            if (item.slots && item.slots.length > 0) {
+              var slotInfo = getLiveSlotStatus(item.slots);
+
+              if (slotInfo.statusState === 'active' && slotInfo.activeSlots.length > 0) {
+                slotsToRender = slotInfo.activeSlots;
+                badgeText = 'Sedang Berlangsung';
+                badgeGrad = 'background: linear-gradient(135deg,#059245,#046635); color: #fff; box-shadow: 0 4px 14px rgba(5,150,70,0.35); border: 1px solid rgba(255,255,255,0.25);';
+                timeSlotText = slotsToRender[0].start + ' – ' + slotsToRender[0].end + ' WIB';
+                isLive = true;
+              } else if (slotInfo.statusState === 'before_school') {
+                var fStart = item.slots[0].start;
+                for (var fi = 0; fi < item.slots.length; fi++) {
+                  if (!item.slots[fi].subject.includes('Istirahat')) { fStart = item.slots[fi].start; break; }
+                }
+                slotsToRender = item.slots.filter(function(s) { return s.start === fStart; });
+                badgeText = 'Sesi Pertama';
+                badgeGrad = 'background: rgba(37,99,235,0.1); color: #1d4ed8; border: 1px solid rgba(37,99,235,0.18);';
+                timeSlotText = slotsToRender[0].start + ' – ' + slotsToRender[0].end + ' WIB';
+              } else if (slotInfo.statusState === 'break_period') {
+                var bStart = item.slots[0].start;
+                for (var bi = 0; bi < item.slots.length; bi++) {
+                  var bMins = timeToMinutes(item.slots[bi].start);
+                  if (bMins > currentMins && !item.slots[bi].subject.includes('Istirahat')) { bStart = item.slots[bi].start; break; }
+                }
+                slotsToRender = item.slots.filter(function(s) { return s.start === bStart; });
+                badgeText = 'Istirahat / Sesi Berikutnya';
+                badgeGrad = 'background: rgba(217,119,6,0.1); color: #b45309; border: 1px solid rgba(217,119,6,0.18);';
+                timeSlotText = slotsToRender[0].start + ' – ' + slotsToRender[0].end + ' WIB';
+              } else {
+                var lastStart = item.slots[item.slots.length - 1].start;
+                slotsToRender = item.slots.filter(function(s) { return s.start === lastStart; });
+                badgeText = 'KBM Selesai';
+                badgeGrad = 'background: rgba(100,116,139,0.08); color: #94a3b8; border: 1px solid rgba(100,116,139,0.15);';
+                timeSlotText = 'Selesai 15.15 WIB';
+              }
+            }
+
+            // Date visuals - iOS Calendar Tile
+            var dateAccentBg = 'background: linear-gradient(145deg, #059245, #046635); box-shadow: 0 10px 25px -4px rgba(5,150,70,0.4), inset 0 1px 1px rgba(255,255,255,0.4);';
+            var dateNumColor = 'color:#fff;';
+            var dateLabelColor = 'color:rgba(255,255,255,0.9);';
+            var topLabel = '<span class="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase text-white shadow-md transition-all" style="background: linear-gradient(135deg,#059245,#046635); box-shadow: 0 6px 18px rgba(5,150,70,0.35); border: 1px solid rgba(255,255,255,0.25);">LIVE HARI INI</span>';
+
+            // Holiday / Weekend
+            if (item.type === 'holiday' || item.type === 'weekend') {
+              container.innerHTML = 
+                '<div class="p-6 sm:p-8 rounded-[36px] text-left relative overflow-hidden transition-all duration-300" style="background: rgba(255,255,255,0.85); backdrop-filter: blur(50px) saturate(220%) brightness(102%); -webkit-backdrop-filter: blur(50px) saturate(220%) brightness(102%); box-shadow: 0 35px 80px -15px rgba(5,150,70,0.1), 0 0 0 1px rgba(255,255,255,0.8), inset 0 1.5px 1px 0 rgba(255,255,255,1);">' +
+                  '<div class="flex items-center justify-between mb-5">' +
+                    '<div class="flex items-center gap-3.5">' +
+                      '<div class="flex flex-col items-center justify-center w-14 h-16 rounded-[22px]" style="' + dateAccentBg + '">' +
+                        '<span class="text-[9.5px] font-bold uppercase tracking-wider" style="' + dateLabelColor + '">' + monthShort + '</span>' +
+                        '<span class="text-2xl font-bold leading-none my-0.5 tracking-tight" style="' + dateNumColor + '">' + dayNum + '</span>' +
+                        '<span class="text-[9.5px] font-semibold" style="' + dateLabelColor + '">' + dayNameShort + '</span>' +
+                      '</div>' +
+                      '<div>' +
+                        '<div class="text-[11px] text-slate-400 font-medium">' + dayFullName + '</div>' +
+                        '<div class="text-base font-bold text-slate-800">' + item.tagText + '</div>' +
+                      '</div>' +
+                    '</div>' +
+                    topLabel +
+                  '</div>' +
+                  '<div class="py-4">' +
+                    '<div class="text-[10px] font-bold uppercase tracking-widest mb-2.5" style="' + badgeGrad + ' display:inline-flex; padding: 4px 12px; border-radius:999px;">' + item.tagText + '</div>' +
+                    '<div class="font-serif text-2xl font-bold text-slate-800 leading-snug mb-2">' + item.title + '</div>' +
+                    '<p class="text-xs text-slate-500 leading-relaxed font-light">' + item.desc + '</p>' +
+                  '</div>' +
+                  '<div class="flex items-center justify-between mt-4 pt-3.5" style="border-top: 1px solid rgba(226,232,240,0.6);">' +
+                    '<span class="font-serif italic text-xs text-amber-600 font-medium">' + item.timeText + '</span>' +
+                    '<span class="text-[11px] text-slate-400 font-medium">MA Margajaya</span>' +
+                  '</div>' +
+                '</div>';
+              return;
+            }
+
+            // Normal KBM Day
+            var classRowsHtml = '';
+            if (slotsToRender.length > 0) {
+              var isCommonSlot = slotsToRender.length === 1 || slotsToRender.every(function(s) { return s.subject === slotsToRender[0].subject; });
+              if (isCommonSlot) {
+                var cs = parseSlotDetails(slotsToRender[0]);
+                classRowsHtml = 
+                  '<div class="py-4 px-4 rounded-2xl text-center" style="background: rgba(255,255,255,0.75); backdrop-filter: blur(20px); box-shadow: 0 4px 15px -3px rgba(0,0,0,0.02), inset 0 1px 1px rgba(255,255,255,0.9), inset 0 0 0 1px rgba(226,232,240,0.6);">' +
+                    '<div class="font-serif text-lg font-bold text-slate-800 leading-snug mb-1">' + cs.subject + '</div>' +
+                    '<div class="text-xs text-slate-500 font-medium truncate">' + cs.teacher + '</div>' +
+                  '</div>';
+              } else {
+                slotsToRender.forEach(function(slot) {
+                  var p = parseSlotDetails(slot);
+                  var pillBg = p.cls === 'X' 
+                    ? 'background: rgba(16,185,129,0.12); color: #047857; border: 1px solid rgba(16,185,129,0.22);' 
+                    : (p.cls === 'XI' 
+                      ? 'background: rgba(59,130,246,0.12); color: #1d4ed8; border: 1px solid rgba(59,130,246,0.22);' 
+                      : (p.cls === 'XII' 
+                        ? 'background: rgba(245,158,11,0.12); color: #b45309; border: 1px solid rgba(245,158,11,0.22);' 
+                        : 'background: rgba(100,116,139,0.12); color: #475569; border: 1px solid rgba(100,116,139,0.22);'));
+
+                  classRowsHtml += 
+                    '<div class="flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-default" style="background: rgba(255,255,255,0.80); backdrop-filter: blur(20px); box-shadow: 0 2px 8px -2px rgba(0,0,0,0.02), inset 0 1px 1px 0 rgba(255,255,255,0.95), inset 0 0 0 1px rgba(226,232,240,0.7);">' +
+                      '<div class="flex items-center gap-3 min-w-0">' +
+                        (p.cls ? '<span class="shrink-0 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide" style="' + pillBg + '">Kelas ' + p.cls + '</span>' : '') +
+                        '<span class="font-bold text-xs sm:text-sm text-slate-800 truncate">' + p.subject + '</span>' +
+                      '</div>' +
+                      '<span class="text-[11px] text-slate-500 font-medium truncate shrink-0 ml-2 max-w-[145px] text-right">' + p.teacher + '</span>' +
+                    '</div>';
+                });
+              }
+            }
+
+            container.innerHTML = 
+              '<div class="p-6 sm:p-8 rounded-[36px] text-left relative overflow-hidden transition-all duration-300 hover:shadow-2xl" style="background: rgba(255,255,255,0.86); backdrop-filter: blur(50px) saturate(220%) brightness(102%); -webkit-backdrop-filter: blur(50px) saturate(220%) brightness(102%); box-shadow: 0 40px 90px -20px rgba(5,150,70,0.14), 0 0 0 1px rgba(255,255,255,0.85), inset 0 2px 1px 0 rgba(255,255,255,1);">' +
+                
+                // Iridescent Apple Ambient glow inside
+                '<div style="position:absolute;inset:0;background:radial-gradient(circle at 10% 10%,rgba(5,150,70,0.08),transparent 55%), radial-gradient(circle at 90% 90%,rgba(234,179,8,0.06),transparent 50%);pointer-events:none;"></div>' +
+
+                // TOP: Date + LIVE badge
+                '<div class="flex items-center justify-between mb-5 relative z-10">' +
+                  '<div class="flex items-center gap-3.5">' +
+                    '<div class="flex flex-col items-center justify-center w-14 h-16 rounded-[22px]" style="' + dateAccentBg + '">' +
+                      '<span class="text-[9.5px] font-bold uppercase tracking-wider" style="' + dateLabelColor + '">' + monthShort + '</span>' +
+                      '<span class="text-2xl font-bold leading-none my-0.5 tracking-tight" style="' + dateNumColor + '">' + dayNum + '</span>' +
+                      '<span class="text-[9.5px] font-semibold" style="' + dateLabelColor + '">' + dayNameShort + '</span>' +
+                    '</div>' +
+                    '<div>' +
+                      '<div class="text-[11px] text-slate-400 font-medium tracking-wide">' + dayFullName + '</div>' +
+                      '<div class="text-base font-bold text-slate-800 tracking-tight">' + item.tagText + '</div>' +
+                    '</div>' +
+                  '</div>' +
+                  topLabel +
+                '</div>' +
+
+                // MIDDLE: Active lesson rows for all classes
+                '<div class="rounded-[26px] p-4 relative z-10 space-y-3 transition-all" style="' + (isLive ? 'background: rgba(5,150,70,0.035); box-shadow: inset 0 0 0 1px rgba(5,150,70,0.12), 0 1px 3px rgba(0,0,0,0.01);' : 'background: rgba(248,250,252,0.7); box-shadow: inset 0 0 0 1px rgba(226,232,240,0.5);') + '">' +
+                  '<div class="flex items-center justify-between gap-2 px-1">' +
+                    '<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9.5px] font-bold tracking-wider uppercase" style="' + badgeGrad + '">' +
+                      (isLive ? '<span class="w-1.5 h-1.5 rounded-full bg-emerald-200 animate-ping"></span>' : '') +
+                      badgeText +
+                    '</span>' +
+                    '<span class="font-mono text-xs font-bold tracking-tight" style="color:' + (isLive ? '#059245' : '#64748b') + ';">' + timeSlotText + '</span>' +
+                  '</div>' +
+                  '<div class="space-y-2">' +
+                    classRowsHtml +
+                  '</div>' +
+                '</div>' +
+
+                // BOTTOM: Footer
+                '<div class="flex items-center justify-between pt-3.5 mt-3.5 relative z-10" style="border-top: 1px solid rgba(226,232,240,0.6);">' +
+                  '<div class="flex items-center gap-1.5">' +
+                    '<svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline stroke-linecap="round" points="12,6 12,12 16,14"/></svg>' +
+                    '<span class="font-serif italic text-xs text-amber-700 font-medium">' + item.timeText + '</span>' +
+                  '</div>' +
+                  '<span class="text-[11px] text-slate-400 font-medium tracking-wide">MA Margajaya</span>' +
+                '</div>' +
+
+              '</div>';
+          }
+
+          // ─── 7. GOOGLE CALENDAR API PARSER & SYNC ─────────────────────────
+          function syncGoogleCalendar() {
+            generateDailyList();
+            renderStatusBanner();
+            renderTodayHeroCard();
+
+            if (!googleCalId || !googleCalApiKey) return;
+
+            var now = new Date();
+            var pastYear = new Date(now.getFullYear() - 1, 0, 1).toISOString();
+            var futureYear = new Date(now.getFullYear() + 2, 11, 31).toISOString();
+            var url = 'https://www.googleapis.com/calendar/v3/calendars/' + encodeURIComponent(googleCalId) + 
+                      '/events?key=' + encodeURIComponent(googleCalApiKey) + 
+                      '&timeMin=' + pastYear + 
+                      '&timeMax=' + futureYear + 
+                      '&singleEvents=true&orderBy=startTime';
+
+            fetch(url)
+              .then(function(res) { 
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                return res.json(); 
+              })
+              .then(function(data) {
+                if (data && data.items && data.items.length > 0) {
+                  var gEvents = [];
+                  var scheduleMap = {};
+
+                  data.items.forEach(function(item, idx) {
+                    var isTimed = item.start.dateTime && item.end.dateTime;
+                    var startStr = item.start.date || (item.start.dateTime ? item.start.dateTime.split('T')[0] : '');
+                    var endStr = item.end.date || (item.end.dateTime ? item.end.dateTime.split('T')[0] : null);
+
+                    var summary = item.summary || 'Kegiatan Madrasah';
+                    var isHoliday = /libur|hari raya|cuti|wafat|kenaikan|natal|nyepi|imlek|kemerdekaan/i.test(summary);
+
+                    if (isTimed) {
+                      var sTime = item.start.dateTime.split('T')[1].substring(0, 5);
+                      var eTime = item.end.dateTime.split('T')[1].substring(0, 5);
+
+                      var subject = summary;
+                      var teacher = item.description || 'Dewan Guru MA';
+                      if (summary.indexOf('-') > 0) {
+                        var parts = summary.split('-');
+                        subject = parts[0].trim();
+                        teacher = parts.slice(1).join('-').trim();
+                      } else if (summary.indexOf(':') > 0) {
+                        var p2 = summary.split(':');
+                        subject = p2[0].trim();
+                        teacher = p2.slice(1).join(':').trim();
+                      }
+
+                      if (!scheduleMap[startStr]) scheduleMap[startStr] = [];
+                      scheduleMap[startStr].push({
+                        start: sTime,
+                        end: eTime,
+                        subject: subject,
+                        teacher: teacher,
+                        room: item.location || 'Kelas MA'
+                      });
+                    } else {
+                      var sDate = parseDate(startStr);
+                      var isGenap = sDate.getMonth() < 6;
+                      gEvents.push({
+                        id: item.id || String(idx),
+                        start: startStr,
+                        end: endStr,
+                        title: summary,
+                        desc: item.description || 'Agenda resmi kalender MA Margajaya',
+                        semester: isGenap ? 'genap' : 'gasal',
+                        isHoliday: isHoliday,
+                        category: isHoliday ? 'Libur Nasional' : 'Agenda Google Calendar'
+                      });
+                    }
+                  });
+
+                  if (Object.keys(scheduleMap).length > 0) {
+                    customGoogleScheduleMap = scheduleMap;
+                  }
+
+                  if (gEvents.length > 0) {
+                    activeEvents = gEvents;
+                  }
+
+                  generateDailyList();
+                  renderStatusBanner();
+                  renderTodayHeroCard();
+                }
+              })
+              .catch(function(err) {
+                console.warn('Google Calendar sync notice (using standard timetable & Kaldik data):', err);
+              });
+          }
+
+          // ─── 9. LIVE CLOCK & AUTO-SWITCHER TIMER ──────────────────────────
+          function startLiveClockAndSwitcher() {
+            function tick() {
+              var clockEl = document.getElementById('live-clock-kaldik');
+              var now = new Date();
+              var h = String(now.getHours()).padStart(2, '0');
+              var m = String(now.getMinutes()).padStart(2, '0');
+              var s = String(now.getSeconds()).padStart(2, '0');
+              if (clockEl) {
+                clockEl.textContent = 'WIB ' + h + ':' + m + ':' + s;
+              }
+
+              // Re-check live active lesson every 10 seconds
+              if (now.getSeconds() % 10 === 0) {
+                renderStatusBanner();
+                renderTodayHeroCard();
+              }
+            }
+
+            tick();
+            setInterval(tick, 1000);
+          }
+
+          // ─── 10. INITIALIZATION ───────────────────────────────────────────
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+              syncGoogleCalendar();
+              startLiveClockAndSwitcher();
+            });
+          } else {
+            syncGoogleCalendar();
+            startLiveClockAndSwitcher();
+          }
+
+        })();
+      </script>
+
+      <!-- 1. INTRO EDITORIAL BANNER (Centered & Balanced Layout) -->
+      <div class="mb-24" data-motion-visual>
+        <div class="p-8 sm:p-14 lg:p-16 rounded-3xl bg-gradient-to-br from-[#06281D] via-[#075B2A] to-[#043317] text-white shadow-2xl pure-glow-card pure-glow-gold relative overflow-hidden text-center max-w-5xl mx-auto">
+          <!-- Ambient Radial Glow -->
+          <div class="absolute inset-0 bg-radial from-gold/15 via-emerald-500/10 to-transparent blur-3xl pointer-events-none"></div>
+
+          <div class="relative z-10 space-y-6 max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold uppercase tracking-[0.25em] text-gold-soft mx-auto">
+              Kurikulum Terpadu 2026
+            </div>
+
+            <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-normal leading-[1.15] text-white">
+              Sinergi Sains Modern &amp; <span class="text-gold font-bold text-shimmer-gold">Tradisi Diniyah Pesantren</span>
+            </h2>
+
+            <p class="text-white/80 text-sm sm:text-base leading-relaxed font-light mx-auto max-w-2xl">
+              MA Margajaya memadukan standar capaian Kurikulum Merdeka Kemendikbudristek dan Kemenag RI dengan kedalaman kajian keislaman khas Pondok Pesantren Darul Muawanah Sukadana-Ciamis.
+            </p>
+
+            <!-- Centered 4 Brutal Luxury Glassmorphism Metric Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 pt-8 border-t border-white/15">
+              
+              <!-- Card 1: Kurikulum -->
+              <div class="brutal-glass-card p-5 sm:p-6 text-center group cursor-default">
+                <span class="inline-block px-3 py-1 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-soft mb-2.5 shadow-sm">
+                  Kurikulum
+                </span>
+                <div class="font-serif text-xl sm:text-2xl lg:text-[22px] xl:text-2xl font-bold text-white group-hover:text-gold transition-colors duration-300 tracking-tight leading-tight">
+                  Merdeka
+                </div>
+                <div class="text-[11px] text-white/70 font-light mt-1.5 tracking-wide">
+                  Kemendikbud &amp; Kemenag
+                </div>
+              </div>
+
+              <!-- Card 2: Karakter -->
+              <div class="brutal-glass-card p-5 sm:p-6 text-center group cursor-default">
+                <span class="inline-block px-3 py-1 rounded-full bg-emerald-400/15 border border-emerald-400/30 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300 mb-2.5 shadow-sm">
+                  Karakter
+                </span>
+                <div class="font-serif text-xl sm:text-2xl lg:text-[22px] xl:text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors duration-300 tracking-tight leading-tight">
+                  Pesantren
+                </div>
+                <div class="text-[11px] text-white/70 font-light mt-1.5 tracking-wide">
+                  Darul Muawanah
+                </div>
+              </div>
+
+              <!-- Card 3: Jurusan -->
+              <div class="brutal-glass-card p-5 sm:p-6 text-center group cursor-default">
+                <span class="inline-block px-3 py-1 rounded-full bg-cyan-400/15 border border-cyan-400/30 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300 mb-2.5 shadow-sm">
+                  Jurusan
+                </span>
+                <div class="font-serif text-xl sm:text-2xl lg:text-[22px] xl:text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors duration-300 tracking-tight leading-tight">
+                  IPS &amp; PAI
+                </div>
+                <div class="text-[11px] text-white/70 font-light mt-1.5 tracking-wide">
+                  Sosial Humaniora
+                </div>
+              </div>
+
+              <!-- Card 4: Status -->
+              <div class="brutal-glass-card p-5 sm:p-6 text-center group cursor-default">
+                <span class="inline-block px-3 py-1 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-2.5 shadow-sm">
+                  Status
+                </span>
+                <div class="font-serif text-[19px] sm:text-2xl lg:text-[20px] xl:text-[22px] font-bold text-white group-hover:text-gold transition-colors duration-300 tracking-tight leading-tight whitespace-nowrap">
+                  Terakreditasi
+                </div>
+                <div class="text-[11px] text-white/70 font-light mt-1.5 tracking-wide">
+                  Kemenag Kab. Ciamis
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. PILAR UTAMA KURIKULUM (4 Pure Color Glow Cards - Centered) -->
+      <div class="mb-24 scroll-mt-28" id="pilar-akademik" data-motion-title>
+        <div class="text-center max-w-3xl mx-auto mb-14">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+            Pilar Pendidikan Unggulan
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em]">
+            Program Akademik <em class="italic text-gold text-shimmer-gold">Terpadu.</em>
+          </h2>
+          <p class="text-ink-soft text-base mt-3 leading-relaxed">
+            Empat pilar pembelajaran dirancang sistematis untuk melahirkan santri cendekia yang tangguh akal, kokoh iman, dan kaya keterampilan.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+          {programs.map((prog, idx) => (
+            <div 
+              class={`p-8 sm:p-10 rounded-2xl bg-paper/90 backdrop-blur-sm pure-glow-card ${
+                idx % 2 === 0 ? 'pure-glow-emerald' : 'pure-glow-gold'
+              } flex flex-col justify-between shadow-sm cursor-default group text-left`}
+              data-motion-item
+            >
+              <div>
+                <div class="flex items-center justify-between mb-6">
+                  <div class="font-serif text-6xl font-light text-gold/60 group-hover:text-gold group-hover:scale-105 transition-all duration-300 leading-none origin-left">
+                    {prog.num}
+                  </div>
+                  <span class="px-3 py-1 rounded-full bg-white text-ink-muted border border-hair text-[11px] font-bold tracking-wider uppercase">
+                    Pilar 0{idx + 1}
+                  </span>
+                </div>
+                <h3 class="font-serif text-2xl font-bold text-blue-ink mb-3 group-hover:text-blue transition-colors">
+                  {prog.title}
+                </h3>
+                <p class="text-ink-soft text-sm sm:text-base leading-relaxed font-light">
+                  {prog.description}
+                </p>
+              </div>
+              <div class="pt-6 mt-6 border-t border-hair flex items-center justify-between text-xs font-bold text-blue">
+                <span class="uppercase tracking-widest text-[11px] text-ink-muted">Metode Pembelajaran Terpadu</span>
+                <span class="text-gold group-hover:translate-x-1 transition-transform">&rarr;</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 3. STRUKTUR MATA PELAJARAN (Centered Unified Grid - 15 Mata Pelajaran Terpadu) -->
+      <div class="mb-24 scroll-mt-28" data-motion-section id="struktur-mapel">
+        <div class="text-center max-w-3xl mx-auto mb-14" data-motion-title>
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue/10 border border-blue/20 text-blue text-xs font-bold uppercase tracking-[0.25em] mb-4">
+            Struktur Mata Pelajaran
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em]">
+            Kurikulum Terpadu <em class="italic text-gold text-shimmer-gold">Nasional &amp; Madrasah.</em>
+          </h2>
+          <p class="text-ink-soft text-base mt-3 leading-relaxed">
+            Struktur 15 mata pelajaran terintegrasi meliputi rumpun Sains, Sosial IPS, Bahasa, Literasi Digital, dan Pendalaman Diniyah Pesantren.
+          </p>
+
+          <!-- Filter Categories Pills (Centered) -->
+          <div class="flex flex-wrap items-center justify-center gap-2 mt-8" id="mapel-filters">
+            <button 
+              type="button" 
+              data-filter="all"
+              class="mapel-filter-btn active px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-emerald-800 text-white shadow-sm"
+            >
+              Semua ({semuaMapel.length})
+            </button>
+            <button 
+              type="button" 
+              data-filter="Keagamaan & Diniyah"
+              class="mapel-filter-btn px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-gray-100 text-ink-soft hover:bg-emerald-50 hover:text-emerald-800"
+            >
+              PAI &amp; Diniyah
+            </button>
+            <button 
+              type="button" 
+              data-filter="Sosial IPS"
+              class="mapel-filter-btn px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-gray-100 text-ink-soft hover:bg-emerald-50 hover:text-emerald-800"
+            >
+              Sosial IPS
+            </button>
+            <button 
+              type="button" 
+              data-filter="Sains & Logika"
+              class="mapel-filter-btn px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-gray-100 text-ink-soft hover:bg-emerald-50 hover:text-emerald-800"
+            >
+              Sains &amp; TIK
+            </button>
+            <button 
+              type="button" 
+              data-filter="Umum & Bahasa"
+              class="mapel-filter-btn px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-gray-100 text-ink-soft hover:bg-emerald-50 hover:text-emerald-800"
+            >
+              Bahasa &amp; Literasi
+            </button>
+          </div>
+        </div>
+
+        <!-- Unified Centered Cards Grid (3 Columns) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto" id="mapel-grid">
+          {semuaMapel.map((item) => (
+            <div 
+              class="p-6 rounded-2xl bg-paper/90 border border-hair-strong hover:border-gold/60 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group mapel-card text-left"
+              data-category={item.kategori}
+              data-motion-item
+            >
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class={`inline-block px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                    item.kategori === 'Keagamaan & Diniyah' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
+                    item.kategori === 'Sosial IPS' ? 'bg-amber-50 text-amber-800 border border-amber-200' :
+                    item.kategori === 'Sains & Logika' ? 'bg-cyan-50 text-cyan-800 border border-cyan-200' :
+                    'bg-blue-50 text-blue border border-blue-100'
+                  }`}>
+                    {item.kategori}
+                  </span>
+                  <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-100 font-mono">
+                    {item.alokasi}
+                  </span>
+                </div>
+
+                <h4 class="font-serif text-xl font-bold text-blue-ink group-hover:text-blue transition-colors mb-2">
+                  {item.name}
+                </h4>
+
+                <p class="text-xs sm:text-[13px] text-ink-muted leading-relaxed font-light">
+                  {item.desc}
+                </p>
+              </div>
+
+              <div class="pt-4 mt-4 border-t border-hair flex items-center justify-between text-[11px] text-ink-soft">
+                <span>Kurikulum Merdeka</span>
+                <span class="text-gold font-semibold">&check; Terpadu</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <script is:inline>
+        document.addEventListener('DOMContentLoaded', function() {
+          var buttons = document.querySelectorAll('#mapel-filters .mapel-filter-btn');
+          var cards = document.querySelectorAll('#mapel-grid .mapel-card');
+          if (!buttons.length || !cards.length) return;
+
+          buttons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var filter = btn.getAttribute('data-filter');
+
+              buttons.forEach(function(b) {
+                b.classList.remove('bg-emerald-800', 'text-white', 'shadow-sm');
+                b.classList.add('bg-gray-100', 'text-ink-soft');
+              });
+              btn.classList.add('bg-emerald-800', 'text-white', 'shadow-sm');
+              btn.classList.remove('bg-gray-100', 'text-ink-soft');
+
+              cards.forEach(function(card) {
+                var cat = card.getAttribute('data-category');
+                if (filter === 'all' || cat === filter) {
+                  card.style.display = 'flex';
+                  card.style.opacity = '0';
+                  setTimeout(function() {
+                    card.style.opacity = '1';
+                  }, 30);
+                } else {
+                  card.style.display = 'none';
+                }
+              });
+            });
+          });
+        });
+      </script>
+
+      <!-- 4. P5-PPRA PROJECT SHOWCASE (Centered Layout) -->
+      <div class="mb-24 scroll-mt-28" id="p5-ppra" data-motion-section>
+        <div class="p-8 sm:p-14 rounded-3xl bg-paper-warm/70 border border-hair-strong pure-glow-card pure-glow-emerald shadow-sm max-w-6xl mx-auto">
+          <div class="max-w-2xl mx-auto text-center mb-12" data-motion-title>
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-900 text-xs font-bold uppercase tracking-wider mb-3">
+              Projek Penguatan Karakter
+            </div>
+            <h3 class="font-serif text-3xl sm:text-4xl font-bold text-blue-ink">
+              Tema Unggulan P5-PPRA Madrasah
+            </h3>
+            <p class="text-xs sm:text-sm text-ink-muted mt-2 leading-relaxed">
+              Projek Penguatan Profil Pelajar Pancasila &amp; Profil Pelajar Rahmatan Lil 'Alamin di MA Margajaya
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {temaP5.map((p5) => (
+              <div 
+                class="p-6 rounded-2xl bg-white shadow-sm border border-hair hover:border-gold/60 hover:shadow-md transition-all duration-300 flex flex-col justify-between group cursor-default text-center"
+                data-motion-item
+              >
+                <div class="flex flex-col items-center">
+                  <!-- Centered SVG Icon Container -->
+                  <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-emerald-100 transition-all duration-300 shadow-sm mx-auto">
+                    {p5.iconType === 'leaf' && (
+                      <svg class="w-6 h-6 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2C6.477 2 2 6.477 2 12c0 3.314 1.686 6.236 4.264 7.965C7.382 17.65 9.513 16 12 16c2.487 0 4.618 1.65 5.736 3.965C20.314 18.236 22 15.314 22 12c0-5.523-4.477-10-10-10z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2v14"></path>
+                      </svg>
+                    )}
+                    {p5.iconType === 'briefcase' && (
+                      <svg class="w-6 h-6 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                      </svg>
+                    )}
+                    {p5.iconType === 'landmark' && (
+                      <svg class="w-6 h-6 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+                      </svg>
+                    )}
+                    {p5.iconType === 'heart-handshake' && (
+                      <svg class="w-6 h-6 text-emerald-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                      </svg>
+                    )}
+                  </div>
+
+                  <span class="inline-block text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-100 mb-2">
+                    {p5.tema}
+                  </span>
+                  <h4 class="font-serif text-lg font-bold text-blue-ink mb-2 group-hover:text-blue transition-colors">
+                    {p5.projek}
+                  </h4>
+                  <p class="text-xs text-ink-muted leading-relaxed font-light">
+                    {p5.desc}
+                  </p>
+                </div>
+                <div class="pt-4 mt-4 border-t border-hair flex items-center justify-between text-[11px] text-ink-soft w-full">
+                  <span>Aksi Nyata</span>
+                  <span class="text-gold font-bold">&check; Berkelanjutan</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. RITME & JADWAL HARIAN SANTRI TERPADU (Centered) -->
+      <div class="mb-24 scroll-mt-28" id="jadwal-harian" data-motion-section>
+        <div class="text-center max-w-3xl mx-auto mb-14" data-motion-title>
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+            Ritme Keseharian Belajar
+          </div>
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em]">
+            Jadwal Terpadu <em class="italic text-gold text-shimmer-gold">Madrasah &amp; Pesantren.</em>
+          </h2>
+          <p class="text-ink-soft text-base mt-3 leading-relaxed">
+            Keseimbangan ritme harian antara pengembangan intelektual sains formal di madrasah dengan pembiasaan spiritual dan adab di pesantren.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {jadwalHarian.map((item, idx) => (
+            <div 
+              class="p-6 rounded-2xl bg-paper/90 border border-hair-strong hover:border-gold/50 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group text-left"
+              data-motion-item
+            >
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold text-gold font-mono tracking-wider">
+                    {item.waktu}
+                  </span>
+                  <span class={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                    item.tag === 'Pesantren' ? 'bg-emerald-100 text-emerald-800' :
+                    item.tag === 'Formal' ? 'bg-blue-50 text-blue' :
+                    item.tag === 'Ekstrakurikuler' ? 'bg-amber-100 text-amber-900' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {item.tag}
+                  </span>
+                </div>
+                <h4 class="font-serif text-xl font-bold text-blue-ink mb-2 group-hover:text-blue transition-colors">
+                  {item.fase}
+                </h4>
+                <p class="text-xs sm:text-sm text-ink-muted leading-relaxed font-light">
+                  {item.kegiatan}
+                </p>
+              </div>
+              <div class="pt-4 mt-4 border-t border-hair flex items-center justify-between text-[11px] text-ink-soft">
+                <span>Sesi 0{idx + 1}</span>
+                <span class="text-gold font-semibold">&check; Terjadwal</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+
+      <!-- 7. STANDAR KOMPETENSI KELULUSAN (Centered 4 Pillars Highlight) -->
+      <div class="mb-20 scroll-mt-28" id="standar-lulusan" data-motion-section>
+        <div class="p-8 sm:p-14 rounded-3xl bg-gradient-to-br from-[#06281D] via-[#075B2A] to-[#043317] text-white shadow-2xl pure-glow-card pure-glow-gold relative overflow-hidden max-w-6xl mx-auto text-center">
+          
+          <div class="relative z-10 max-w-4xl mx-auto space-y-8">
+            <div>
+              <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold uppercase tracking-[0.25em] text-gold-soft mb-4 mx-auto">
+                Output &amp; Capaian Kelulusan
+              </div>
+              <h3 class="font-serif text-3xl sm:text-4xl md:text-5xl font-normal text-white">
+                Standar Kompetensi <span class="text-gold font-bold text-shimmer-gold">Alumni MA Margajaya</span>
+              </h3>
+              <p class="text-white/80 text-sm sm:text-base leading-relaxed mt-3 font-light max-w-2xl mx-auto">
+                Setiap lulusan dibekali empat pilar kompetensi utama yang menjamin kesiapan melanjutkan ke perguruan tinggi unggulan, pesantren luhur, maupun berkiprah di masyarakat.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 text-left">
+              {standarLulusan.map((std) => (
+                <div class="p-6 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-sm space-y-2 hover:bg-white/15 transition-colors">
+                  <div class="flex items-center gap-3">
+                    <span class="font-serif text-2xl font-bold text-gold">{std.num}</span>
+                    <h4 class="font-serif text-lg font-bold text-white">{std.title}</h4>
+                  </div>
+                  <p class="text-xs text-white/75 leading-relaxed font-light pl-7">
+                    {std.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. EDITORIAL CONCLUSION & ACTION (Right-Aligned Luxury Action) -->
+      <div class="mb-12" data-motion-visual>
+        <div class="p-8 sm:p-12 lg:p-14 rounded-3xl bg-gradient-to-r from-emerald-950 via-[#075B2A] to-slate-950 text-white shadow-2xl pure-glow-card pure-glow-gold flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 max-w-6xl mx-auto border border-white/15 relative overflow-hidden text-left">
+          
+          <!-- Subtle Glow Flare -->
+          <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-gold/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="space-y-3 max-w-xl text-left">
+            <span class="inline-block px-3 py-1 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-soft">
+              Penerimaan Santri Baru
+            </span>
+            <div class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-snug">
+              Siap Bertumbuh Bersama MA Margajaya?
+            </div>
+            <p class="text-white/80 text-sm sm:text-base leading-relaxed font-light">
+              Penerimaan Santri &amp; Siswa Baru (PPDB) telah dibuka. Bergabunglah dalam lingkungan pendidikan islami yang unggul, berakhlak, dan berdaya saing global.
+            </p>
+          </div>
+
+          <!-- Buttons Group - Right Aligned with Luxury Effects -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 lg:ml-auto shrink-0 w-full sm:w-auto">
+            <a 
+              href="/ppdb" 
+              class="glow-button inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-gradient-to-r from-gold via-amber-400 to-gold text-blue-deep font-bold text-xs uppercase tracking-widest shadow-xl shadow-gold/25 hover:shadow-[0_0_30px_rgba(232,185,35,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-gold-soft/60"
+            >
+              <span>Daftar PPDB Sekarang</span>
+              <span class="text-sm font-bold">&rarr;</span>
+            </a>
+            <a 
+              href="/kontak" 
+              class="brutal-glass-card inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-white hover:text-gold font-semibold text-xs uppercase tracking-widest transition-all duration-300"
+            >
+              <span>Konsultasi Akademik</span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+    </Container>
+  </section>
+</PageLayout>
+
+<script>
+  import '../scripts/beranda-motion';
+</script>

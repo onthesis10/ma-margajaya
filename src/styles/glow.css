@@ -1,0 +1,289 @@
+/* ==========================================================================
+   Glowing & Cursor-Proximity Micro-Interactions
+   ========================================================================== */
+
+/* 1. Global Ambient Cursor Glow Follower */
+.ambient-cursor-glow {
+  position: fixed;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    circle,
+    rgba(8, 122, 53, 0.12) 0%,
+    rgba(232, 185, 35, 0.08) 40%,
+    transparent 70%
+  );
+  filter: blur(60px);
+  transform: translate(-50%, -50%);
+  transition: opacity 0.4s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+@media (max-width: 768px) {
+  .ambient-cursor-glow {
+    display: none !important;
+  }
+}
+
+/* 2. Interactive Spotlight & Glowing Cards */
+.glow-card {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --glow-opacity: 0;
+  --glow-color: rgba(8, 122, 53, 0.14);
+  --glow-border-color: rgba(8, 122, 53, 0.35);
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+  will-change: transform;
+}
+
+.glow-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    450px circle at var(--mouse-x) var(--mouse-y),
+    var(--glow-color),
+    transparent 65%
+  );
+  opacity: var(--glow-opacity);
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 2;
+}
+
+.glow-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    320px circle at var(--mouse-x) var(--mouse-y),
+    var(--glow-border-color),
+    transparent 70%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: var(--glow-opacity);
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 3;
+}
+
+/* Color variations for glow cards */
+.glow-card-gold {
+  --glow-color: rgba(232, 185, 35, 0.18);
+  --glow-border-color: rgba(232, 185, 35, 0.55);
+}
+
+.glow-card-emerald {
+  --glow-color: rgba(8, 122, 53, 0.16);
+  --glow-border-color: rgba(16, 185, 129, 0.5);
+}
+
+.glow-card-dark {
+  --glow-color: rgba(232, 185, 35, 0.14);
+  --glow-border-color: rgba(242, 202, 76, 0.45);
+}
+
+.glow-card-cyan {
+  --glow-color: rgba(6, 182, 212, 0.16);
+  --glow-border-color: rgba(34, 211, 238, 0.5);
+}
+
+/* 3. Soft Glowing Elevation on Hover */
+.glow-hover-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -15px rgba(8, 122, 53, 0.18), 0 0 25px -5px rgba(232, 185, 35, 0.12);
+}
+
+.glow-hover-lift-dark:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.5), 0 0 35px -5px rgba(232, 185, 35, 0.22);
+}
+
+/* 4. Glowing Pill / Badge Pulsing */
+@keyframes soft-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(8, 122, 53, 0.4), 0 0 15px 2px rgba(8, 122, 53, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(8, 122, 53, 0), 0 0 25px 6px rgba(232, 185, 35, 0.35);
+  }
+}
+
+.pulse-glow {
+  animation: soft-pulse-glow 3s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* 5. Glowing Interactive Button */
+.glow-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glow-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    transparent 60%
+  );
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.glow-button:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.glow-button:hover {
+  box-shadow: 0 10px 25px -5px rgba(8, 122, 53, 0.35), 0 0 20px 0 rgba(232, 185, 35, 0.3);
+  transform: translateY(-2px);
+}
+
+/* 6. Text Shimmer Glow */
+@keyframes text-glow-shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.text-shimmer-gold {
+  background: linear-gradient(
+    90deg,
+    #E8B923 0%,
+    #FFF6D1 50%,
+    #E8B923 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-glow-shimmer 6s ease-in-out infinite;
+}
+
+/* 7. Image Glow & Tilt Container */
+.tilt-card-wrapper {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.tilt-card-inner {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* ==========================================================================
+   8. Pure Color Glow Cards (NO BORDER LINES, PURE COLOR GLOW ONLY)
+   ========================================================================== */
+.pure-glow-card {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --glow-opacity: 0;
+  --color-bloom: rgba(8, 122, 53, 0.15);
+  --shadow-bloom: rgba(8, 122, 53, 0.2);
+  position: relative;
+  border: none !important;
+  outline: none !important;
+  background-clip: padding-box;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.pure-glow-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    520px circle at var(--mouse-x) var(--mouse-y),
+    var(--color-bloom),
+    transparent 70%
+  );
+  opacity: var(--glow-opacity);
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+/* Color variations for pure-glow-card */
+.pure-glow-emerald {
+  --color-bloom: rgba(8, 122, 53, 0.18);
+  --shadow-bloom: rgba(8, 122, 53, 0.22);
+}
+
+.pure-glow-emerald:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 24px 48px -16px var(--shadow-bloom), 0 0 35px 0 rgba(8, 122, 53, 0.12);
+}
+
+.pure-glow-gold {
+  --color-bloom: rgba(232, 185, 35, 0.22);
+  --shadow-bloom: rgba(232, 185, 35, 0.3);
+}
+
+.pure-glow-gold:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 24px 48px -16px var(--shadow-bloom), 0 0 40px 0 rgba(232, 185, 35, 0.16);
+}
+
+.pure-glow-dark {
+  --color-bloom: rgba(232, 185, 35, 0.2);
+  --shadow-bloom: rgba(0, 0, 0, 0.6);
+}
+
+.pure-glow-dark:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 28px 56px -16px rgba(0, 0, 0, 0.55), 0 0 45px 0 rgba(232, 185, 35, 0.25);
+}
+
+.pure-glow-cyan {
+  --color-bloom: rgba(6, 182, 212, 0.2);
+  --shadow-bloom: rgba(6, 182, 212, 0.25);
+}
+
+.pure-glow-cyan:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 24px 48px -16px var(--shadow-bloom), 0 0 35px 0 rgba(6, 182, 212, 0.15);
+}
+
+/* Ambient Floating Glow Blobs */
+.glow-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.65;
+  animation: float-glow 10s ease-in-out infinite alternate;
+}
+
+@keyframes float-glow {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(30px, -25px) scale(1.08);
+  }
+}
+

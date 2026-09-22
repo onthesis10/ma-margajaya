@@ -1,0 +1,131 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Container from '../components/ui/Container.astro';
+import { facilities } from '../data/facilities';
+
+const breadcrumbs = [{ label: "Fasilitas", href: "/fasilitas" }];
+---
+
+<PageLayout 
+  title="Fasilitas Madrasah" 
+  description="Sarana dan prasarana penunjang pembelajaran representatif terintegrasi di Kompleks Pondok Pesantren Darul Muawanah Sukadana."
+  breadcrumbs={breadcrumbs}
+>
+  <section class="py-16 md:py-24 bg-white relative overflow-hidden" data-motion-section>
+    
+    <!-- Ambient Background Blobs -->
+    <div class="glow-blob w-[500px] h-[500px] bg-emerald-500/8 -top-32 -left-32 pointer-events-none"></div>
+    <div class="glow-blob w-[600px] h-[600px] bg-gold/10 top-1/3 -right-40 pointer-events-none" style="animation-delay:-4s"></div>
+    <div class="glow-blob w-[550px] h-[550px] bg-cyan-400/8 -bottom-40 left-1/4 pointer-events-none" style="animation-delay:-2s"></div>
+
+    <Container>
+
+      <!-- ══ HEADER EDITORIAL (Identik dengan Kesiswaan) ══ -->
+      <div class="text-center max-w-3xl mx-auto mb-14" data-motion-title>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-[0.25em] mb-4">
+          Sarana &amp; Prasarana
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em]">
+          Fasilitas &amp; <em class="italic text-gold text-shimmer-gold">Lingkungan Belajar.</em>
+        </h1>
+        <p class="text-ink-soft text-base mt-3 leading-relaxed">
+          Eksplorasi setiap sarana pendukung pembelajaran santri MA Margajaya di Kompleks Ponpes Darul Muawanah — geser atau drag ke samping untuk menjelajah seluruh fasilitas.
+        </p>
+      </div>
+
+    </Container>
+
+    <!-- ══ EDITORIAL HORIZONTAL GALLERY SHOWCASE (Persis 1:1 Kesiswaan) ══ -->
+    <div class="w-full bg-white relative mb-12">
+
+      <!-- Horizontal Scrollable Track Container -->
+      <div 
+        id="fasilitas-gallery-track" 
+        class="w-full overflow-x-auto select-none cursor-grab active:cursor-grabbing border-t border-b border-neutral-200/90 bg-white scroll-smooth"
+        style="scrollbar-width: none; -ms-overflow-style: none;"
+      >
+        <div class="flex items-end min-w-max">
+          {facilities.map((item) => (
+            <div class="w-[290px] sm:w-[330px] md:w-[360px] lg:w-[390px] border-r border-neutral-200/90 px-5 sm:px-7 pt-12 pb-10 flex flex-col justify-end shrink-0 transition-colors duration-300 hover:bg-neutral-50/60 group/column">
+              
+              <!-- Clean Name Header -->
+              <div class="mb-3">
+                <span class="text-xs sm:text-[13px] font-sans font-medium text-neutral-800 tracking-tight">
+                  {item.title}
+                </span>
+              </div>
+
+              <!-- Rounded Image Card with Distinct Staggered Height -->
+              <div 
+                class={`relative w-full ${item.heightClass} rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-sm group hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 ease-out bg-neutral-900`}
+              >
+                <!-- Background Image -->
+                <img 
+                  src={item.image} 
+                  alt={item.title} 
+                  loading="lazy" 
+                  class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out pointer-events-none"
+                />
+
+                <!-- Smooth Hover Gradient Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out flex flex-col justify-end p-6 text-white">
+                  <div class="transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                    <h3 class="font-serif text-2xl font-bold text-white leading-tight mb-1">
+                      {item.title}
+                    </h3>
+                    <p class="text-xs text-white/70 line-clamp-1 mb-2 font-medium">
+                      {item.subtitle}
+                    </p>
+                    <p class="text-xs text-white/90 line-clamp-3 leading-relaxed font-light">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+</PageLayout>
+
+<script>
+  import '../scripts/beranda-motion';
+
+  // Smooth Horizontal Gallery Drag
+  const track = document.getElementById('fasilitas-gallery-track');
+
+  if (track) {
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    track.addEventListener('mousedown', (e) => {
+      isDown = true;
+      track.classList.add('cursor-grabbing');
+      track.classList.remove('cursor-grab', 'scroll-smooth');
+      startX = e.pageX - track.offsetLeft;
+      scrollLeft = track.scrollLeft;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!isDown) return;
+      isDown = false;
+      track.classList.remove('cursor-grabbing');
+      track.classList.add('cursor-grab', 'scroll-smooth');
+    });
+
+    track.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - track.offsetLeft;
+      const walk = (x - startX) * 1.5; // Drag sensitivity
+      track.scrollLeft = scrollLeft - walk;
+    });
+  }
+</script>

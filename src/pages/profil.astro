@@ -1,0 +1,645 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Container from '../components/ui/Container.astro';
+import { schoolConfig } from '../config/school.config';
+import { leadershipData, teachersData } from '../data/teachers';
+
+const breadcrumbs = [{ label: "Profil Madrasah", href: "/profil" }];
+
+const identitasItems = [
+  { label: "Nama Resmi", value: schoolConfig.name, sub: "Madrasah Aliyah Berbasis Pesantren", icon: "school", color: "gold" },
+  { label: "Nama Populer", value: `${schoolConfig.shortName} Sukadana`, sub: "Kompleks Ponpes Darul Muawanah", icon: "sparkle", color: "emerald" },
+  { label: "Kepala Madrasah", value: schoolConfig.principal, sub: "Periode Aktif Pengabdian", icon: "user", color: "gold" },
+  { label: "Naungan Lembaga", value: "Kementerian Agama Kab. Ciamis", sub: "Yayasan MPP PUI Ciamis", icon: "building", color: "emerald" },
+  { label: "Status Akreditasi", value: "Terakreditasi Baik", sub: "Kurikulum Merdeka & Kemenag", icon: "badge", color: "cyan" },
+  { label: "Kampus & Pesantren", value: "Dusun Jontor RT 01/04, Margajaya", sub: "Sukadana · Ciamis, Jawa Barat", icon: "pin", color: "emerald" },
+];
+
+const misiItems = [
+  {
+    num: "01",
+    title: "Pendidikan Holistik Terpadu",
+    desc: "Menyelenggarakan pembelajaran integratif antara kurikulum sains umum nasional dengan pendalaman kitab kuning dan kajian keislaman khas Pondok Pesantren Darul Muawanah.",
+    color: "emerald"
+  },
+  {
+    num: "02",
+    title: "Karakter & Akhlakul Karimah",
+    desc: "Membina adab santri, kedisiplinan spiritual, kemandirian hidup, serta jiwa kepemimpinan yang tangguh dan berakar pada nilai-nilai kepesantrenan.",
+    color: "gold"
+  },
+  {
+    num: "03",
+    title: "Eksplorasi Sains & Prestasi",
+    desc: "Mengembangkan potensi talenta akademik dan non-akademik siswa melalui bimbingan intensif olimpiade sains, riset ilmiah remaja, seni hadrah, dan keolahragaan.",
+    color: "cyan"
+  },
+  {
+    num: "04",
+    title: "Lingkungan Edukasi Asri",
+    desc: "Mewujudkan tata ruang belajar yang hijau, nyaman, religius, serta ramah bagi pembentukan karakter dan konsentrasi belajar para siswa santri.",
+    color: "emerald"
+  },
+  {
+    num: "05",
+    title: "Sinergi Umat & Kemitraan",
+    desc: "Mempererat kolaborasi strategis dengan KUA Sukadana, pesantren mitra, instansi pemerintah, dunia usaha, dan jejaring alumni berdaya saing.",
+    color: "gold"
+  }
+];
+
+const coreValues = [
+  { title: "Religius", desc: "Berlandaskan tauhid dan istiqamah ibadah", icon: "✨" },
+  { title: "Beradab", desc: "Mengutamakan akhlak mulia dan tawadhu", icon: "🌿" },
+  { title: "Intelektual", desc: "Kritis, inovatif, dan berwawasan luas", icon: "💡" },
+  { title: "Mandiri", desc: "Tangguh, disiplin, dan cakap bertindak", icon: "⚡" },
+  { title: "Bermanfaat", desc: "Menebar kemaslahatan bagi umat & bangsa", icon: "🌟" }
+];
+
+const milestones = [
+  {
+    era: "Fase Pendirian",
+    title: "Cita-cita Mulia Pendidikan Islam",
+    desc: "Didirikan di bawah naungan Yayasan MPP Persatuan Ummat Islam (PUI) Ciamis untuk menjawab kebutuhan pendidikan menengah atas yang berkualitas dan religius bagi putra-putri daerah Sukadana dan sekitarnya."
+  },
+  {
+    era: "Integrasi Pesantren",
+    title: "Sinergi Ponpes Darul Muawanah",
+    desc: "Mengukuhkan basis pendidikan dengan memadukan kurikulum Kemenag dan kultur kepesantrenan, menciptakan ekosistem belajar yang seimbang antara kecerdasan intelektual dan spiritual."
+  },
+  {
+    era: "Transformasi Modern",
+    title: "Generasi Berakhlak & Berprestasi",
+    desc: "Melangkah ke era digital dengan penguatan fasilitas belajar, digitalisasi informasi madrasah, dan pencapaian prestasi siswa di berbagai ajang kompetisi regional dan provinsi."
+  }
+];
+---
+
+<PageLayout 
+  title="Profil Madrasah" 
+  description={`Mengenal lebih dekat visi, misi, identitas, dan sejarah MA Margajaya di Kompleks Pondok Pesantren Darul Muawanah.`}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Main Profil Content Section with Soft Ambient Color Blobs -->
+  <section class="py-16 md:py-24 bg-white relative overflow-hidden" data-motion-section>
+    
+    <!-- Floating Soft Color Glow Blobs in Background (NO BORDER LINES) -->
+    <div class="glow-blob w-[500px] h-[500px] bg-emerald-500/10 -top-32 -left-32"></div>
+    <div class="glow-blob w-[550px] h-[550px] bg-gold/12 top-1/3 -right-40" style="animation-delay: -5s;"></div>
+    <div class="glow-blob w-[600px] h-[600px] bg-cyan-500/10 -bottom-40 left-1/4" style="animation-delay: -3s;"></div>
+
+    <Container>
+      
+      <!-- 1. HERO SHOWCASE PHOTO (Clean Borderless & Transparent Typography Overlay) -->
+      <div class="mb-20" data-motion-visual>
+        <div class="relative rounded-3xl overflow-hidden shadow-2xl group bg-slate-950">
+          <div class="aspect-[16/9] sm:aspect-[21/9] w-full overflow-hidden relative">
+            <img 
+              src="/images/gedung-ma-margajaya.jpg" 
+              alt="Gedung Kampus MA Margajaya" 
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out filter contrast-[1.04] brightness-[1.02]" 
+            />
+            
+            <!-- Smooth Cinematic Transparent Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none"></div>
+
+            <!-- Transparent Floating Typography & Info Overlay -->
+            <div class="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-white z-10">
+              <div class="space-y-1">
+                <div class="mb-1.5">
+                  <span class="text-[11px] font-bold uppercase tracking-[0.25em] text-gold drop-shadow-md">
+                    Kampus Terpadu
+                  </span>
+                </div>
+                <h3 class="font-serif text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white/95 drop-shadow-[0_2px_12px_rgba(0,0,0,0.8)]">
+                  Gedung Kampus MA Margajaya
+                </h3>
+                <p class="text-xs sm:text-sm text-white/75 font-normal tracking-wide drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)] max-w-xl">
+                  Kompleks Pondok Pesantren Darul Muawanah · Sukadana, Ciamis
+                </p>
+              </div>
+
+              <div class="self-start sm:self-end">
+                <span class="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/10 text-white/90 backdrop-blur-sm text-xs font-medium tracking-wider uppercase border border-white/15 drop-shadow">
+                  Pondok &amp; Madrasah
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. IDENTITAS RESMI MADRASAH (6 Pure Color Glow Cards - NO BORDER LINES) -->
+      <div class="mb-24 scroll-mt-28" id="identitas" data-motion-title>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-7 h-[1.5px] bg-gold pulse-glow"></span>
+          <span class="text-xs font-bold uppercase tracking-[0.25em] text-blue">
+            Informasi Institusi
+          </span>
+        </div>
+        
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.1] tracking-[-0.02em] mb-10">
+          Identitas Resmi <em class="italic text-gold text-shimmer-gold">Madrasah.</em>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {identitasItems.map((item) => (
+            <div 
+              class={`p-6 sm:p-8 rounded-2xl bg-paper/90 backdrop-blur-sm pure-glow-card pure-glow-${item.color} flex flex-col justify-between shadow-sm cursor-default`}
+              data-motion-item
+            >
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-[0.2em] text-ink-muted mb-2">
+                  {item.label}
+                </div>
+                <div class="font-serif text-xl sm:text-2xl font-bold text-blue-ink leading-snug mb-1">
+                  {item.value}
+                </div>
+              </div>
+              <div class="pt-4 mt-4 text-xs font-medium text-blue/90">
+                <span>{item.sub}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 3. VISI BESAR MADRASAH (Editorial Spotlight with Gold Aura - NO BORDERS) -->
+      <div class="mb-24 relative scroll-mt-28" id="visi-misi" data-motion-visual>
+        <!-- Soft Golden Ambient Halo -->
+        <div class="absolute inset-0 bg-radial from-gold/20 via-emerald-500/10 to-transparent blur-3xl -z-10"></div>
+        
+        <div class="p-8 sm:p-14 lg:p-16 rounded-3xl bg-gradient-to-br from-[#06281D] via-[#075B2A] to-[#043317] text-white shadow-2xl pure-glow-card pure-glow-gold relative overflow-hidden">
+          
+          <!-- Decorative Arabic Watermark / Pattern -->
+          <div class="absolute -right-12 -bottom-12 opacity-10 text-[200px] font-serif select-none pointer-events-none text-gold leading-none">
+            ۞
+          </div>
+
+          <div class="max-w-3xl relative z-10 space-y-6">
+            <div class="inline-flex items-center px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-xs font-bold uppercase tracking-[0.25em] text-gold-soft">
+              Visi Luhur MA Margajaya
+            </div>
+
+            <h3 class="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[54px] leading-[1.12] tracking-[-0.02em] font-normal text-white">
+              “Mewujudkan Generasi Madrasah yang <span class="text-gold font-bold text-shimmer-gold">Berakhlakul Karimah</span>, Unggul dalam IPTEK, Berwawasan Kebangsaan, dan <span class="text-emerald-300 font-bold">Berdaya Saing Global</span>.”
+            </h3>
+
+            <p class="text-white/80 text-sm sm:text-base leading-relaxed max-w-2xl font-light">
+              Falsafah pendidikan yang mengintegrasikan kecerdasan intelektual, kemuliaan budi pekerti islami, dan ketangguhan karakter santri untuk menjawab tantangan zaman.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. PANCA MISI STRATEGIS (5 Pure Color Glow Cards - NO BORDER LINES) -->
+      <div class="mb-24" data-motion-title>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-7 h-[1.5px] bg-gold pulse-glow"></span>
+          <span class="text-xs font-bold uppercase tracking-[0.25em] text-blue">
+            Pilar Aksi Strategis
+          </span>
+        </div>
+
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.1] tracking-[-0.02em] mb-4">
+          Misi &amp; Komitmen <em class="italic text-blue">Pendidikan.</em>
+        </h2>
+        <p class="text-ink-soft text-base max-w-2xl mb-12">
+          Lima pilar langkah nyata MA Margajaya dalam membimbing seluruh civitas akademika mencapai potensi insan kamil.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {misiItems.map((misi) => (
+            <div 
+              class={`p-8 rounded-2xl bg-paper/90 backdrop-blur-sm pure-glow-card pure-glow-${misi.color} flex flex-col justify-between shadow-sm cursor-default group`}
+              data-motion-item
+            >
+              <div>
+                <div class="font-serif text-6xl sm:text-7xl font-light text-gold/60 group-hover:text-gold group-hover:scale-105 transition-all duration-300 leading-none mb-6 origin-left">
+                  {misi.num}
+                </div>
+                <h4 class="font-serif text-2xl font-bold text-blue-ink mb-3 group-hover:text-blue transition-colors">
+                  {misi.title}
+                </h4>
+                <p class="text-ink-soft text-[14px] leading-relaxed">
+                  {misi.desc}
+                </p>
+              </div>
+              <div class="pt-6 mt-6 flex items-center gap-2">
+                <span class="w-8 h-[2px] bg-gold-soft/50 group-hover:w-12 group-hover:bg-gold transition-all duration-300"></span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 5. PANCA KARAKTER (Core Values Pills - NO BORDERS) -->
+      <div class="mb-24 scroll-mt-28" id="karakter" data-motion-section>
+        <div class="p-8 sm:p-12 rounded-3xl bg-paper-warm/60 pure-glow-card pure-glow-emerald shadow-sm">
+          <div class="text-center max-w-xl mx-auto mb-10" data-motion-title>
+            <div class="text-[11px] font-bold uppercase tracking-[0.25em] text-blue mb-2">Nilai Inti Madrasah</div>
+            <h3 class="font-serif text-3xl sm:text-4xl font-bold text-blue-ink">Panca Karakter Santri Margajaya</h3>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {coreValues.map((val) => (
+              <div 
+                class="p-5 rounded-2xl bg-white/90 shadow-sm text-center pure-glow-card pure-glow-gold cursor-default"
+                data-motion-item
+              >
+                <div class="text-3xl mb-3">{val.icon}</div>
+                <div class="font-serif text-xl font-bold text-blue-ink mb-1">{val.title}</div>
+                <div class="text-[11.5px] text-ink-muted leading-snug">{val.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. SEJARAH & REKAM JEJAK (Magazine Milestone Layout - NO BORDERS) -->
+      <div class="mb-12 scroll-mt-28" id="sejarah" data-motion-section>
+        <div class="flex items-center gap-3 mb-4" data-motion-title>
+          <span class="w-7 h-[1.5px] bg-gold pulse-glow"></span>
+          <span class="text-xs font-bold uppercase tracking-[0.25em] text-blue">
+            Napak Tilas &amp; Rekam Jejak
+          </span>
+        </div>
+
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.1] tracking-[-0.02em] mb-12" data-motion-title>
+          Sejarah Singkat <em class="italic text-gold text-shimmer-gold">MA Margajaya.</em>
+        </h2>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+          {milestones.map((ms, idx) => (
+            <div 
+              class="p-8 rounded-2xl bg-paper/90 pure-glow-card pure-glow-emerald shadow-sm flex flex-col justify-between group"
+              data-motion-item
+            >
+              <div>
+                <div class="inline-block px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase tracking-wider mb-4">
+                  {ms.era}
+                </div>
+                <h4 class="font-serif text-2xl font-bold text-blue-ink mb-3 group-hover:text-blue transition-colors">
+                  {ms.title}
+                </h4>
+                <p class="text-ink-soft text-[14px] leading-relaxed">
+                  {ms.desc}
+                </p>
+              </div>
+              <div class="pt-6 mt-6 flex items-center gap-2 text-xs font-bold text-blue">
+                <span>Langkah {idx + 1}</span>
+                <span class="text-gold">&rarr;</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- 7. STRUKTUR ORGANISASI & DEWAN PENDIDIK (Organigram & Direktori Guru) -->
+      <div class="mb-24 scroll-mt-28" data-motion-section id="organigram">
+        
+        <!-- Section Header -->
+        <div class="flex items-center gap-3 mb-4" data-motion-title>
+          <span class="w-7 h-[1.5px] bg-gold pulse-glow"></span>
+          <span class="text-xs font-bold uppercase tracking-[0.25em] text-blue">
+            Tata Kelola &amp; Dewan Pendidik
+          </span>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12" data-motion-title>
+          <div>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.1] tracking-[-0.02em]">
+              Struktur Organisasi <em class="italic text-gold text-shimmer-gold">&amp; Dewan Guru.</em>
+            </h2>
+            <p class="text-ink-soft text-base max-w-2xl mt-3">
+              Bagan kepemimpinan terpadu dan direktori dewan pendidik berdedikasi tinggi dalam membimbing santri meraih prestasi sains dan keluhuran akhlak.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-800 text-xs font-bold self-start md:self-auto">
+            Civitas Akademika Aktif
+          </div>
+        </div>
+
+        <!-- ═══ SUB-BAGIAN A: BAGAN ORGANIGRAM KEPEMIMPINAN ═══ -->
+        <div class="p-6 sm:p-10 rounded-3xl bg-slate-900 text-white shadow-2xl relative overflow-hidden mb-16" data-motion-visual>
+          <!-- Background Subtle Glow Orbs -->
+          <div class="absolute -top-24 -left-24 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-gold/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="text-center max-w-xl mx-auto mb-10 relative z-10">
+            <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-gold-soft mb-2 inline-block">Bagan Hirarki Kepemimpinan</span>
+            <h3 class="font-serif text-2xl sm:text-3xl font-bold text-white">Struktur Pimpinan MA Margajaya</h3>
+          </div>
+
+          <!-- Organigram Tree Layout -->
+          <div class="relative z-10 space-y-10">
+            
+            <!-- Tier 1: Pimpinan Utama & Dewan Pembina / Komite -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+              
+              <!-- Sayap Kiri: Pengasuh Pesantren -->
+              <div class="md:col-span-3 p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm text-center md:text-left space-y-2 hover:bg-white/10 transition-colors">
+                <span class="inline-block px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  {leadershipData.pesantren.badge}
+                </span>
+                <div class="font-serif text-lg font-bold text-white">
+                  {leadershipData.pesantren.name}
+                </div>
+                <p class="text-xs text-white/70">
+                  {leadershipData.pesantren.subrole}
+                </p>
+              </div>
+
+              <!-- Pusat: Kepala Madrasah (Highlight Card) -->
+              <div class="md:col-span-6 p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-[#075B2A] to-[#043317] border border-gold/40 shadow-xl shadow-black/40 text-center relative overflow-hidden group">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full overflow-hidden border-2 border-gold shadow-lg mb-4 group-hover:scale-105 transition-transform duration-300">
+                  <img 
+                    src={leadershipData.principal.image} 
+                    alt={leadershipData.principal.name}
+                    class="w-full h-full object-cover object-top"
+                  />
+                </div>
+                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] bg-gold text-blue-deep mb-2 shadow-sm">
+                  {leadershipData.principal.badge}
+                </span>
+                <h4 class="font-serif text-xl sm:text-2xl font-bold text-white mb-1">
+                  {leadershipData.principal.name}
+                </h4>
+                <div class="text-xs font-semibold text-gold-soft uppercase tracking-wider mb-2">
+                  {leadershipData.principal.role}
+                </div>
+                <p class="text-xs text-white/80 max-w-md mx-auto leading-relaxed">
+                  {leadershipData.principal.subrole}
+                </p>
+              </div>
+
+              <!-- Sayap Kanan: Dewan Komite & TU -->
+              <div class="md:col-span-3 space-y-4">
+                <div class="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm text-center md:text-left space-y-1 hover:bg-white/10 transition-colors">
+                  <span class="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-gold/20 text-gold border border-gold/30">
+                    {leadershipData.komite.badge}
+                  </span>
+                  <div class="font-serif text-base font-bold text-white">
+                    {leadershipData.komite.name}
+                  </div>
+                  <p class="text-[11px] text-white/70">
+                    {leadershipData.komite.subrole}
+                  </p>
+                </div>
+
+                <div class="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm text-center md:text-left space-y-1 hover:bg-white/10 transition-colors">
+                  <span class="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                    {leadershipData.tu.badge}
+                  </span>
+                  <div class="font-serif text-base font-bold text-white">
+                    {leadershipData.tu.name}
+                  </div>
+                  <p class="text-[11px] text-white/70">
+                    {leadershipData.tu.subrole}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Visual Connector Line -->
+            <div class="flex items-center justify-center">
+              <div class="h-8 w-[1.5px] bg-gradient-to-b from-gold via-emerald-400 to-white/20"></div>
+            </div>
+
+            <!-- Tier 2: 4 Bidang Wakil Kepala Madrasah (Grid 4 Kolom) -->
+            <div>
+              <div class="text-center mb-6">
+                <span class="text-[11px] font-bold uppercase tracking-[0.25em] text-white/60">
+                  Bidang Koordinasi &amp; Pelaksana Operasional
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {leadershipData.deputies.map((deputy) => (
+                  <div class="p-5 rounded-2xl bg-white/[0.06] border border-white/10 backdrop-blur-sm hover:border-gold/50 hover:bg-white/10 transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                      <div class="flex items-center justify-between mb-3">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                          Waka Bidang
+                        </span>
+                      </div>
+                      <div class="font-serif text-lg font-bold text-white mb-2 group-hover:text-gold transition-colors">
+                        {deputy.name}
+                      </div>
+                      <p class="text-xs text-white/70 leading-relaxed font-light">
+                        {deputy.field}
+                      </p>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between text-[11px] text-white/50">
+                      <span>MA Margajaya</span>
+                      <span class="text-gold font-semibold">Aktif</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ═══ SUB-BAGIAN B: DIREKTORI DEWAN GURU & TENAGA PENDIDIK ═══ -->
+        <div class="space-y-8 scroll-mt-28" id="direktori-guru" data-motion-title>
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-hair-strong pb-6">
+            <div>
+              <h3 class="font-serif text-2xl sm:text-3xl font-bold text-blue-ink">
+                Direktori Guru &amp; Tenaga Pendidik
+              </h3>
+              <p class="text-xs sm:text-sm text-ink-muted mt-1">
+                Total {teachersData.length} Pendidik Profesional Terbagi Berdasarkan Rumpun Mata Pelajaran
+              </p>
+            </div>
+
+            <!-- Filter Categories Pills -->
+            <div class="flex flex-wrap items-center gap-2" id="teacher-filters">
+              <button 
+                type="button" 
+                data-filter="all"
+                class="filter-btn active px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-emerald-800 text-white shadow-sm"
+              >
+                Semua ({teachersData.length})
+              </button>
+              <button 
+                type="button" 
+                data-filter="PAI & Keagamaan"
+                class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-gray-100 text-ink-soft hover:bg-emerald-50 hover:text-emerald-800"
+              >
+                PAI &amp; Diniyah
+              </button>
+              <button 
+                type="button" 
+                data-filter="Sains & Teknologi"
+                class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-gray-100 text-ink-soft hover:bg-emerald-50 hover:text-emerald-800"
+              >
+                Sains &amp; TIK
+              </button>
+              <button 
+                type="button" 
+                data-filter="Bahasa & Literasi"
+                class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-gray-100 text-ink-soft hover:bg-emerald-50 hover:text-emerald-800"
+              >
+                Bahasa
+              </button>
+              <button 
+                type="button" 
+                data-filter="Sosial & Humaniora"
+                class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-gray-100 text-ink-soft hover:bg-emerald-50 hover:text-emerald-800"
+              >
+                Sosial IPS
+              </button>
+              <button 
+                type="button" 
+                data-filter="Vokasi & Konseling"
+                class="filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all bg-gray-100 text-ink-soft hover:bg-emerald-50 hover:text-emerald-800"
+              >
+                BK &amp; Penjas
+              </button>
+            </div>
+          </div>
+
+          <!-- Teachers Grid Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="teachers-grid">
+            {teachersData.map((t) => (
+              <div 
+                class="p-6 rounded-2xl bg-paper/80 border border-hair-strong hover:border-gold/60 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group teacher-card"
+                data-category={t.category}
+                data-motion-item
+              >
+                <div>
+                  <div class="flex items-start justify-between gap-4 mb-4">
+                    <!-- Avatar Initials Icon -->
+                    <div class={`w-12 h-12 rounded-xl flex items-center justify-center font-serif text-lg font-bold shadow-sm ${
+                      t.avatarBg === 'emerald' ? 'bg-emerald-100 text-emerald-900' :
+                      t.avatarBg === 'gold' ? 'bg-amber-100 text-amber-900' :
+                      'bg-cyan-100 text-cyan-900'
+                    }`}>
+                      {t.name.split(' ').filter(n => !n.includes('.')).slice(0, 2).map(n => n[0]).join('') || 'MA'}
+                    </div>
+
+                    <span class={`inline-block px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
+                      t.category === 'PAI & Keagamaan' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
+                      t.category === 'Sains & Teknologi' ? 'bg-cyan-50 text-cyan-800 border border-cyan-200' :
+                      t.category === 'Bahasa & Literasi' ? 'bg-blue-50 text-blue border border-blue-100' :
+                      t.category === 'Sosial & Humaniora' ? 'bg-amber-50 text-amber-800 border border-amber-200' :
+                      'bg-purple-50 text-purple-800 border border-purple-200'
+                    }`}>
+                      {t.category}
+                    </span>
+                  </div>
+
+                  <h4 class="font-serif text-lg font-bold text-blue-ink group-hover:text-blue transition-colors mb-1">
+                    {t.name}
+                  </h4>
+
+                  <div class="text-xs font-semibold text-emerald-800 mb-2 flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-gold shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <span>{t.subject}</span>
+                  </div>
+
+                  <p class="text-xs text-ink-muted">
+                    {t.role}
+                  </p>
+                </div>
+
+                <div class="pt-4 mt-4 border-t border-hair flex items-center justify-between text-[11px] text-ink-soft">
+                  <span>{t.education}</span>
+                  <span class="text-gold font-bold">&check; Aktif</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+      </div>
+
+      <script is:inline>
+        document.addEventListener('DOMContentLoaded', function() {
+          var buttons = document.querySelectorAll('#teacher-filters .filter-btn');
+          var cards = document.querySelectorAll('#teachers-grid .teacher-card');
+          if (!buttons.length || !cards.length) return;
+
+          buttons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var filter = btn.getAttribute('data-filter');
+
+              // Update active button state
+              buttons.forEach(function(b) {
+                b.classList.remove('bg-emerald-800', 'text-white', 'shadow-sm');
+                b.classList.add('bg-gray-100', 'text-ink-soft');
+              });
+              btn.classList.add('bg-emerald-800', 'text-white', 'shadow-sm');
+              btn.classList.remove('bg-gray-100', 'text-ink-soft');
+
+              // Filter cards
+              cards.forEach(function(card) {
+                var cat = card.getAttribute('data-category');
+                if (filter === 'all' || cat === filter) {
+                  card.style.display = 'flex';
+                  card.style.opacity = '0';
+                  setTimeout(function() {
+                    card.style.opacity = '1';
+                  }, 30);
+                } else {
+                  card.style.display = 'none';
+                }
+              });
+            });
+          });
+        });
+      </script>
+
+      <!-- 8. KESIMPULAN & AJAKAN MELANGKAH (Right-Aligned Luxury Action) -->
+      <div class="mb-12" data-motion-visual>
+        <div class="p-8 sm:p-12 lg:p-14 rounded-3xl bg-gradient-to-r from-emerald-950 via-[#075B2A] to-slate-950 text-white shadow-2xl pure-glow-card pure-glow-gold flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 max-w-6xl mx-auto border border-white/15 relative overflow-hidden text-left">
+          
+          <!-- Subtle Glow Flare -->
+          <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-gold/15 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="space-y-3 max-w-xl text-left">
+            <span class="inline-block px-3 py-1 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-soft">
+              Komitmen Masa Depan
+            </span>
+            <div class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-snug">
+              Melangkah Bersama MA Margajaya
+            </div>
+            <p class="text-white/80 text-sm sm:text-base leading-relaxed font-light">
+              Kini MA Margajaya terus bertumbuh mendidik generasi muda Ciamis dan Jawa Barat menjadi pribadi yang kokoh iman, unggul ilmu, dan siap bersaing di tingkat perguruan tinggi maupun dunia global.
+            </p>
+          </div>
+
+          <!-- Buttons Group - Right Aligned with Luxury Effects -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 lg:ml-auto shrink-0 w-full sm:w-auto">
+            <a 
+              href="/ppdb" 
+              class="glow-button inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-gradient-to-r from-gold via-amber-400 to-gold text-blue-deep font-bold text-xs uppercase tracking-widest shadow-xl shadow-gold/25 hover:shadow-[0_0_30px_rgba(232,185,35,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-gold-soft/60"
+            >
+              <span>Bergabung di PPDB</span>
+              <span class="text-sm font-bold">&rarr;</span>
+            </a>
+            <a 
+              href="/kontak" 
+              class="brutal-glass-card inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-white hover:text-gold font-semibold text-xs uppercase tracking-widest transition-all duration-300"
+            >
+              <span>Hubungi Kami</span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+    </Container>
+  </section>
+</PageLayout>
+
+<script>
+  import '../scripts/beranda-motion';
+</script>

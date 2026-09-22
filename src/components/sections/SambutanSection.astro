@@ -1,0 +1,80 @@
+---
+import Container from '../ui/Container.astro';
+import { schoolConfig } from '../../config/school.config';
+---
+
+<section id="sambutan-section" class="py-24 bg-white border-b border-hair relative overflow-hidden" data-motion-section>
+  <!-- Ambient background glow for section -->
+  <div class="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+  <Container>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      
+      <!-- Clean & Sharp Portrait Column with Tilt & Glow -->
+      <div class="lg:col-span-5 order-2 lg:order-1" data-motion-visual data-sambutan-photo>
+        <div class="relative max-w-md mx-auto lg:max-w-none tilt-card-wrapper">
+          <div class="tilt-card-inner aspect-[4/5] rounded-xl overflow-hidden shadow-xl border border-hair-strong bg-paper glow-card glow-card-gold glow-hover-lift group">
+            <img 
+              src="/images/kepala-madrasah.png" 
+              alt="Anih Hidayatul Kamilah, M.Pd. - Kepala MA Margajaya" 
+              class="w-full h-full object-cover object-top filter contrast-[1.03] group-hover:scale-105 transition-transform duration-700 ease-out" 
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-emerald-950/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+          <!-- Clean Caption Under Photo -->
+          <div class="mt-4 pt-3 border-t border-hair flex items-baseline justify-between">
+            <div>
+              <div class="font-serif text-lg font-bold text-blue-ink">Anih Hidayatul Kamilah, M.Pd.</div>
+              <div class="text-xs text-ink-muted mt-0.5">Kepala Madrasah MA Margajaya</div>
+            </div>
+            <span class="text-[11px] font-semibold text-blue tracking-wider uppercase px-2.5 py-1 bg-emerald-50 rounded border border-emerald-100">
+              Sukadana · Ciamis
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clean Editorial Content Column -->
+      <div class="lg:col-span-7 order-1 lg:order-2" data-motion-title>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="w-6 h-[1.5px] bg-gold pulse-glow"></span>
+          <span class="text-xs font-bold uppercase tracking-[0.25em] text-blue">
+            Sambutan Kepala Madrasah
+          </span>
+        </div>
+
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em] mb-6">
+          Membangun Karakter Santri, <br />
+          <em class="italic text-blue font-normal">Menggapai Prestasi Berkelanjutan.</em>
+        </h2>
+
+        <div class="space-y-4 text-ink-soft text-base leading-relaxed mb-8">
+          <p id="sambutan-typing-p1">
+            <span class="float-left text-5xl font-serif text-blue leading-[0.8] pr-3 pt-1">A</span>
+            <span id="sambutan-typing-text1" data-sambutan-typing data-typing-text="lhamdulillah, puji dan syukur kita panjatkan ke hadirat Allah SWT. Berada di lingkungan Kompleks Pondok Pesantren Darul Muawanah Sukadana, MA Margajaya berkomitmen menyelenggarakan pendidikan terpadu yang memadukan keunggulan sains umum dengan kedalaman nilai-nilai keislaman."></span><span class="sambutan-cursor" aria-hidden="true">|</span>
+          </p>
+          <p id="sambutan-typing-p2">
+            <span id="sambutan-typing-text2" data-sambutan-typing data-typing-text="Kami meyakini bahwa generasi yang berdaya saing adalah mereka yang kokoh dalam akidah, berakhlak mulia, serta tanggap terhadap perkembangan ilmu pengetahuan dan teknologi. Bersama seluruh tenaga pendidik dan kependidikan, kami siap membimbing siswa-siswi meraih potensi terbaiknya."></span><span class="sambutan-cursor" aria-hidden="true">|</span>
+          </p>
+        </div>
+
+        <!-- Signature Block -->
+        <div class="pt-6 border-t border-hair-strong flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="font-serif text-xl font-bold text-blue-ink">Anih Hidayatul Kamilah, M.Pd.</div>
+            <div class="text-xs text-ink-muted mt-0.5">Kepala MA Margajaya Sukadana-Ciamis</div>
+          </div>
+
+          <a 
+            href="/profil" 
+            class="glow-button inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-blue hover:text-blue-deep transition-colors py-2 px-3 rounded hover:bg-emerald-50"
+          >
+            Profil Madrasah Selengkapnya &rarr;
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </Container>
+</section>

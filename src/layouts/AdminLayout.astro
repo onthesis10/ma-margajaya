@@ -1,0 +1,190 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+}
+
+const { title = "Admin Portal — MA Margajaya" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-[#0d4a2f] text-slate-100">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+
+  <!-- Strict Search Engine Shield -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+  <meta name="googlebot" content="noindex, nofollow" />
+  <link rel="icon" href="/logo/logo-ma-margajaya.png" type="image/png" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style is:global>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #0a3d28;
+      color: #f1f5f9;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3, h4, .font-serif {
+      font-family: 'Fraunces', Georgia, serif;
+    }
+
+    /* iOS / macOS Glassmorphic Containers */
+    .ios-glass-card {
+      background: rgba(14, 68, 44, 0.65);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    .ios-glass-panel {
+      background: rgba(10, 55, 35, 0.82);
+      backdrop-filter: blur(36px) saturate(190%);
+      -webkit-backdrop-filter: blur(36px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .ios-glass-nav {
+      background: rgba(10, 52, 33, 0.88);
+      backdrop-filter: blur(32px) saturate(200%);
+      -webkit-backdrop-filter: blur(32px) saturate(200%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+    }
+
+    .ios-glass-input {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ios-glass-input:focus {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: #e8b923;
+      box-shadow: 0 0 0 4px rgba(232, 185, 35, 0.22);
+      outline: none;
+    }
+
+    /* Animated Motion Waves */
+    @keyframes admin-wave-1 {
+      0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+      50% { transform: translateY(-24px) translateX(20px) rotate(1deg); }
+      100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+    }
+    @keyframes admin-wave-2 {
+      0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+      50% { transform: translateY(20px) translateX(-25px) rotate(-1deg); }
+      100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+    }
+    @keyframes admin-glow-pulse {
+      0%, 100% { opacity: 0.35; transform: scale(1); }
+      50% { opacity: 0.65; transform: scale(1.1); }
+    }
+
+    .wave-motion-1 {
+      animation: admin-wave-1 16s ease-in-out infinite;
+    }
+    .wave-motion-2 {
+      animation: admin-wave-2 20s ease-in-out infinite;
+    }
+    .glow-pulse {
+      animation: admin-glow-pulse 8s ease-in-out infinite;
+    }
+
+    /* Ultra-thin Transparent Apple Scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(232, 185, 35, 0.45);
+    }
+
+    .transparent-thin-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    }
+    .transparent-thin-scrollbar::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    .transparent-thin-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .transparent-thin-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+    .transparent-thin-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(232, 185, 35, 0.5);
+    }
+
+    /* Completely hidden scrollbar — scroll still works */
+    .preview-scrollbar {
+      scrollbar-width: none; /* Firefox */
+    }
+    .preview-scrollbar::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Edge */
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden selection:bg-emerald-400 selection:text-white bg-[#0a3d28]">
+  
+  <!-- =========================================================================
+       DYNAMIC GREEN BACKGROUND WITH ANIMATED WAVES & GLOWING ATMOSPHERES
+       ========================================================================= -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#0a3d28]">
+    
+    <!-- Base Green Gradients -->
+    <div class="absolute inset-0 bg-gradient-to-br from-[#125c38] via-[#0a3d28] to-[#073122]"></div>
+    
+    <!-- Glowing Soft Orbs -->
+    <div class="absolute -top-32 -left-32 w-[600px] h-[600px] bg-emerald-400/30 rounded-full blur-[110px] glow-pulse"></div>
+    <div class="absolute top-1/3 -right-40 w-[700px] h-[700px] bg-gold/20 rounded-full blur-[130px] glow-pulse" style="animation-delay: -3s;"></div>
+    <div class="absolute -bottom-40 left-1/4 w-[650px] h-[650px] bg-emerald-400/25 rounded-full blur-[120px] glow-pulse" style="animation-delay: -5s;"></div>
+
+    <!-- Animated Flowing Wave Vector 1 (Emerald Deep) -->
+    <svg 
+      class="absolute -bottom-10 left-0 right-0 w-[140%] -ml-[20%] h-[450px] text-emerald-900/30 wave-motion-1 fill-current opacity-60" 
+      viewBox="0 0 1440 320" 
+      preserveAspectRatio="none"
+    >
+      <path d="M0,192L48,197.3C96,203,192,213,288,192C384,171,480,117,576,117.3C672,117,768,171,864,186.7C960,203,1056,181,1152,154.7C1248,128,1344,96,1392,80L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+
+    <!-- Animated Flowing Wave Vector 2 (Emerald Mid & Gold Tint) -->
+    <svg 
+      class="absolute -bottom-5 left-0 right-0 w-[150%] -ml-[25%] h-[380px] text-[#075B2A]/25 wave-motion-2 fill-current opacity-70" 
+      viewBox="0 0 1440 320" 
+      preserveAspectRatio="none"
+    >
+      <path d="M0,96L60,117.3C120,139,240,181,360,170.7C480,160,600,96,720,85.3C840,75,960,117,1080,133.3C1200,149,1320,139,1380,133.3L1440,128L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+    </svg>
+
+    <!-- Subtle Radial Grid Pattern -->
+    <div class="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:32px_32px] opacity-[0.06]"></div>
+
+  </div>
+
+  <main class="relative z-10 flex-1 flex flex-col">
+    <slot />
+  </main>
+</body>
+</html>

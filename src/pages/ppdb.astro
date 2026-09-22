@@ -1,0 +1,491 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Container from '../components/ui/Container.astro';
+import { schoolConfig } from '../config/school.config';
+
+const breadcrumbs = [{ label: "PPDB 2026/2027", href: "/ppdb" }];
+
+const jalurList = [
+  {
+    id: "reguler",
+    name: "Jalur Reguler",
+    tag: "Terbuka Luas",
+    desc: "Terbuka bagi seluruh lulusan SMP/MTs sederajat yang telah menyelesaikan pendidikan dasar 9 tahun dan berkomitmen menempuh pendidikan bernuansa islami.",
+    benefits: [
+      "Seleksi administrasi & pemetaan potensi diri",
+      "Akses penuh seluruh fasilitas madrasah & pesantren",
+      "Pilihan ekstrakurikuler kepemimpinan & olahraga",
+      "Peluang tinggal di asrama Ponpes Darul Muawanah"
+    ],
+    featured: false,
+    iconPath: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>`
+  },
+  {
+    id: "prestasi",
+    name: "Jalur Prestasi & Tahfidz",
+    tag: "Prioritas & Beasiswa",
+    desc: "Apresiasi khusus bagi lulusan berprestasi juara olimpiade sains, keagamaan, seni, olahraga, ranking rapor 1–3, atau hafiz Al-Qur'an.",
+    benefits: [
+      "Bebas tes seleksi & prioritas penempatan asrama",
+      "Potongan & beasiswa pendidikan yayasan madrasah",
+      "Pembinaan intensif kompetisi sains & Kemenag",
+      "Bimbingan santri tahfidz bersama asatidz bersanad"
+    ],
+    featured: true,
+    iconPath: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>`
+  },
+  {
+    id: "afirmasi",
+    name: "Jalur Afirmasi",
+    tag: "Bantuan Penuh",
+    desc: "Komitmen sosial madrasah untuk menjamin hak pendidikan putra-putri berprestasi dari keluarga prasejahtera, yatim, piatu, atau dhuafa.",
+    benefits: [
+      "Dukungan program beasiswa santri madrasah peduli",
+      "Keringanan biaya seragam, buku, dan asrama",
+      "Pendampingan akademik & konseling intensif",
+      "Fasilitas belajar yang setara dan bermartabat"
+    ],
+    featured: false,
+    iconPath: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>`
+  }
+];
+
+const alurPendaftaran = [
+  {
+    step: 1,
+    title: "Formulir Pendaftaran",
+    desc: "Isi formulir secara online via WhatsApp panitia atau kunjungi sekretariat PPDB madrasah.",
+    iconPath: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>`
+  },
+  {
+    step: 2,
+    title: "Verifikasi Berkas",
+    desc: "Serahkan kelengkapan dokumen: SKL/Ijazah, KK, Akta, KTP Orang Tua, dan Pas Foto.",
+    iconPath: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`
+  },
+  {
+    step: 3,
+    title: "Pemetaan & Wawancara",
+    desc: "Ikuti sesi pemetaan minat bakat dan tes baca Al-Qur'an dasar bersama tim penerimaan.",
+    iconPath: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>`
+  },
+  {
+    step: 4,
+    title: "Daftar Ulang & Matsama",
+    desc: "Konfirmasi penerimaan, selesaikan administrasi, dan persiapan Masa Ta'aruf Siswa Madrasah.",
+    iconPath: `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/>`
+  }
+];
+
+const syaratWajib = [
+  "Formulir pendaftaran resmi yang telah diisi lengkap & ditandatangani",
+  "Fotokopi Ijazah / Surat Keterangan Lulus (SKL) SMP/MTs (2 rangkap)",
+  "Fotokopi Akta Kelahiran (2 rangkap)",
+  "Fotokopi Kartu Keluarga (KK) terbaru (2 rangkap)",
+  "Fotokopi KTP Orang Tua / Wali santri (2 rangkap)",
+  "Pas foto formal 3×4 background merah/biru (4 lembar)"
+];
+
+const syaratKhusus = [
+  "Piagam / sertifikat kejuaraan akademik, seni, atau olahraga (Jalur Prestasi)",
+  "Syahadah atau surat keterangan hafalan Al-Qur'an (Jalur Tahfidz)",
+  "Kartu KIP, PKH, KKS, atau SKTM dari Desa/Kelurahan (Jalur Afirmasi)",
+  "Fotokopi buku rapor semester 1–5 yang telah dilegalisir"
+];
+
+const specs = [
+  { label: "Kurikulum", value: "Merdeka Belajar + Salaf" },
+  { label: "Jenjang", value: "Madrasah Aliyah (MA)" },
+  { label: "Akreditasi", value: "Terakreditasi Baik" },
+  { label: "Ekosistem", value: "Ponpes Darul Muawanah" }
+];
+---
+
+<PageLayout 
+  title="Penerimaan Peserta Didik Baru" 
+  description="Informasi pendaftaran santri dan siswa baru MA Margajaya Sukadana-Ciamis tahun ajaran 2026/2027."
+  breadcrumbs={breadcrumbs}
+  showContact={false}
+  showPPDBCTA={false}
+>
+  <div class="ppdb-page bg-white" data-motion-section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         HERO — iOS-style large title + status indicator
+    ═══════════════════════════════════════════════════════════ -->
+    <section class="pt-10 pb-20 border-b border-neutral-100">
+      <Container>
+        <div class="max-w-4xl">
+
+          <!-- Status pill — thin, minimal -->
+          <div class="flex items-center gap-2.5 mb-8">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span class="text-xs text-neutral-500 tracking-wide font-medium">
+              Penerimaan Gelombang I · T.A. 2026/2027 · Sedang Dibuka
+            </span>
+          </div>
+
+          <!-- Large display title — SF Display weight -->
+          <h1 class="font-serif text-[2.75rem] sm:text-[3.5rem] md:text-[4.5rem] leading-[1.1] tracking-[-0.025em] text-neutral-900 mb-6 font-normal">
+            Penerimaan<br/>
+            Peserta Didik<br/>
+            <span class="text-emerald-700">Baru 2026.</span>
+          </h1>
+
+          <p class="text-neutral-500 text-base sm:text-lg leading-relaxed max-w-xl mb-10 font-light">
+            MA Margajaya menyambut putra-putri lulusan SMP/MTs sederajat untuk bertumbuh dalam ekosistem pendidikan terpadu bersama Pondok Pesantren Darul Muawanah.
+          </p>
+
+          <!-- CTA buttons — iOS action button style -->
+          <div class="flex flex-wrap gap-3">
+            <a 
+              href={`https://wa.me/${schoolConfig.whatsapp}?text=Assalamu%27alaikum%20Panitia%20PPDB%20MA%20Margajaya,%20saya%20ingin%20mendaftar.`} 
+              target="_blank" rel="noopener noreferrer"
+              class="inline-flex items-center gap-2.5 px-6 py-3 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold rounded-xl transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              <svg class="w-4 h-4 flex-shrink-0 fill-current" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-5.705 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+              </svg>
+              Daftar via WhatsApp
+            </a>
+            <a 
+              href="#alur-pendaftaran"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 text-sm font-semibold rounded-xl transition-all duration-200"
+            >
+              Lihat Alur & Syarat
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Spec strip — like Apple product specs row -->
+        <div class="mt-16 pt-8 border-t border-neutral-100 grid grid-cols-2 md:grid-cols-4 gap-8">
+          {specs.map(s => (
+            <div>
+              <div class="text-[11px] uppercase tracking-widest text-neutral-400 font-semibold mb-1">{s.label}</div>
+              <div class="text-sm font-semibold text-neutral-800">{s.value}</div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         JALUR PENDAFTARAN — 3-column clean comparison
+    ═══════════════════════════════════════════════════════════ -->
+    <section class="py-20 bg-neutral-50/60 border-b border-neutral-100">
+      <Container>
+        <!-- Section label -->
+        <div class="mb-12">
+          <p class="text-[11px] uppercase tracking-widest text-emerald-700 font-semibold mb-2">Jalur Masuk</p>
+          <h2 class="font-serif text-3xl sm:text-4xl text-neutral-900 font-normal tracking-tight">Tiga Jalur Penerimaan</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {jalurList.map(jalur => (
+            <div class={`group relative flex flex-col bg-white rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl overflow-hidden ${
+              jalur.featured 
+                ? 'border-emerald-200 shadow-lg shadow-emerald-500/8 ring-1 ring-emerald-200' 
+                : 'border-neutral-200 shadow-sm hover:border-neutral-300'
+            }`}>
+              
+              {jalur.featured && (
+                <div class="h-0.5 bg-gradient-to-r from-emerald-500 to-teal-400 w-full"></div>
+              )}
+
+              <div class="p-7 flex flex-col flex-1">
+                <!-- Icon + Tag row -->
+                <div class="flex items-start justify-between mb-5">
+                  <div class={`w-9 h-9 rounded-lg flex items-center justify-center ${jalur.featured ? 'bg-emerald-50 text-emerald-700' : 'bg-neutral-100 text-neutral-500'}`}>
+                    <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={jalur.iconPath}/>
+                  </div>
+                  {jalur.featured && (
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                      Direkomendasikan
+                    </span>
+                  )}
+                </div>
+
+                <!-- Name & desc -->
+                <h3 class="text-[17px] font-semibold text-neutral-900 mb-2 leading-snug">{jalur.name}</h3>
+                <p class="text-sm text-neutral-500 leading-relaxed mb-6 font-light">{jalur.desc}</p>
+
+                <!-- Divider -->
+                <div class="h-px bg-neutral-100 mb-5"></div>
+
+                <!-- Benefit list -->
+                <div class="space-y-2.5 mb-7 flex-1">
+                  {jalur.benefits.map(b => (
+                    <div class="flex items-start gap-2.5">
+                      <svg class={`w-4 h-4 flex-shrink-0 mt-0.5 ${jalur.featured ? 'text-emerald-600' : 'text-neutral-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                      </svg>
+                      <span class="text-xs text-neutral-600 leading-relaxed">{b}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <!-- CTA -->
+                <a 
+                  href={`https://wa.me/${schoolConfig.whatsapp}?text=Assalamu%27alaikum,%20saya%20ingin%20mendaftar%20melalui%20${encodeURIComponent(jalur.name)}.`} 
+                  target="_blank" rel="noopener noreferrer"
+                  class={`w-full py-2.5 px-4 rounded-xl text-sm font-semibold text-center transition-all duration-200 flex items-center justify-center gap-1.5 ${
+                    jalur.featured 
+                      ? 'bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm' 
+                      : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
+                  }`}
+                >
+                  Pilih Jalur Ini
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         ALUR PENDAFTARAN — numbered timeline, horizontal
+    ═══════════════════════════════════════════════════════════ -->
+    <section id="alur-pendaftaran" class="py-20 border-b border-neutral-100">
+      <Container>
+        <div class="mb-12">
+          <p class="text-[11px] uppercase tracking-widest text-emerald-700 font-semibold mb-2">Tahapan</p>
+          <h2 class="font-serif text-3xl sm:text-4xl text-neutral-900 font-normal tracking-tight">Alur Pendaftaran</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-100 rounded-2xl overflow-hidden border border-neutral-100">
+          {alurPendaftaran.map((item, idx) => (
+            <div class="bg-white p-7 group hover:bg-neutral-50/80 transition-colors duration-200">
+              <!-- Step number + icon -->
+              <div class="flex items-center justify-between mb-6">
+                <span class="font-mono text-xs font-bold text-neutral-300 tracking-wider">0{item.step}</span>
+                <div class="w-8 h-8 rounded-lg bg-neutral-100 text-neutral-500 flex items-center justify-center group-hover:bg-emerald-50 group-hover:text-emerald-700 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" set:html={item.iconPath}/>
+                </div>
+              </div>
+
+              <h3 class="text-sm font-semibold text-neutral-900 mb-2">{item.title}</h3>
+              <p class="text-xs text-neutral-500 leading-relaxed font-light">{item.desc}</p>
+
+              {idx < 3 && (
+                <div class="mt-5 flex items-center gap-1 text-[11px] text-neutral-300 font-medium">
+                  <span>Lanjut ke 0{idx+2}</span>
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </Container>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         PERSYARATAN BERKAS — 2-col checklist, minimal table style
+    ═══════════════════════════════════════════════════════════ -->
+    <section class="py-20 bg-neutral-50/60 border-b border-neutral-100">
+      <Container>
+        <div class="mb-12">
+          <p class="text-[11px] uppercase tracking-widest text-emerald-700 font-semibold mb-2">Dokumen</p>
+          <h2 class="font-serif text-3xl sm:text-4xl text-neutral-900 font-normal tracking-tight">Kelengkapan Berkas</h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          
+          <!-- Berkas wajib -->
+          <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm">
+            <!-- Card header -->
+            <div class="px-7 py-5 border-b border-neutral-100 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-neutral-900">Berkas Wajib</h3>
+                <p class="text-xs text-neutral-400">Untuk semua jalur · rangkap 2</p>
+              </div>
+            </div>
+
+            <!-- List rows — table-like -->
+            <div class="divide-y divide-neutral-50">
+              {syaratWajib.map((item, i) => (
+                <div class="px-7 py-4 flex items-start gap-3 hover:bg-neutral-50/70 transition-colors">
+                  <div class="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <svg class="w-2.5 h-2.5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                    </svg>
+                  </div>
+                  <span class="text-xs text-neutral-600 leading-relaxed">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Berkas khusus + info box -->
+          <div class="flex flex-col gap-6">
+            <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm flex-1">
+              <div class="px-7 py-5 border-b border-neutral-100 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-neutral-900">Dokumen Penunjang</h3>
+                  <p class="text-xs text-neutral-400">Khusus jalur prestasi, tahfidz & afirmasi</p>
+                </div>
+              </div>
+
+              <div class="divide-y divide-neutral-50">
+                {syaratKhusus.map(item => (
+                  <div class="px-7 py-4 flex items-start gap-3 hover:bg-neutral-50/70 transition-colors">
+                    <div class="mt-0.5 flex-shrink-0 w-4 h-4 rounded-full bg-amber-50 flex items-center justify-center">
+                      <svg class="w-2.5 h-2.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                      </svg>
+                    </div>
+                    <span class="text-xs text-neutral-600 leading-relaxed">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <!-- Info card — iOS notification style -->
+            <div class="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 flex items-start gap-4">
+              <div class="flex-shrink-0 w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                <svg class="w-4.5 h-4.5 w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-neutral-800 mb-1">Catatan Sekretariat</p>
+                <p class="text-xs text-neutral-500 leading-relaxed">
+                  Berkas dapat dibawa langsung ke sekretariat saat jam kerja, atau dikonsultasikan lebih dulu via WhatsApp resmi madrasah.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         KONTAK PPDB — Clean sectioned info + CTA 
+    ═══════════════════════════════════════════════════════════ -->
+    <section class="py-20">
+      <Container>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          
+          <div class="lg:col-span-5">
+            <p class="text-[11px] uppercase tracking-widest text-emerald-700 font-semibold mb-2">Layanan</p>
+            <h2 class="font-serif text-3xl sm:text-4xl text-neutral-900 font-normal tracking-tight mb-4">Pusat Informasi<br/>& Konsultasi PPDB</h2>
+            <p class="text-neutral-500 text-sm leading-relaxed font-light max-w-sm mb-8">
+              Panitia siap membantu orang tua dan calon santri untuk berkonsultasi mengenai jalur pendaftaran, asrama, dan kelengkapan berkas.
+            </p>
+
+            <!-- Contact details — list, icon-line style -->
+            <div class="space-y-5">
+              <div class="flex items-start gap-3.5">
+                <div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500 flex-shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-neutral-800 mb-0.5">Sekretariat Offline</p>
+                  <p class="text-xs text-neutral-500 leading-relaxed">Kompleks Ponpes Darul Muawanah, Dusun Jontor RT 01/RW 04,<br/>Desa Margajaya, Kec. Sukadana, Ciamis.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3.5">
+                <div class="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-500 flex-shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-neutral-800 mb-0.5">Jam Layanan Kantor</p>
+                  <p class="text-xs text-neutral-500">Senin – Sabtu · 08.00 – 15.00 WIB<br/>WhatsApp aktif setiap saat</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: action buttons -->
+          <div class="lg:col-span-7">
+            <div class="bg-neutral-50 rounded-2xl border border-neutral-200 overflow-hidden">
+              
+              <!-- WhatsApp CTA row -->
+              <a 
+                href={`https://wa.me/${schoolConfig.whatsapp}?text=Assalamu%27alaikum%20Panitia%20PPDB%20MA%20Margajaya,%20saya%20ingin%20konsultasi%20pendaftaran.`} 
+                target="_blank" rel="noopener noreferrer"
+                class="flex items-center justify-between px-7 py-5 bg-white hover:bg-neutral-50 border-b border-neutral-100 transition-colors group"
+              >
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-emerald-700 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24">
+                      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-5.705 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-neutral-400 mb-0.5">Konsultasi langsung</p>
+                    <p class="text-sm font-semibold text-neutral-900">Chat WhatsApp Panitia PPDB</p>
+                  </div>
+                </div>
+                <svg class="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </a>
+
+              <!-- Maps row -->
+              <a 
+                href={schoolConfig.mapsUrl} 
+                target="_blank" rel="noopener noreferrer"
+                class="flex items-center justify-between px-7 py-5 bg-white hover:bg-neutral-50 border-b border-neutral-100 transition-colors group"
+              >
+                <div class="flex items-center gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center flex-shrink-0 text-neutral-500">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-xs text-neutral-400 mb-0.5">Navigasi ke lokasi</p>
+                    <p class="text-sm font-semibold text-neutral-900">Buka di Google Maps</p>
+                  </div>
+                </div>
+                <svg class="w-4 h-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </a>
+
+              <!-- Info row bottom -->
+              <div class="px-7 py-5 flex items-start gap-4 bg-neutral-50">
+                <div class="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center flex-shrink-0 text-neutral-400">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-neutral-700 mb-1">Pendaftaran Juga Tersedia Secara Offline</p>
+                  <p class="text-xs text-neutral-500 leading-relaxed">
+                    Calon santri dan orang tua dapat hadir langsung ke sekretariat PPDB madrasah pada hari dan jam kerja yang telah ditentukan.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+
+  </div>
+</PageLayout>
+
+<style>
+  .ppdb-page {
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+</style>
