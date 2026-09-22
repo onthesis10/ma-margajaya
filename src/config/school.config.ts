@@ -25,7 +25,7 @@ export const schoolConfig = {
   },
 
   mapsUrl: "https://maps.app.goo.gl/nkGWjcM8Myo9XVX58",
-  googleCalendarId: import.meta.env.PUBLIC_GOOGLE_CALENDAR_ID || "",
-  googleCalendarApiKey: import.meta.env.PUBLIC_GOOGLE_CALENDAR_API_KEY || "",
+  googleCalendarId: import.meta.env.PUBLIC_GOOGLE_CALENDAR_ID || "1b77410c55668ed181622e5e6f5f0b6be2c4f6f7cc13b67765bafeb228e87106@group.calendar.google.com",
+  googleCalendarApiKey: import.meta.env.PUBLIC_GOOGLE_CALENDAR_API_KEY || "AIzaSyBZQeiQIvodiknY78wGWdLn0BP2xo-KAh8",
 };
 

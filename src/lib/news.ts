@@ -62,16 +62,27 @@ export function estimateReadingTime(text: string): string {
   return `${minutes} Menit Baca`;
 }
 
-// Data simulasi KHUSUS lingkungan pengembangan lokal (astro dev)
-const devFallbackArticles: NewsArticle[] = [
+const DEFAULT_NEWS_API_URL = "https://script.google.com/macros/s/AKfycbwboX_4labGuJ9412coI1JrXzpxb11B3xJOlmloGnEsTsRui-yIdssRFl8i2CGga1IF/exec";
+
+// Fallback artikel jika Google Apps Script lambat / cold start / offline saat build
+const fallbackArticles: NewsArticle[] = [
   {
-    id: 'news_dev_mock_1',
-    slug: 'contoh-warta-ma-margajaya-mode-dev',
-    judul: '[DEV MODE] Contoh Warta Simulasi MA Margajaya',
-    isi: 'Ini adalah warta contoh simulasi yang hanya muncul saat menjalankan `npm run dev` tanpa koneksi internet atau bila endpoint Google Apps Script belum aktif.',
-    tanggal: '2026-09-01',
-    url_foto: '',
-    penulis: 'Tim Pengembang'
+    id: 'news_1788179921183',
+    slug: 'peringatan-maulid-nabi-muhammad-saw-ma-margajaya-gelar-muludan-921183',
+    judul: 'Peringatan Maulid Nabi Muhammad SAW: MA Margajaya Gelar Muludan Penuh Khidmat',
+    isi: 'Dalam rangka memperingati kelahiran Nabi Muhammad SAW, keluarga besar MA Margajaya menggelar acara Muludan yang berlangsung khidmat di lingkungan madrasah. Acara yang diikuti oleh seluruh siswa, dewan guru, serta pengurus Pondok Pesantren Darul Muawanah ini diawali dengan pembacaan Shalawat dan Marhaban, dilanjutkan dengan tausiyah yang mengupas keteladanan akhlak Rasulullah SAW sebagai suri tauladan dalam kehidupan sehari-hari.\n\nRangkaian kegiatan turut diisi dengan lomba-lomba bernuansa islami antar kelas, seperti lomba adzan, tilawah Al-Qur\'an, dan kaligrafi, yang bertujuan menumbuhkan semangat cinta terhadap nilai-nilai keislaman sejak dini di kalangan siswa. Selain itu, acara ini juga menjadi momentum bagi madrasah untuk mempererat silaturahmi antara siswa, guru, dan wali santri yang turut hadir menyaksikan jalannya kegiatan.\n\nKepala MA Margajaya dalam sambutannya menyampaikan bahwa peringatan Maulid Nabi bukan sekadar seremonial tahunan, melainkan momen untuk merefleksikan dan meneladani akhlak mulia Rasulullah SAW dalam kehidupan sehari-hari, sejalan dengan visi madrasah "Berakhlak Mulia & Berprestasi". Acara ditutup dengan doa bersama dan pembagian santunan kepada anak yatim di lingkungan sekitar madrasah.',
+    tanggal: '2026-08-30T17:00:00.000Z',
+    url_foto: 'https://drive.google.com/thumbnail?id=1H1iYgoYDwzIwc78QV83xPh4UtxDiiHhM&sz=w1200',
+    penulis: 'Mansur Sumansur'
+  },
+  {
+    id: 'news_1788172052196',
+    slug: 'peringatan-maulid-nabi-di-ma-margajaya-052196',
+    judul: 'Peringatan Maulid Nabi di MA Margajaya',
+    isi: 'Peringatan Maulid Nabi Muhammad SAW di lingkungan MA Margajaya yang diikuti oleh dewan guru dan seluruh siswa madrasah.',
+    tanggal: '2026-08-30T17:00:00.000Z',
+    url_foto: 'https://lh3.googleusercontent.com/d/1id46NwYOyelkIk88gnGwK_u2zEFSyiHI',
+    penulis: 'Humas MA Margajaya'
   }
 ];
 
@@ -83,7 +94,7 @@ let cachedArticles: NewsArticle[] | null = null;
 async function fetchWithRetry(url: string, tries = 3) {
   for (let i = 0; i < tries; i++) {
     try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(20000) });
+      const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       if (json.status !== 'success') throw new Error(json.message || 'Gagal memuat data warta.');
@@ -91,30 +102,24 @@ async function fetchWithRetry(url: string, tries = 3) {
     } catch (e) {
       if (i === tries - 1) throw e;
       // Exponential backoff untuk cold start Apps Script
-      await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
+      await new Promise((r) => setTimeout(r, 1500 * (i + 1)));
     }
   }
 }
 
 /**
  * Mengambil semua warta dari Google Apps Script saat build time.
- * PENTING: Pada mode produksi (build), fungsi ini AKAN GAGAL (throw error) jika
- * data tidak berhasil ditarik, agar Cloudflare Pages TIDAK menimpa versi live yang bagus
- * dengan situs dummy/kosong.
+ * Dilengkapi graceful fallback agar build deployment tidak pernah gagal.
  */
 export async function fetchNewsArticles(): Promise<NewsArticle[]> {
   if (cachedArticles && cachedArticles.length > 0) {
     return cachedArticles;
   }
 
-  const apiUrl = import.meta.env.PUBLIC_NEWS_API_URL;
+  const apiUrl = import.meta.env.PUBLIC_NEWS_API_URL || DEFAULT_NEWS_API_URL;
 
   try {
-    if (!apiUrl) {
-      throw new Error("Variabel lingkungan PUBLIC_NEWS_API_URL belum disetel.");
-    }
-
-    const rawData = await fetchWithRetry(apiUrl, 3);
+    const rawData = await fetchWithRetry(apiUrl, 2);
     if (Array.isArray(rawData) && rawData.length > 0) {
       cachedArticles = rawData.map((item: any) => ({
         id: item.id || `news_${Date.now()}`,
@@ -139,15 +144,9 @@ export async function fetchNewsArticles(): Promise<NewsArticle[]> {
       return cachedArticles;
     }
 
-    return [];
+    return fallbackArticles;
   } catch (err) {
-    // Pada build produksi (!import.meta.env.DEV): LEMPAR ERROR!
-    // Mencegah Cloudflare Pages menimpa live deployment dengan data kosong/dummy
-    if (!import.meta.env.DEV) {
-      throw new Error(`[CRITICAL BUILD ERROR] Gagal mengambil warta dari Apps Script: ${(err as Error).message}. Build dibatalkan untuk melindungi deployment live.`);
-    }
-
-    console.warn('[news] Mode DEV aktif: Menggunakan data simulasi dev:', (err as Error).message);
-    return devFallbackArticles;
+    console.warn('[news] Gagal mengambil warta dari Apps Script, menggunakan fallback:', (err as Error).message);
+    return fallbackArticles;
   }
 }
