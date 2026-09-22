@@ -222,33 +222,85 @@ function initScrollAnimations() {
 }
 
 /**
- * 5. Dynamic Stats Counter Animation with Motion
+ * 5. Dynamic Stats Counter Animation (Cascading Easing & Tabular Numbers)
  */
 function initStatsCounters() {
   const statsContainer = document.querySelector('#stats-section');
   if (!statsContainer) return;
 
-  inView(statsContainer, () => {
-    const counterElements = statsContainer.querySelectorAll<HTMLElement>('[data-counter-target]');
+  const counterElements = statsContainer.querySelectorAll<HTMLElement>('[data-counter-target]');
+  if (counterElements.length === 0) return;
 
-    counterElements.forEach((el) => {
+  // Set initial text to 0
+  counterElements.forEach(el => {
+    el.textContent = '0';
+  });
+
+  let hasAnimated = false;
+
+  const runCounter = () => {
+    if (hasAnimated) return;
+    hasAnimated = true;
+
+    counterElements.forEach((el, index) => {
       const rawTarget = el.getAttribute('data-counter-target') || '0';
       const targetNumber = parseFloat(rawTarget.replace(/[^0-9.]/g, '')) || 0;
-      
       if (targetNumber === 0) return;
 
-      animate(
-        (progress) => {
-          const current = Math.round(targetNumber * progress);
-          el.textContent = current.toString();
-        },
-        {
-          duration: 1.8,
-          ease: [0.16, 1, 0.3, 1]
-        }
-      );
+      const duration = 1800; // 1.8 detik
+      const delay = index * 140; // Staggered cascade per kolom
+
+      setTimeout(() => {
+        const startTime = performance.now();
+
+        // Ease Out Expo: cepat di awal, melambat sangat halus di akhir
+        const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
+
+        const updateCounter = (now: number) => {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easedProgress = easeOutExpo(progress);
+
+          const currentVal = Math.round(targetNumber * easedProgress);
+          el.textContent = currentVal.toString();
+
+          if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+          } else {
+            el.textContent = targetNumber.toString();
+            // Subtle bounce pop saat angka selesai tercapai
+            el.style.transform = 'scale(1.08)';
+            const suffix = el.nextElementSibling as HTMLElement | null;
+            if (suffix) suffix.style.transform = 'scale(1.2)';
+
+            setTimeout(() => {
+              el.style.transform = 'scale(1)';
+              if (suffix) suffix.style.transform = '';
+            }, 250);
+          }
+        };
+
+        requestAnimationFrame(updateCounter);
+      }, delay);
     });
-  }, { margin: '-80px' });
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            runCounter();
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.25, rootMargin: '0px 0px -40px 0px' }
+    );
+    observer.observe(statsContainer);
+  } else {
+    runCounter();
+  }
 }
 
 /**

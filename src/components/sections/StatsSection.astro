@@ -25,7 +25,7 @@ import { stats } from '../../data/stats';
           data-motion-item
         >
           <div class="font-serif text-[80px] md:text-[100px] leading-[0.85] tracking-[-0.03em] mb-6 text-white group-hover:text-gold-soft transition-colors duration-300 flex items-baseline">
-            <span data-counter-target={stat.number}>{stat.number}</span>
+            <span data-counter-target={stat.number} class="tabular-nums transition-transform duration-200 inline-block">{stat.number}</span>
             {stat.suffix && <em class="text-gold not-italic text-[50px] align-top ml-1 group-hover:scale-110 transition-transform">{stat.suffix}</em>}
           </div>
           <div class="text-[13px] font-bold mb-2 group-hover:text-white transition-colors">{stat.label}</div>
