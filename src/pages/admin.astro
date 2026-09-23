@@ -48,30 +48,29 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
       </div>
 
-      <!-- SISI KANAN: Frosted Glass Login Window Card -->
+      <!-- SISI KANAN: Clean Professional Card with Brutalist Effect -->
       <div class="lg:col-span-5 w-full">
-        <div class="group relative rounded-3xl p-8 sm:p-10 border border-white/15 hover:border-emerald-400/40 bg-[#06281D]/60 hover:bg-[#06281D]/80 backdrop-blur-3xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.7)] hover:shadow-[0_25px_60px_-10px_rgba(5,150,105,0.35),0_0_40px_rgba(232,185,35,0.18)] transition-all duration-500 overflow-hidden">
+        <div class="brutal-mac-card group relative border-2 border-emerald-500/40 shadow-[8px_8px_0px_0px_#022016] transition-all duration-300 overflow-hidden p-8 sm:p-10">
           
           <!-- Soft Interactive Ambient Glow Radial Flare -->
-          <div class="pointer-events-none absolute -top-20 -right-20 w-56 h-56 bg-gradient-to-br from-gold/25 via-emerald-500/20 to-transparent rounded-full blur-3xl group-hover:scale-150 group-hover:opacity-100 opacity-40 transition-all duration-700"></div>
+          <div class="pointer-events-none absolute -top-20 -right-20 w-56 h-56 bg-gradient-to-br from-gold/20 via-emerald-500/20 to-transparent rounded-full blur-3xl group-hover:scale-150 group-hover:opacity-100 opacity-40 transition-all duration-700"></div>
           <div class="pointer-events-none absolute -bottom-20 -left-20 w-56 h-56 bg-gradient-to-tr from-emerald-600/20 via-gold/10 to-transparent rounded-full blur-3xl group-hover:scale-125 group-hover:opacity-80 opacity-30 transition-all duration-700"></div>
 
-          <div class="relative z-10 mb-6 space-y-1">
-            <div class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300">Autentikasi Pengelola</span>
-            </div>
-            <h2 class="text-2xl font-serif font-bold text-white tracking-tight">
-              Masuk Dashboard
+          <div class="relative z-10 mb-6 space-y-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 font-sans block">
+              Portal Administrasi
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight">
+              Masuk ke Dashboard
             </h2>
-            <p class="text-xs text-slate-300/80 leading-relaxed">
-              Masukkan kunci sandi administrator untuk mengakses sistem pengelolaan warta.
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+              Masukkan kata sandi administrator untuk mengelola warta dan dokumentasi madrasah.
             </p>
           </div>
 
-          <form id="form-login" class="space-y-5">
+          <form id="form-login" class="space-y-5 relative z-10">
             <div>
-              <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+              <label for="admin-password" class="block text-xs font-bold uppercase tracking-wider text-slate-200 mb-2 font-sans">
                 Kata Sandi Administrator
               </label>
               <div class="relative">
@@ -81,7 +80,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                   required 
                   autocomplete="current-password"
                   placeholder="Masukkan kata sandi..."
-                  class="ios-glass-input w-full px-4 py-3.5 pr-11 rounded-xl text-sm placeholder:text-slate-500 font-medium bg-white/10"
+                  class="brutal-mac-input w-full px-4 py-3.5 pr-11 rounded-xl text-sm placeholder:text-slate-500 font-medium"
                 />
                 <button 
                   type="button" 
@@ -101,7 +100,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
               </div>
             </div>
 
-            <div id="login-error" class="hidden text-xs text-rose-300 bg-rose-950/80 p-3.5 rounded-xl border border-rose-500/40 flex items-center gap-2">
+            <div id="login-error" class="hidden text-xs text-rose-300 bg-rose-950/80 p-3.5 rounded-xl border-2 border-rose-500/40 shadow-[3px_3px_0px_0px_#4c0519] flex items-center gap-2">
               <svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
               </svg>
@@ -110,17 +109,19 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
             <button 
               type="submit" 
-              class="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 hover:from-emerald-500 hover:to-emerald-400 text-white text-xs font-bold uppercase tracking-widest transition-all shadow-[0_10px_25px_-5px_rgba(5,150,105,0.5)] hover:shadow-[0_15px_35px_-5px_rgba(5,150,105,0.7)] hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+              id="btn-login-submit"
+              class="brutal-mac-btn-primary w-full py-4 px-6 rounded-xl text-white text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2.5 font-sans disabled:opacity-60 disabled:cursor-not-allowed transition-all"
             >
-              <span>Masuk ke Dashboard</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <span id="login-btn-spinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0"></span>
+              <svg id="login-btn-icon" class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
               </svg>
+              <span id="login-btn-text">Masuk ke Dashboard</span>
             </button>
           </form>
 
           <div class="mt-6 pt-5 border-t border-white/10 text-center">
-            <p class="text-[11px] text-slate-400 flex items-center justify-center gap-1.5 font-medium">
+            <p class="text-xs text-slate-400 flex items-center justify-center gap-1.5 font-medium">
               <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
               </svg>
@@ -140,34 +141,36 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
        ========================================================================= -->
   <div id="admin-dashboard" class="hidden min-h-screen flex-1 flex flex-col" data-api-url={newsApiUrl} data-deploy-hook={vercelDeployHook}>
     
-    <!-- macOS Floating Frosted Navbar Header -->
-    <header class="ios-glass-nav sticky top-0 z-40 border-b border-white/10">
+    <!-- macOS / iOS Floating Frosted Navbar Header with Brutalism -->
+    <header class="ios-glass-nav sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
         
-        <!-- Left Brand -->
+        <!-- Left Brand: macOS App Identity -->
         <div class="flex items-center gap-3.5">
-          <img src="/logo/logo-ma-margajaya.png" alt="Logo" class="w-10 h-10 object-contain drop-shadow" />
+          <div class="w-10 h-10 rounded-2xl bg-black/50 border-2 border-white/20 p-1 flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_#022016]">
+            <img src="/logo/logo-ma-margajaya.png" alt="Logo" class="w-7 h-7 object-contain drop-shadow" />
+          </div>
           <div>
             <h1 class="font-serif text-base sm:text-lg font-bold text-white tracking-tight leading-tight">
               MA Margajaya
             </h1>
-            <p class="text-[11px] text-emerald-300/80 font-medium">
-              Portal Warta &amp; CMS Publikasi
+            <p class="text-xs text-emerald-300/80 font-medium font-sans">
+              Portal Warta &amp; Publikasi
             </p>
           </div>
         </div>
 
-        <!-- Center: macOS Sliding Pill Segmented Control -->
-        <nav id="tab-nav" class="hidden md:flex items-center relative p-1 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-xl shadow-inner gap-0.5" role="tablist">
+        <!-- Center: Segmented Control Pill with Clean Brutalist Border -->
+        <nav id="tab-nav" class="hidden md:flex items-center relative p-1.5 rounded-2xl bg-black/60 border-2 border-white/20 backdrop-blur-xl shadow-[3px_3px_0px_0px_#022016] gap-1" role="tablist">
           <!-- Animated sliding pill indicator -->
-          <div id="tab-indicator" class="absolute top-1 bottom-1 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-[0_2px_12px_rgba(5,150,105,0.45)] border border-emerald-400/40 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none" style="width:0;left:4px;"></div>
+          <div id="tab-indicator" class="absolute top-1.5 bottom-1.5 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 shadow-[0_2px_12px_rgba(5,150,105,0.45)] border-2 border-emerald-300/50 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none" style="width:0;left:6px;"></div>
           
           <button 
             type="button" 
             id="tab-btn-editor"
             role="tab"
             aria-selected="true"
-            class="tab-btn relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors duration-200 text-white"
+            class="tab-btn relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors duration-200 text-white cursor-pointer select-none"
           >
             <svg class="w-3.5 h-3.5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -180,24 +183,24 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
             id="tab-btn-archives"
             role="tab"
             aria-selected="false"
-            class="tab-btn relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors duration-200 text-slate-400"
+            class="tab-btn relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors duration-200 text-slate-400 cursor-pointer select-none"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
             </svg>
             <span>Kelola Arsip</span>
-            <span id="badge-archive-count" class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-slate-300 min-w-[18px] text-center">0</span>
+            <span id="badge-archive-count" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/10 border border-white/20 text-slate-200 min-w-[20px] text-center">0</span>
           </button>
         </nav>
 
-        <!-- Right Clean Actions -->
+        <!-- Right Tactile Actions: Brutal Mac Buttons -->
         <div class="flex items-center gap-2 sm:gap-2.5">
           
           <!-- View Public Website -->
           <a 
             href="/" 
             target="_blank" 
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/15 transition-all shadow-sm"
+            class="brutal-mac-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold"
             title="Lihat Website Utama"
           >
             <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -210,7 +213,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
           <button 
             id="btn-rebuild-web" 
             type="button" 
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-200 text-xs font-semibold border border-emerald-500/30 transition-all shadow-sm"
+            class="brutal-mac-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 text-xs font-bold border-emerald-500/40"
             title="Sinkronkan pembaruan data terkini ke portal publik madrasah"
           >
             <svg id="icon-rebuild" class="w-3.5 h-3.5 text-emerald-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -223,7 +226,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
           <button 
             id="btn-logout" 
             type="button" 
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-semibold border border-rose-500/30 transition-all shadow-sm"
+            class="brutal-mac-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-bold border-rose-500/40"
             title="Keluar dari portal"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -237,9 +240,9 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       </div>
 
       <!-- Mobile Segmented Tabs Bar -->
-      <div class="md:hidden px-4 pb-3 pt-2 border-t border-white/5">
-        <div id="tab-nav-mobile" class="relative flex gap-0.5 p-1 rounded-xl bg-black/40 border border-white/10">
-          <div id="tab-indicator-mobile" class="absolute top-1 bottom-1 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-[0_2px_8px_rgba(5,150,105,0.4)] border border-emerald-400/40 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none" style="width:0;left:4px;"></div>
+      <div class="md:hidden px-4 pb-3 pt-2 border-t border-white/10">
+        <div id="tab-nav-mobile" class="relative flex gap-1 p-1 rounded-xl bg-black/60 border-2 border-white/20 shadow-[2px_2px_0px_0px_#022016]">
+          <div id="tab-indicator-mobile" class="absolute top-1 bottom-1 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 shadow-[0_2px_8px_rgba(5,150,105,0.4)] border border-emerald-400/50 transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none" style="width:0;left:4px;"></div>
           <button 
             type="button" 
             id="tab-btn-editor-mobile"
@@ -277,64 +280,59 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
         
         <form id="form-news" class="space-y-6">
           
-          <!-- Outer Card Container with Sleek macOS Window Frame -->
-          <div class="ios-glass-card rounded-3xl border border-white/15 shadow-2xl overflow-hidden">
+          <!-- Outer Card Container with Sleek macOS Window Frame & Brutalism -->
+          <div class="brutal-mac-card overflow-hidden">
             
-            <!-- Window Header Bar (Clean breadcrumb left, Cancel & Publish right) -->
-            <div class="px-6 py-4 border-b border-white/10 bg-black/20 flex flex-wrap items-center justify-between gap-4">
+            <!-- Window Header Bar (Clean Document Title left, Reset & Publish right) -->
+            <div class="mac-window-bar px-6 py-4 flex flex-wrap items-center justify-between gap-4 select-none">
               
-              <!-- Left: Document Context -->
-              <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center justify-center">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              <!-- Left: Document Icon & Clean Professional Title -->
+              <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border-2 border-emerald-500/40 text-emerald-300 flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_#022016]">
+                  <svg class="w-5 h-5 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                   </svg>
                 </div>
                 <div>
-                  <div class="flex items-center gap-2">
-                    <h2 class="text-sm sm:text-base font-serif font-bold text-white tracking-tight">
-                      Editor Artikel Warta
-                    </h2>
-                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold uppercase tracking-wider">
-                      Siap Publikasi
-                    </span>
-                  </div>
-                  <p class="text-[11px] text-slate-400">
-                    Format compact 2-kolom terintegrasi pangkalan data madrasah
+                  <h2 class="text-base sm:text-lg font-serif font-bold text-white tracking-tight">
+                    Editor Artikel Warta
+                  </h2>
+                  <p class="text-xs text-slate-300 font-sans">
+                    Formulir penulisan dan publikasi kegiatan madrasah
                   </p>
                 </div>
               </div>
 
-              <!-- Right Actions: Cancel / Reset & Publish Button (Matching Image Reference) -->
+              <!-- Right Actions: Cancel / Reset & Publish Button with Clean Professional Styling -->
               <div class="flex items-center gap-2.5">
                 <button 
                   type="button" 
                   id="btn-reset-form" 
-                  class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-slate-200 hover:text-white text-xs font-semibold border border-white/15 transition-all flex items-center gap-1.5 shadow-sm"
+                  class="brutal-mac-btn px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 hover:text-white text-xs font-bold transition-all flex items-center gap-1.5 font-sans"
                 >
-                  <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                   </svg>
-                  <span>Batal / Reset</span>
+                  <span>Reset Formulir</span>
                 </button>
 
                 <button 
                   type="submit" 
                   id="btn-submit" 
-                  class="px-6 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-emerald-600 hover:from-emerald-500 hover:to-emerald-400 text-white text-xs font-bold uppercase tracking-wider transition-all shadow-[0_4px_16px_rgba(5,150,105,0.4)] hover:shadow-[0_6px_22px_rgba(5,150,105,0.6)] hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="brutal-mac-btn-primary px-6 py-2.5 rounded-xl text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed font-sans"
                 >
                   <span id="btn-spinner" class="hidden w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                   <svg id="btn-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                   </svg>
-                  <span id="btn-text">Publikasikan</span>
+                  <span id="btn-text">Publikasikan Warta</span>
                 </button>
               </div>
 
             </div>
 
             <!-- Editor Body: 2-Column Responsive Layout -->
-            <div class="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div id="editor-body-grid" class="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
               <!-- =========================================================
                    KOLOM KIRI (7-8 Kolom): Judul & Kanvas Penulisan Narasi
@@ -344,34 +342,34 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                 <!-- Judul Berita -->
                 <div class="space-y-2">
                   <div class="flex items-center justify-between">
-                    <label for="judul" class="block text-xs font-bold uppercase tracking-wider text-slate-200">
-                      Judul Warta / Prestasi <span class="text-rose-400">*</span>
+                    <label for="judul" class="block text-xs font-bold uppercase tracking-wider text-slate-200 font-sans">
+                      Judul Warta / Kegiatan <span class="text-rose-400">*</span>
                     </label>
-                    <span class="text-[11px] text-slate-400 font-medium">Beri judul yang menarik &amp; informatif</span>
+                    <span class="text-[11px] text-slate-400 font-medium font-sans">Beri judul yang jelas &amp; informatif</span>
                   </div>
                   <input 
                     type="text" 
                     id="judul" 
                     name="judul" 
                     required 
-                    placeholder="Masukkan judul warta madrasah..."
-                    class="ios-glass-input w-full px-4 sm:px-5 py-3.5 rounded-xl text-base sm:text-lg font-serif font-bold placeholder:font-sans placeholder:text-sm placeholder:text-slate-500 focus:border-gold/60 transition-all text-white"
+                    placeholder="Masukkan judul artikel warta madrasah..."
+                    class="brutal-mac-input w-full px-4 sm:px-5 py-3.5 rounded-xl text-base sm:text-lg font-serif font-bold placeholder:font-sans placeholder:text-sm placeholder:text-slate-500 text-white"
                   />
                 </div>
 
                 <!-- Konten Narasi: WYSIWYG Rich Editor -->
                 <div class="space-y-2">
                   <div class="flex items-center justify-between">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-200">
-                      Isi Warta &amp; Narasi Lengkap <span class="text-rose-400">*</span>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-200 font-sans">
+                      Isi Narasi Warta <span class="text-rose-400">*</span>
                     </label>
-                    <span id="editor-counter" class="text-[11px] text-emerald-300/80 font-mono font-medium">
+                    <span id="editor-counter" class="text-[11px] text-emerald-300 font-sans font-medium">
                       0 kata &bull; 0 karakter
                     </span>
                   </div>
 
-                  <!-- macOS Rich Formatting Toolbar -->
-                  <div class="rounded-t-2xl bg-black/40 border border-white/15 border-b-0 p-2 sm:p-2.5 flex flex-wrap items-center justify-between gap-2 backdrop-blur-md">
+                  <!-- macOS Rich Formatting Toolbar Ribbon -->
+                  <div class="rounded-t-2xl bg-black/60 border-2 border-white/20 border-b-0 p-2 sm:p-2.5 flex flex-wrap items-center justify-between gap-2 backdrop-blur-md">
                     
                     <!-- Left Toolbar Controls -->
                     <div class="flex items-center flex-wrap gap-1">
@@ -380,7 +378,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       <button 
                         type="button" 
                         id="btn-fmt-bold" 
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Tebal (Ctrl+B)"
                         data-command="bold"
                       >
@@ -391,7 +389,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       <button 
                         type="button" 
                         id="btn-fmt-italic" 
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Miring (Ctrl+I)"
                         data-command="italic"
                       >
@@ -402,7 +400,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       <button 
                         type="button" 
                         id="btn-fmt-underline" 
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Garis Bawah (Ctrl+U)"
                         data-command="underline"
                       >
@@ -413,20 +411,20 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       <button 
                         type="button" 
                         id="btn-fmt-strike" 
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Coret"
                         data-command="strikeThrough"
                       >
                         <span class="line-through font-serif text-sm leading-none">S</span>
                       </button>
 
-                      <div class="w-[1px] h-5 bg-white/15 mx-1"></div>
+                      <div class="w-[2px] h-5 bg-white/20 mx-1"></div>
 
                       <!-- Heading H2 -->
                       <button 
                         type="button" 
                         id="btn-fmt-h2" 
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Judul Bagian"
                         data-command="formatBlock"
                         data-value="H2"
@@ -438,7 +436,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       <button 
                         type="button" 
                         id="btn-fmt-quote" 
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Kutipan Pernyataan"
                         data-command="formatBlock"
                         data-value="BLOCKQUOTE"
@@ -453,7 +451,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       <button 
                         type="button" 
                         id="btn-fmt-ul" 
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Daftar Poin"
                         data-command="insertUnorderedList"
                       >
@@ -466,7 +464,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       <button 
                         type="button" 
                         id="btn-fmt-ol" 
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Daftar Nomor"
                         data-command="insertOrderedList"
                       >
@@ -475,12 +473,12 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                         </svg>
                       </button>
 
-                      <div class="w-[1px] h-5 bg-white/15 mx-1"></div>
+                      <div class="w-[2px] h-5 bg-white/20 mx-1"></div>
 
                       <!-- Align Left -->
                       <button 
                         type="button"
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Rata Kiri"
                         data-command="justifyLeft"
                       >
@@ -492,7 +490,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       <!-- Align Center -->
                       <button 
                         type="button"
-                        class="toolbar-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90"
+                        class="toolbar-btn brutal-mac-btn w-8 h-8 rounded-lg bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white flex items-center justify-center transition-all"
                         title="Rata Tengah"
                         data-command="justifyCenter"
                       >
@@ -508,7 +506,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       <button 
                         type="button" 
                         id="btn-fmt-clear" 
-                        class="toolbar-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-rose-500/15 text-slate-400 hover:text-rose-300 text-[11px] font-medium transition-all flex items-center gap-1.5 active:scale-95"
+                        class="toolbar-btn brutal-mac-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-200 text-[11px] font-bold transition-all flex items-center gap-1.5"
                         title="Hapus Semua Format"
                       >
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -525,7 +523,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                     id="isi"
                     contenteditable="true"
                     data-placeholder="Tuliskan narasi warta secara lengkap. Gunakan toolbar di atas untuk memformat — klik Bold untuk tebal, Italic untuk miring, H2 untuk judul bagian, dan sebagainya..."
-                    class="wysiwyg-editor ios-glass-input w-full min-h-[320px] px-4 sm:px-5 py-4 rounded-b-2xl rounded-t-none text-sm font-normal leading-[2] text-slate-100 border-t-0 focus:outline-none focus:border-gold/60 transition-all font-sans overflow-y-auto"
+                    class="wysiwyg-editor brutal-mac-input w-full min-h-[340px] px-4 sm:px-5 py-4 rounded-b-2xl rounded-t-none text-sm font-normal leading-[2] text-slate-100 border-t-0 focus:outline-none transition-all font-sans overflow-y-auto"
                     style="resize:vertical;"
                   ></div>
                   <!-- Hidden textarea used for form submit serialization -->
@@ -535,15 +533,18 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
               </div>
 
               <!-- =========================================================
-                   KOLOM KANAN (4-5 Kolom): Metadata Sidebar (Cover, Tanggal, Penulis)
+                   KOLOM KANAN (4-5 Kolom): Metadata Sidebar (iOS Widgets)
                    ========================================================= -->
               <div class="lg:col-span-4 space-y-6">
                 
-                <!-- 1. Tanggal Kegiatan (Custom Calendar Popover) -->
-                <div class="p-5 rounded-2xl bg-black/30 border border-white/10 space-y-3">
-                  <label class="block text-xs font-bold uppercase tracking-wider text-slate-200">
-                    Tanggal Kegiatan <span class="text-rose-400">*</span>
-                  </label>
+                <!-- 1. Tanggal Kegiatan -->
+                <div class="brutal-mac-subcard p-5 space-y-3">
+                  <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                    <label class="block text-xs font-sans font-bold uppercase tracking-wider text-slate-200">
+                      Tanggal Kegiatan <span class="text-rose-400">*</span>
+                    </label>
+                    <span class="text-[10px] text-slate-400 font-sans font-medium">Kalender</span>
+                  </div>
                   
                   <input type="hidden" id="tanggal" name="tanggal" required value="" />
 
@@ -552,12 +553,12 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                     <button 
                       type="button" 
                       id="btn-custom-date" 
-                      class="ios-glass-input w-full px-4 py-3 rounded-xl text-xs font-medium flex items-center justify-between text-left hover:border-gold/50 transition-colors group"
+                      class="brutal-mac-input w-full px-4 py-3 rounded-xl text-xs font-semibold flex items-center justify-between text-left hover:border-gold transition-colors group cursor-pointer"
                     >
-                      <span id="date-display-text" class="text-white font-semibold truncate">
+                      <span id="date-display-text" class="text-white font-medium truncate font-sans">
                         Memuat tanggal...
                       </span>
-                      <div class="w-7 h-7 rounded-lg bg-emerald-500/15 text-gold flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                      <div class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-gold flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
@@ -567,13 +568,13 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                     <!-- Custom Emerald & Gold Theme Calendar Popup Popover -->
                     <div 
                       id="custom-calendar-popover" 
-                      class="hidden absolute top-full left-0 mt-2 z-50 w-72 sm:w-80 p-4 rounded-2xl ios-glass-panel border border-gold/30 bg-[#062417]/95 shadow-2xl backdrop-blur-2xl"
+                      class="hidden absolute top-full left-0 mt-2 z-50 w-72 sm:w-80 p-4 brutal-mac-card border-2 border-gold/40 bg-[#062417]/98 shadow-[6px_6px_0px_0px_#022016] backdrop-blur-2xl"
                     >
                       <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/10">
                         <button 
                           type="button" 
                           id="cal-prev-month" 
-                          class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-white flex items-center justify-center transition-colors"
+                          class="brutal-mac-btn w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-white flex items-center justify-center font-bold text-sm"
                         >
                           &lsaquo;
                         </button>
@@ -583,13 +584,13 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                         <button 
                           type="button" 
                           id="cal-next-month" 
-                          class="w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-white flex items-center justify-center transition-colors"
+                          class="brutal-mac-btn w-7 h-7 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-white flex items-center justify-center font-bold text-sm"
                         >
                           &rsaquo;
                         </button>
                       </div>
 
-                      <div class="grid grid-cols-7 gap-1 text-center text-[9px] font-bold uppercase text-slate-400 mb-2">
+                      <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-sans font-bold uppercase text-slate-400 mb-2">
                         <span>Ahd</span>
                         <span>Sen</span>
                         <span>Sel</span>
@@ -605,16 +606,16 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                         <button 
                           type="button" 
                           id="cal-btn-today" 
-                          class="text-[10px] font-bold uppercase tracking-wider text-emerald-300 hover:text-white transition-colors"
+                          class="brutal-mac-btn px-2.5 py-1 rounded-lg text-[10px] text-emerald-300 hover:text-white border-emerald-500/40 bg-emerald-950/60 font-bold uppercase font-sans"
                         >
                           Hari Ini
                         </button>
                         <button 
                           type="button" 
                           id="cal-btn-close" 
-                          class="text-[10px] font-semibold text-slate-400 hover:text-white transition-colors"
+                          class="text-[10px] font-semibold text-slate-400 hover:text-white transition-colors font-sans"
                         >
-                          Tutup
+                          Tutup (ESC)
                         </button>
                       </div>
                     </div>
@@ -622,12 +623,12 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                 </div>
 
                 <!-- 2. Penulis & Unit Peliput -->
-                <div class="p-5 rounded-2xl bg-black/30 border border-white/10 space-y-3">
-                  <div class="flex items-center justify-between">
-                    <label for="penulis" class="block text-xs font-bold uppercase tracking-wider text-slate-200">
-                      Penulis / Unit <span class="text-rose-400">*</span>
+                <div class="brutal-mac-subcard p-5 space-y-3">
+                  <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                    <label for="penulis" class="block text-xs font-sans font-bold uppercase tracking-wider text-slate-200">
+                      Penulis / Unit Peliput <span class="text-rose-400">*</span>
                     </label>
-                    <span class="text-[10px] text-slate-400">Atribusi Warta</span>
+                    <span class="text-[10px] text-slate-400 font-sans font-medium">Pengirim</span>
                   </div>
 
                   <div class="relative">
@@ -642,29 +643,29 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                       name="penulis" 
                       required 
                       placeholder="Humas MA Margajaya"
-                      class="ios-glass-input w-full pl-10 pr-4 py-3 rounded-xl text-xs font-medium placeholder:text-slate-500"
+                      class="brutal-mac-input w-full pl-10 pr-4 py-3 rounded-xl text-xs font-semibold font-sans"
                     />
                   </div>
 
-                  <!-- Quick Author Preset Chips -->
+                  <!-- Quick Author Preset Chips with Tactile Buttons -->
                   <div class="flex flex-wrap gap-1.5 pt-1">
                     <button 
                       type="button" 
-                      class="btn-author-preset px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-200 text-[10px] font-medium border border-white/10 transition-colors"
+                      class="btn-author-preset brutal-mac-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-200 text-xs font-semibold font-sans"
                       data-value="Humas MA Margajaya"
                     >
                       Humas MA
                     </button>
                     <button 
                       type="button" 
-                      class="btn-author-preset px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-200 text-[10px] font-medium border border-white/10 transition-colors"
+                      class="btn-author-preset brutal-mac-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-200 text-xs font-semibold font-sans"
                       data-value="Tim Jurnalistik Santri"
                     >
                       Jurnalistik
                     </button>
                     <button 
                       type="button" 
-                      class="btn-author-preset px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-300 hover:text-emerald-200 text-[10px] font-medium border border-white/10 transition-colors"
+                      class="btn-author-preset brutal-mac-btn px-2.5 py-1 rounded-lg bg-white/5 hover:bg-emerald-500/20 text-slate-200 text-xs font-semibold font-sans"
                       data-value="Pengurus OSIS MA"
                     >
                       OSIS
@@ -672,32 +673,32 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                   </div>
                 </div>
 
-                <!-- 3. Foto Dokumentasi Utama (Cover Image Dropzone - Matching Reference Image) -->
-                <div class="p-5 rounded-2xl bg-black/30 border border-white/10 space-y-3">
-                  <div class="flex items-center justify-between">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-200">
-                      Foto Sampul (Cover Image)
+                <!-- 3. Foto Dokumentasi Utama -->
+                <div class="brutal-mac-subcard p-5 space-y-3">
+                  <div class="flex items-center justify-between pb-2 border-b border-white/10">
+                    <label class="block text-xs font-sans font-bold uppercase tracking-wider text-slate-200">
+                      Foto Sampul Dokumentasi
                     </label>
-                    <span class="text-[10px] text-slate-400">Opsional</span>
+                    <span class="text-[10px] text-slate-400 font-sans font-medium">Opsional</span>
                   </div>
 
                   <!-- Dropzone Area -->
                   <label 
                     for="foto" 
                     id="dropzone-area"
-                    class="flex flex-col items-center justify-center gap-2.5 p-6 rounded-xl border-2 border-dashed border-white/20 hover:border-emerald-400/60 bg-white/[0.02] hover:bg-emerald-950/20 transition-all cursor-pointer group text-center"
+                    class="flex flex-col items-center justify-center gap-2.5 p-6 rounded-xl border-2 border-dashed border-white/30 hover:border-emerald-400 bg-white/[0.03] hover:bg-emerald-950/40 transition-all cursor-pointer group text-center shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.3)]"
                   >
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                       </svg>
                     </div>
                     <div class="space-y-0.5">
-                      <div class="text-xs font-semibold text-white group-hover:text-emerald-300 transition-colors">
-                        Klik atau Tarik Foto ke Sini
+                      <div class="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors font-sans">
+                        Pilih atau Tarik Foto ke Sini
                       </div>
-                      <p class="text-[10px] text-slate-400">
-                        JPG, PNG, WEBP &bull; Maks 10 MB
+                      <p class="text-xs text-slate-400 font-sans">
+                        Format JPG, PNG, WEBP (Maksimal 10 MB)
                       </p>
                     </div>
                     <input type="file" id="foto" name="foto" accept="image/*" class="hidden" />
@@ -706,16 +707,16 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                   <!-- Image Live Preview Container -->
                   <div id="preview-container" class="hidden space-y-2.5">
                     <div class="flex items-center justify-between">
-                      <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+                      <span class="text-xs font-bold text-emerald-300 flex items-center gap-1.5 font-sans">
                         <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
                         </svg>
-                        <span>Foto Terpilih</span>
+                        <span>Foto Berhasil Dipilih</span>
                       </span>
                       <button 
                         type="button" 
                         id="btn-remove-photo" 
-                        class="text-[10px] text-rose-400 hover:text-rose-300 font-bold uppercase tracking-wider flex items-center gap-1 transition-colors"
+                        class="brutal-mac-btn text-xs text-rose-300 hover:text-white bg-rose-500/20 hover:bg-rose-500/30 px-2.5 py-1 rounded-lg border-rose-500/40 font-bold uppercase tracking-wider flex items-center gap-1 font-sans"
                       >
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                           <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -723,7 +724,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                         <span>Hapus</span>
                       </button>
                     </div>
-                    <div class="overflow-hidden rounded-xl border border-white/15 bg-black/40 shadow-inner">
+                    <div class="overflow-hidden rounded-xl border-2 border-white/20 bg-black/60 shadow-[3px_3px_0px_0px_#022016]">
                       <img 
                         id="img-preview" 
                         src="" 
@@ -734,16 +735,16 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                   </div>
                 </div>
 
-                <!-- 4. Target Sinkronisasi Informasi -->
-                <div class="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/20 text-[11px] text-slate-300 space-y-1.5">
-                  <div class="font-bold text-emerald-300 flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <!-- 4. Target Sinkronisasi Informasi Widget -->
+                <div class="brutal-mac-subcard p-4 border-2 border-emerald-500/40 bg-emerald-950/60 shadow-[3px_3px_0px_0px_#022016] text-xs text-slate-300 space-y-1.5">
+                  <div class="font-bold text-emerald-300 flex items-center gap-1.5 font-sans">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <span>Penyimpanan Aman Terpadu</span>
+                    <span>Sinkronisasi Terpadu</span>
                   </div>
-                  <p class="text-slate-400 leading-relaxed">
-                    Setiap warta yang diterbitkan langsung tersinkronisasi ke Google Sheets dan foto disimpan ke Google Drive madrasah.
+                  <p class="text-slate-300/90 leading-relaxed font-sans">
+                    Warta yang diterbitkan otomatis tersimpan ke Google Sheets dan foto arsip terintegrasi ke Google Drive madrasah.
                   </p>
                 </div>
 
@@ -759,22 +760,21 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
 
       <!-- =========================================================================
-           VIEW TAB 2: KELOLA ARSIP WARTA & PUBLIKASI AKTIF
+           VIEW TAB 2: KELOLA ARSIP WARTA & PUBLIKASI AKTIF (macOS Finder Style)
            ========================================================================= -->
       <section id="section-archives" class="hidden space-y-6">
         
         <!-- Header Strip & Search Bar -->
-        <div class="ios-glass-card rounded-3xl p-6 border border-white/15 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="brutal-mac-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="w-2 h-2 rounded-full bg-gold"></span>
-              <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-gold">Basis Data</span>
-            </div>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 font-sans block mb-1">
+              Basis Data Publikasi
+            </span>
             <h2 class="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight">
               Daftar Arsip Warta Madrasah
             </h2>
-            <p class="text-xs text-slate-400 mt-0.5">
-              Kelola, pratinjau, atau hapus publikasi artikel yang telah terbit.
+            <p class="text-xs text-slate-300 font-sans mt-0.5">
+              Kelola, pratinjau, atau hapus publikasi artikel yang telah terbit secara terpusat.
             </p>
           </div>
 
@@ -790,14 +790,14 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
                 type="text" 
                 id="input-search-news" 
                 placeholder="Cari judul atau penulis..."
-                class="ios-glass-input w-full pl-9 pr-3 py-2 rounded-xl text-xs placeholder:text-slate-500 font-medium"
+                class="brutal-mac-input w-full pl-9 pr-3 py-2 rounded-xl text-xs placeholder:text-slate-400 font-medium font-sans"
               />
             </div>
 
             <button 
               id="btn-refresh-list" 
               type="button" 
-              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/15 transition-all shadow-sm shrink-0"
+              class="brutal-mac-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold shrink-0 font-sans"
               title="Segarkan daftar data dari server"
             >
               <svg id="icon-refresh-news" class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -810,31 +810,31 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
         <!-- Skeleton Loading State -->
         <div id="news-list-skeleton" class="space-y-3">
-          <div class="ios-glass-card rounded-2xl p-5 h-20 skeleton-shimmer bg-white/5 border border-white/10"></div>
-          <div class="ios-glass-card rounded-2xl p-5 h-20 skeleton-shimmer bg-white/5 border border-white/10"></div>
-          <div class="ios-glass-card rounded-2xl p-5 h-20 skeleton-shimmer bg-white/5 border border-white/10"></div>
+          <div class="brutal-mac-subcard p-5 h-20 skeleton-shimmer"></div>
+          <div class="brutal-mac-subcard p-5 h-20 skeleton-shimmer"></div>
+          <div class="brutal-mac-subcard p-5 h-20 skeleton-shimmer"></div>
         </div>
 
         <!-- Dynamic News Item List -->
         <div id="news-list-container" class="hidden space-y-3">
-          <!-- Rendered via JavaScript -->
+          <!-- Rendered via JavaScript with brutal-mac-subcard -->
         </div>
 
         <!-- Empty State -->
-        <div id="news-list-empty" class="hidden py-16 text-center ios-glass-card rounded-3xl border border-white/10">
-          <div class="w-14 h-14 rounded-2xl bg-white/5 text-slate-400 flex items-center justify-center mx-auto mb-3 border border-white/10">
+        <div id="news-list-empty" class="hidden py-16 text-center brutal-mac-card">
+          <div class="w-14 h-14 rounded-2xl bg-white/5 text-slate-400 flex items-center justify-center mx-auto mb-3 border-2 border-white/20 shadow-[2px_2px_0px_0px_#022016]">
             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
             </svg>
           </div>
           <h3 class="font-serif text-base font-bold text-white mb-1">Belum Ada Warta Ditemukan</h3>
-          <p class="text-xs text-slate-400 max-w-sm mx-auto mb-4">
+          <p class="text-xs text-slate-300 max-w-sm mx-auto mb-4 font-sans">
             Belum ada publikasi yang cocok atau pangkalan data masih kosong. Silakan gunakan tab "Tulis Warta" untuk mulai menerbitkan artikel warta baru.
           </p>
           <button 
             type="button" 
             id="btn-goto-editor" 
-            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gold hover:bg-gold-soft text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+            class="brutal-mac-btn-gold inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs uppercase tracking-wider"
           >
             <span>Tulis Warta Baru &rarr;</span>
           </button>
@@ -847,44 +847,56 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
 
   <!-- =========================================================================
-       MODAL: FULLSCREEN ARTICLE PREVIEW (macOS Document Reader)
+       MODAL: FULLSCREEN ARTICLE PREVIEW (macOS QuickLook Reader Window)
        ========================================================================= -->
   <div id="preview-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-xl">
-    <div class="ios-glass-card rounded-3xl w-full max-w-3xl max-h-[88vh] overflow-y-auto preview-scrollbar border border-white/20 shadow-2xl relative">
+    <div class="brutal-mac-card w-full max-w-3xl max-h-[88vh] overflow-y-auto preview-scrollbar border-2 border-white/30 shadow-[10px_10px_0px_0px_#022016] relative p-0 overflow-hidden">
 
-      <!-- Floating Close Button -->
-      <button 
-        id="btn-close-preview" 
-        type="button" 
-        aria-label="Tutup pratinjau"
-        class="absolute top-4 right-4 z-30 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white transition-colors rounded-full hover:bg-white/10"
-      >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
+      <!-- Preview Modal Header Bar -->
+      <div class="mac-window-bar px-5 py-3.5 sticky top-0 z-30 flex items-center justify-between select-none">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-gold flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </div>
+          <span class="text-xs sm:text-sm font-sans font-bold text-white tracking-wide">Pratinjau Artikel Warta</span>
+        </div>
+        <button 
+          id="btn-close-preview" 
+          type="button" 
+          aria-label="Tutup pratinjau"
+          class="brutal-mac-btn px-3 py-1.5 flex items-center gap-1.5 text-xs text-slate-300 hover:text-white rounded-lg bg-white/10 hover:bg-rose-500/30 font-sans"
+        >
+          <span>Tutup</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
 
       <!-- Article Reading Body -->
-      <div class="p-6 sm:p-10 pt-12 space-y-6">
+      <div class="p-6 sm:p-10 space-y-6">
         <h2 id="pv-title" class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight pr-6"></h2>
         
-        <div class="flex flex-wrap items-center gap-4 text-xs text-slate-400 pb-4 border-b border-white/10">
+        <div class="flex flex-wrap items-center gap-4 text-xs text-slate-300/80 pb-4 border-b-2 border-white/10 font-sans">
           <div class="flex items-center gap-2">
-            <span class="text-slate-500">Tanggal:</span>
-            <span id="pv-date" class="font-semibold text-gold"></span>
+            <span class="text-slate-400">Tanggal:</span>
+            <span id="pv-date" class="font-bold text-gold font-sans"></span>
           </div>
           <span>&bull;</span>
           <div class="flex items-center gap-2">
-            <span class="text-slate-500">Penulis:</span>
-            <span id="pv-penulis" class="text-slate-300 font-medium"></span>
+            <span class="text-slate-400">Penulis:</span>
+            <span id="pv-penulis" class="text-emerald-300 font-bold font-sans"></span>
           </div>
         </div>
 
-        <div class="overflow-hidden rounded-2xl border border-white/10 shadow-lg bg-slate-900/60">
+        <div class="overflow-hidden rounded-2xl border-2 border-white/20 shadow-[4px_4px_0px_0px_#022016] bg-slate-900/60">
           <img id="pv-photo" src="" alt="Foto Berita" class="hidden w-full max-h-96 object-cover" />
         </div>
 
-        <div id="pv-body" class="prose-article prose-article-dark text-sm sm:text-base leading-[2.1] pb-4"></div>
+        <div id="pv-body" class="prose-article prose-article-dark text-sm sm:text-base leading-[2.1] pb-4 font-sans"></div>
       </div>
 
     </div>
@@ -892,41 +904,54 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
 
   <!-- =========================================================================
-       MODAL: DELETE CONFIRMATION (macOS Card)
+       MODAL: DELETE CONFIRMATION (Clean Dialog with Brutalism)
        ========================================================================= -->
-  <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-    <div class="ios-glass-card rounded-3xl w-full max-w-md p-6 sm:p-8 border border-rose-500/30 shadow-2xl text-center relative overflow-hidden">
+  <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="brutal-mac-card w-full max-w-md border-2 border-rose-500/50 shadow-[8px_8px_0px_0px_#4c0519] text-center relative overflow-hidden p-0">
       
-      <!-- Normal State -->
-      <div id="delete-normal-state">
-        <div class="w-14 h-14 rounded-2xl bg-rose-500/15 text-rose-400 flex items-center justify-center mx-auto mb-4 border border-rose-500/30">
-          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+      <!-- Dialog Window Header -->
+      <div class="mac-window-bar px-5 py-3 bg-rose-950/70 border-b-2 border-rose-500/30 flex items-center justify-between select-none">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
           </svg>
+          <span class="font-sans text-xs font-bold uppercase tracking-wider text-rose-300">Konfirmasi Penghapusan</span>
         </div>
+        <span class="text-[10px] text-rose-300/80 font-sans font-medium">Tindakan Permanen</span>
+      </div>
 
-        <h3 class="font-serif text-xl font-bold text-white mb-2">Hapus Artikel Ini?</h3>
-        <p class="text-xs text-slate-400 mb-6 leading-relaxed">
-          Artikel yang dihapus tidak akan ditampilkan lagi di halaman warta publik. Tindakan ini bersifat permanen.
-        </p>
+      <div class="p-6 sm:p-8">
+        <!-- Normal State -->
+        <div id="delete-normal-state">
+          <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-4 border-2 border-rose-500/40 shadow-[3px_3px_0px_0px_#4c0519]">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </div>
 
-        <div id="delete-confirm-title" class="text-xs font-semibold text-slate-300 bg-white/5 p-3 rounded-xl mb-6 line-clamp-2 border border-white/10"></div>
+          <h3 class="font-serif text-xl font-bold text-white mb-2">Hapus Artikel Ini?</h3>
+          <p class="text-xs text-slate-300/80 mb-6 leading-relaxed font-sans">
+            Artikel yang dihapus tidak akan ditampilkan lagi di halaman warta publik. Tindakan ini bersifat permanen.
+          </p>
 
-        <div class="flex gap-3">
-          <button 
-            id="btn-cancel-delete" 
-            type="button" 
-            class="flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider transition-colors"
-          >
-            Batal
-          </button>
-          <button 
-            id="btn-confirm-delete" 
-            type="button" 
-            class="flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold uppercase tracking-widest transition-colors shadow-lg shadow-rose-900/40"
-          >
-            Ya, Hapus
-          </button>
+          <div id="delete-confirm-title" class="text-xs font-semibold text-slate-200 bg-black/40 p-3 rounded-xl mb-6 line-clamp-2 border-2 border-white/10 font-sans"></div>
+
+          <div class="flex gap-3">
+            <button 
+              id="btn-cancel-delete" 
+              type="button" 
+              class="brutal-mac-btn flex-1 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider font-sans"
+            >
+              Batal
+            </button>
+            <button 
+              id="btn-confirm-delete" 
+              type="button" 
+              class="brutal-mac-btn flex-1 py-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold uppercase tracking-widest border-rose-400 shadow-[3px_3px_0px_0px_#4c0519] font-sans"
+            >
+              Ya, Hapus
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1364,10 +1389,11 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
     }
 
     function setLoading(isLoading) {
+      if (!btnSubmit) return;
       btnSubmit.disabled = isLoading;
-      btnSpinner.classList.toggle('hidden', !isLoading);
-      btnIcon.classList.toggle('hidden', isLoading);
-      btnText.textContent = isLoading ? 'Menyimpan...' : 'Publikasikan';
+      if (btnSpinner) btnSpinner.classList.toggle('hidden', !isLoading);
+      if (btnIcon) btnIcon.classList.toggle('hidden', isLoading);
+      if (btnText) btnText.textContent = isLoading ? 'Memproses...' : 'Publikasikan Warta';
     }
 
     // Toggle Password Visibility
@@ -1527,6 +1553,22 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       showDashboard();
     }
 
+    // Login Loading State Helper
+    const loginSubmitBtn = document.getElementById('btn-login-submit');
+    const loginBtnSpinner = document.getElementById('login-btn-spinner');
+    const loginBtnIcon = document.getElementById('login-btn-icon');
+    const loginBtnText = document.getElementById('login-btn-text');
+
+    function setLoginLoading(isLoading) {
+      if (!loginSubmitBtn) return;
+      loginSubmitBtn.disabled = isLoading;
+      if (loginBtnSpinner) loginBtnSpinner.classList.toggle('hidden', !isLoading);
+      if (loginBtnIcon) loginBtnIcon.classList.toggle('hidden', isLoading);
+      if (loginBtnText) {
+        loginBtnText.textContent = isLoading ? 'Memverifikasi Sandi...' : 'Masuk ke Dashboard';
+      }
+    }
+
     if (formLogin) {
       formLogin.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -1541,12 +1583,8 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
           return;
         }
 
-        const btnLoginSubmit = formLogin.querySelector('button[type="submit"]');
-        const originalBtnText = btnLoginSubmit ? btnLoginSubmit.innerHTML : '';
-        if (btnLoginSubmit) {
-          btnLoginSubmit.disabled = true;
-          btnLoginSubmit.innerHTML = '<span>Memverifikasi Sandi...</span>';
-        }
+        setLoginLoading(true);
+        loginError.classList.add('hidden');
 
         try {
           const res = await fetch(apiUrl, {
@@ -1570,12 +1608,9 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
         } catch (err) {
           loginError.classList.remove('hidden');
           const errorMsgSpan = loginError.querySelector('span');
-          if (errorMsgSpan) errorMsgSpan.textContent = 'Gagal menghubungi server database: ' + err.message;
+          if (errorMsgSpan) errorMsgSpan.textContent = 'Gagal menghubungi server: ' + err.message;
         } finally {
-          if (btnLoginSubmit) {
-            btnLoginSubmit.disabled = false;
-            btnLoginSubmit.innerHTML = originalBtnText;
-          }
+          setLoginLoading(false);
         }
       });
     }
@@ -1665,22 +1700,22 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       items.forEach((item, idx) => {
         const isFirst = idx === 0;
         const card = document.createElement('div');
-        card.className = 'ios-glass-card rounded-2xl p-4 sm:p-5 border border-white/10 hover:border-emerald-500/40 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group';
+        card.className = 'brutal-mac-subcard p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group hover:border-emerald-400/50 hover:shadow-[5px_5px_0px_0px_#022016] transition-all';
 
         const photoUrl = formatDriveImageUrl(item.url_foto);
         const imgBlock = photoUrl
-          ? `<img src="${photoUrl}" alt="${item.judul}" referrerpolicy="no-referrer" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-white/10 shrink-0 bg-slate-900" />`
-          : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center text-gold font-bold font-serif text-xs shrink-0">MA</div>`;
+          ? `<img src="${photoUrl}" alt="${item.judul}" referrerpolicy="no-referrer" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border-2 border-white/20 shrink-0 bg-slate-900 shadow-[2px_2px_0px_0px_#022016]" />`
+          : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-emerald-950/90 border-2 border-emerald-500/40 flex items-center justify-center text-emerald-300 shrink-0 shadow-[2px_2px_0px_0px_#022016]"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg></div>`;
 
         card.innerHTML = `
           <div class="flex items-center gap-3.5 min-w-0 flex-1">
             ${imgBlock}
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2 mb-1">
-                ${isFirst ? '<span class="px-2 py-0.5 rounded-md bg-gold/15 border border-gold/30 text-[9px] font-bold text-gold uppercase tracking-wider">Headline</span>' : ''}
-                <span class="text-[11px] text-slate-400 font-medium">${formatDate(item.tanggal)}</span>
+                ${isFirst ? '<span class="px-2 py-0.5 rounded-md bg-gold/20 border-2 border-gold/40 text-[10px] font-bold text-gold uppercase tracking-wider font-sans">Terbaru</span>' : ''}
+                <span class="text-xs text-slate-300 font-medium font-sans">${formatDate(item.tanggal)}</span>
                 <span class="text-slate-500">&bull;</span>
-                <span class="text-[11px] text-slate-400 truncate">${item.penulis || 'Humas'}</span>
+                <span class="text-xs text-emerald-300 font-semibold truncate font-sans">${item.penulis || 'Humas'}</span>
               </div>
               <h3 class="text-sm sm:text-base font-serif font-bold text-white group-hover:text-emerald-300 transition-colors truncate">
                 ${item.judul || '(Tanpa Judul)'}
@@ -1692,7 +1727,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
             <button 
               type="button" 
               data-id="${item.id || ''}" 
-              class="btn-preview-item inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/15 transition-all"
+              class="btn-preview-item brutal-mac-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold font-sans"
             >
               <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -1705,7 +1740,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
               type="button" 
               data-id="${item.id || ''}" 
               data-title="${(item.judul || '').replace(/"/g, '&quot;')}" 
-              class="btn-delete-item inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-semibold border border-rose-500/30 transition-all"
+              class="btn-delete-item brutal-mac-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-bold border-rose-500/40 font-sans"
             >
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -1792,6 +1827,8 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
     }
 
     if (btnClosePreview) btnClosePreview.addEventListener('click', closePreview);
+    const btnClosePreviewDot = document.getElementById('btn-close-preview-dot');
+    if (btnClosePreviewDot) btnClosePreviewDot.addEventListener('click', closePreview);
 
     // =========================================================================
     // DELETE MODAL LOGIC
@@ -2004,11 +2041,73 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       });
     }
 
-    // Keyboard Shortcuts (Esc to close open popups)
+    // =========================================================================
+    // MACOS WINDOW TRAFFIC LIGHTS & APPLE-STYLE KEYBOARD SHORTCUTS
+    // =========================================================================
+    const macBtnCloseEditor = document.getElementById('mac-btn-close-editor');
+    const macBtnMinEditor = document.getElementById('mac-btn-min-editor');
+    const macBtnPreviewEditor = document.getElementById('mac-btn-preview-editor');
+    const editorBodyGrid = document.getElementById('editor-body-grid');
+
+    if (macBtnCloseEditor && btnResetForm) {
+      macBtnCloseEditor.addEventListener('click', () => {
+        btnResetForm.click();
+      });
+    }
+
+    if (macBtnMinEditor && editorBodyGrid) {
+      macBtnMinEditor.addEventListener('click', () => {
+        editorBodyGrid.classList.toggle('hidden');
+      });
+    }
+
+    if (macBtnPreviewEditor) {
+      macBtnPreviewEditor.addEventListener('click', () => {
+        const curJudul = judulInput ? judulInput.value.trim() : '';
+        const curContent = isiEditor ? isiEditor.innerHTML : '';
+        const curPenulis = penulisInput ? penulisInput.value.trim() : 'Humas MA Margajaya';
+        const curDate = tanggalHiddenInput ? tanggalHiddenInput.value : '';
+
+        openPreview({
+          judul: curJudul || '(Pratinjau Draf Warta)',
+          tanggal: curDate || new Date().toISOString(),
+          penulis: curPenulis,
+          isi: curContent || '<p class="text-slate-400 italic">Belum ada narasi berita yang dituliskan.</p>',
+          url_foto: currentBase64Image || ''
+        });
+      });
+    }
+
+    // Apple-style Keyboard Shortcuts: Cmd/Ctrl+Enter, Cmd/Ctrl+1, Cmd/Ctrl+2, Esc
     window.addEventListener('keydown', (e) => {
+      // Cmd/Ctrl + 1 (Switch to Editor)
+      if ((e.metaKey || e.ctrlKey) && e.key === '1') {
+        e.preventDefault();
+        switchTab('editor');
+        return;
+      }
+
+      // Cmd/Ctrl + 2 (Switch to Archives)
+      if ((e.metaKey || e.ctrlKey) && e.key === '2') {
+        e.preventDefault();
+        switchTab('archives');
+        return;
+      }
+
+      // Cmd/Ctrl + Enter (Submit / Publish News)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        const isEditorActive = !sectionEditor.classList.contains('hidden');
+        if (isEditorActive && formNews && btnSubmit && !btnSubmit.disabled) {
+          e.preventDefault();
+          formNews.requestSubmit();
+        }
+        return;
+      }
+
+      // Escape (Close Modals & Popovers)
       if (e.key === 'Escape') {
-        if (!previewModal.classList.contains('hidden')) closePreview();
-        if (!deleteModal.classList.contains('hidden')) closeDeleteModal();
+        if (previewModal && !previewModal.classList.contains('hidden')) closePreview();
+        if (deleteModal && !deleteModal.classList.contains('hidden')) closeDeleteModal();
         if (calPopover && !calPopover.classList.contains('hidden')) calPopover.classList.add('hidden');
       }
     });
