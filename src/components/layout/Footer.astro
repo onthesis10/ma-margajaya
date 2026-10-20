@@ -7,8 +7,14 @@ const year = new Date().getFullYear();
   <div class="max-w-7xl mx-auto px-6">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
       <div class="col-span-1">
-        <img src={schoolConfig.logo} alt="Logo" class="h-12 mb-4" />
-        <p class="font-serif text-xl italic text-blue-deep mb-4">{schoolConfig.name}</p>
+        <!-- Dual Logo Footer: MA Margajaya + Ponpes Darul Muawanah -->
+        <div class="flex items-center gap-3 mb-4">
+          <img src={schoolConfig.logo} alt={`Logo ${schoolConfig.name}`} class="h-12 w-auto object-contain" />
+          <div class="w-px h-10 bg-gray-300/50 shrink-0"></div>
+          <img src={schoolConfig.ponpesLogo} alt={`Logo ${schoolConfig.ponpesName}`} class="h-10 w-auto object-contain opacity-85" />
+        </div>
+        <p class="font-serif text-xl italic text-blue-deep mb-1">{schoolConfig.name}</p>
+        <p class="text-xs text-ink-muted mb-4 uppercase tracking-widest">{schoolConfig.ponpesName}</p>
         <p class="text-sm text-ink-soft leading-relaxed">{schoolConfig.description}</p>
       </div>
       

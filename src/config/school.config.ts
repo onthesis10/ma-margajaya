@@ -6,6 +6,8 @@ export const schoolConfig = {
   principal: "Anih Hidayatul Kamilah, M.Pd.",
 
   logo: "/logo/logo-ma-margajaya.png",
+  ponpesName: "Pondok Pesantren Darul Muawanah",
+  ponpesLogo: "/logo/logo-ponpes-darul-muawanah.png",
   favicon: "/favicon.png",
 
   address: "Kompleks Ponpes Darul Muawanah, Jl. Gardu-Ciilat, Dusun Jontor RT 01/RW 04, Desa Margajaya, Kec. Sukadana",
