@@ -88,7 +88,8 @@ const fallbackArticles: NewsArticle[] = [
   }
 ];
 
-let cachedArticles: NewsArticle[] | null = null;
+// Sentinel: undefined = belum di-fetch; [] atau [...] = sudah di-fetch (termasuk array kosong valid)
+let _buildCache: NewsArticle[] | undefined = undefined;
 
 /**
  * Fetch dengan retry & backoff untuk mengantisipasi cold-start Google Apps Script
@@ -111,44 +112,58 @@ async function fetchWithRetry(url: string, tries = 3) {
 
 /**
  * Mengambil semua warta dari Google Apps Script saat build time.
- * Dilengkapi graceful fallback agar build deployment tidak pernah gagal.
+ *
+ * PENTING — perilaku array kosong:
+ *   - Jika API berhasil & mengembalikan [] → DIHORMATI sebagai "tidak ada berita".
+ *     Halaman publik akan tampil kosong. Fallback hardcoded TIDAK dipakai.
+ *   - Jika API gagal (network error / timeout) → fallbackArticles dipakai
+ *     agar proses build Vercel tidak crash.
+ *
+ * Tidak menggunakan cache modul-level agar setiap build Vercel
+ * selalu mengambil data segar dari Google Sheet.
  */
 export async function fetchNewsArticles(): Promise<NewsArticle[]> {
-  if (cachedArticles && cachedArticles.length > 0) {
-    return cachedArticles;
-  }
+  // Kembalikan cache jika sudah di-fetch dalam build ini (termasuk [] yang valid)
+  if (_buildCache !== undefined) return _buildCache;
 
   const apiUrl = import.meta.env.PUBLIC_NEWS_API_URL || DEFAULT_NEWS_API_URL;
 
   try {
     const rawData = await fetchWithRetry(apiUrl, 2);
-    if (Array.isArray(rawData) && rawData.length > 0) {
-      cachedArticles = rawData.map((item: any) => ({
-        id: item.id || `news_${Date.now()}`,
-        slug: generateNewsSlug(item),
-        judul: item.judul || 'Tanpa Judul',
-        isi: item.isi || '',
-        tanggal: item.tanggal || '',
-        url_foto: formatDriveImageUrl(item.url_foto),
-        penulis: item.penulis || 'Humas MA Margajaya'
-      }));
 
-      // Urutkan tanggal terbaru
-      cachedArticles.sort((a, b) => {
-        const timeA = a.tanggal ? new Date(a.tanggal).getTime() : 0;
-        const timeB = b.tanggal ? new Date(b.tanggal).getTime() : 0;
-        if (timeB !== timeA) return timeB - timeA;
-        const idA = parseInt((a.id || '').replace('news_', '')) || 0;
-        const idB = parseInt((b.id || '').replace('news_', '')) || 0;
-        return idB - idA;
-      });
-
-      return cachedArticles;
+    // Array kosong = sheet memang kosong, dihormati. Bukan alasan untuk fallback.
+    if (!Array.isArray(rawData)) {
+      console.warn('[news] API mengembalikan data bukan array, menggunakan fallback.');
+      _buildCache = fallbackArticles;
+      return _buildCache;
     }
 
-    return fallbackArticles;
+    const articles: NewsArticle[] = rawData.map((item: any) => ({
+      id: item.id || `news_${Date.now()}`,
+      slug: generateNewsSlug(item),
+      judul: item.judul || 'Tanpa Judul',
+      isi: item.isi || '',
+      tanggal: item.tanggal || '',
+      url_foto: formatDriveImageUrl(item.url_foto),
+      penulis: item.penulis || 'Humas MA Margajaya'
+    }));
+
+    // Urutkan tanggal terbaru
+    articles.sort((a, b) => {
+      const timeA = a.tanggal ? new Date(a.tanggal).getTime() : 0;
+      const timeB = b.tanggal ? new Date(b.tanggal).getTime() : 0;
+      if (timeB !== timeA) return timeB - timeA;
+      const idA = parseInt((a.id || '').replace('news_', '')) || 0;
+      const idB = parseInt((b.id || '').replace('news_', '')) || 0;
+      return idB - idA;
+    });
+
+    _buildCache = articles;
+    return _buildCache;
   } catch (err) {
+    // Hanya gunakan fallback jika API benar-benar tidak dapat dihubungi
     console.warn('[news] Gagal mengambil warta dari Apps Script, menggunakan fallback:', (err as Error).message);
-    return fallbackArticles;
+    _buildCache = fallbackArticles;
+    return _buildCache;
   }
 }

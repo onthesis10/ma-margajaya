@@ -84,15 +84,21 @@ const currentPath = Astro.url.pathname;
         class="h-9 lg:h-9 xl:h-10 w-auto object-contain drop-shadow transition-transform duration-300 group-hover:scale-105 shrink-0 opacity-90 group-hover:opacity-100"
       />
 
-      <!-- Separator Vertikal (sembunyikan di lg, tampil xl+) -->
-      <div class="hidden xl:block w-px h-6 bg-white/20 shrink-0 mx-1"></div>
+      <!-- Separator Vertikal (sembunyikan di md ke bawah, tampil sm+) -->
+      <div class="hidden sm:block w-px h-6 bg-white/20 shrink-0 mx-1.5"></div>
 
-      <!-- Teks Identitas (sembunyikan di lg, tampil xl+) -->
-      <div class="hidden xl:block">
-        <div class="font-bold text-[11px] tracking-normal text-white group-hover:text-gold transition-colors uppercase font-sans leading-none">
+      <!-- Teks Identitas (tampil dari tablet kecil ke atas) -->
+      <div class="hidden sm:block">
+        <div
+          class="font-bold text-[12px] tracking-wide text-white group-hover:text-gold transition-colors uppercase leading-none"
+          style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;"
+        >
           {schoolConfig.shortName}
         </div>
-        <div class="text-[8px] text-white/60 uppercase tracking-[0.06em] font-medium leading-none mt-0.5">
+        <div
+          class="text-[9px] text-white/90 uppercase tracking-[0.07em] font-medium leading-none mt-0.5"
+          style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;"
+        >
           {schoolConfig.ponpesName}
         </div>
       </div>

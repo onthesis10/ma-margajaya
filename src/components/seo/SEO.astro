@@ -152,6 +152,8 @@ const jsonLdBreadcrumb = breadcrumbs && breadcrumbs.length > 0 ? {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- Stylesheet font: Fraunces (serif) + Plus Jakarta Sans (sans-serif) -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" />
+<!-- Preload critical font subset untuk mencegah FOIT pada nama sekolah di header -->
+<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KU7NSg.woff2" />
 
 <!-- Primary Meta Tags -->
 <title>{fullTitle}</title>
