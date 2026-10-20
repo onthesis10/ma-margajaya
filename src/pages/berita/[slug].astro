@@ -22,18 +22,39 @@ const breadcrumbs = [
   { label: article.judul, href: `/berita/${article.slug}` }
 ];
 
-const articleUrl = `https://mamargajaya.sch.id/berita/${article.slug}`;
+// Gunakan Astro.site agar canonical URL selalu konsisten dengan domain resmi
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.mamargajaya.sch.id';
+const articleUrl = `${siteUrl}/berita/${article.slug}`;
+
 const formattedDate = formatIndonesianDate(article.tanggal);
 const readingTime = estimateReadingTime(article.isi);
+
 // Detect whether content is stored as HTML (from WYSIWYG) or plain text (legacy)
 const isiContent = article.isi || '';
 const isHtmlContent = isiContent.trimStart().startsWith('<');
 const paragraphs = !isHtmlContent ? isiContent.split(/\n\s*\n/).filter(p => p.trim()) : [];
+
+// Buat description bersih (140-160 karakter): strip tag HTML, potong di batas kata ramah SEO
+const plainText = isiContent.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+const fallbackDesc = 'Warta dan informasi resmi civitas akademika MA Margajaya Sukadana bersama Pondok Pesantren Darul Muawanah, Jln. Ciilat - Gardu Margajaya, Ciamis.';
+let articleDescription = fallbackDesc;
+if (plainText.length >= 140) {
+  const maxLen = 155;
+  const cutIndex = plainText.lastIndexOf(' ', maxLen);
+  articleDescription = (cutIndex > 130 ? plainText.substring(0, cutIndex) : plainText.substring(0, maxLen)) + '…';
+} else if (plainText.length > 0) {
+  const combined = `${plainText} — Simak publikasi warta resmi civitas akademika MA Margajaya di Kompleks Pondok Pesantren Darul Muawanah Sukadana, Ciamis.`;
+  articleDescription = combined.length > 158 ? combined.substring(0, combined.lastIndexOf(' ', 155)) + '…' : combined;
+}
 ---
 
 <PageLayout 
   title={article.judul} 
-  description={article.isi ? article.isi.substring(0, 160) + '...' : 'Warta resmi MA Margajaya'}
+  description={articleDescription}
+  image={article.url_foto || undefined}
+  type="article"
+  publishedTime={article.tanggal ? new Date(article.tanggal).toISOString() : undefined}
+  author={article.penulis || 'Humas MA Margajaya'}
   breadcrumbs={breadcrumbs}
 >
   <section class="py-12 md:py-20 bg-slate-50/50 min-h-screen relative overflow-hidden" data-motion-section>
@@ -175,7 +196,10 @@ const paragraphs = !isHtmlContent ? isiContent.split(/\n\s*\n/).filter(p => p.tr
             <img 
               src={article.url_foto} 
               alt={article.judul} 
-              referrerpolicy="no-referrer" 
+              referrerpolicy="no-referrer"
+              loading="eager"
+              width="1200"
+              height="750"
               class="w-full max-h-[580px] object-cover" 
             />
             <div class="p-3.5 bg-slate-900/90 text-center text-xs text-white/70 italic backdrop-blur-md">

@@ -8,18 +8,37 @@ import '../../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  /** URL gambar OG (opsional, fallback ke logo sekolah) */
+  image?: string;
+  /** Tipe halaman untuk og:type dan JSON-LD ('website' atau 'article') */
+  type?: 'website' | 'article';
+  /** Tanggal terbit ISO 8601 — khusus halaman berita */
+  publishedTime?: string;
+  /** Nama penulis — khusus halaman berita */
+  author?: string;
 }
 
 const { 
   title, 
-  description
+  description,
+  image,
+  type,
+  publishedTime,
+  author,
 } = Astro.props;
 ---
 
 <!DOCTYPE html>
 <html lang="id">
   <head>
-    <SEO title={title} description={description} />
+    <SEO 
+      title={title} 
+      description={description}
+      image={image}
+      type={type}
+      publishedTime={publishedTime}
+      author={author}
+    />
   </head>
   <body class="flex flex-col min-h-screen">
     <Header />
@@ -29,3 +48,4 @@ const {
     <Footer />
   </body>
 </html>
+

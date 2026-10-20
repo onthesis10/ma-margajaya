@@ -2,7 +2,7 @@ export const schoolConfig = {
   name: "Madrasah Aliyah Margajaya",
   shortName: "MA Margajaya",
   tagline: "Berakhlak Mulia & Berprestasi",
-  description: "Website resmi Madrasah Aliyah (MA) Margajaya Sukadana-Ciamis di bawah naungan Kemenag Ciamis dan Yayasan MPP PUI Ciamis.",
+  description: "Website resmi MA Margajaya Sukadana, Ciamis. Pendidikan Islam terpadu bersama Ponpes Darul Muawanah di bawah naungan Kemenag dan Yayasan PUI Ciamis.",
   principal: "Anih Hidayatul Kamilah, M.Pd.",
 
   logo: "/logo/logo-ma-margajaya.png",
@@ -10,7 +10,7 @@ export const schoolConfig = {
   ponpesLogo: "/logo/logo-ponpes-darul-muawanah.png",
   favicon: "/favicon.png",
 
-  address: "Kompleks Ponpes Darul Muawanah, Jl. Gardu-Ciilat, Dusun Jontor RT 01/RW 04, Desa Margajaya, Kec. Sukadana",
+  address: "Kompleks Ponpes Darul Muawanah, Jln. Ciilat - Gardu Margajaya, Dusun Jontor RT 01/RW 04, Desa Margajaya, Kec. Sukadana",
   city: "Kabupaten Ciamis",
   province: "Jawa Barat",
   postalCode: "46272",

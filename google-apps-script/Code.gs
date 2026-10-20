@@ -5,7 +5,7 @@
  * 2. Tambah Warta Baru + Validasi Foto (MIME & Ukuran) ke Google Drive
  * 3. Hapus Warta Berdasarkan ID beserta fotonya di Google Drive (dilindungi autentikasi)
  * 4. Ambil Semua Warta (GET - terurut tanggal terbaru)
- * 5. Trigger Rebuild (Cloudflare Deploy Hook) otomatis saat data berubah
+ * 5. Trigger Rebuild (Vercel Deploy Hook) otomatis saat data berubah
  *
  * Struktur Kolom Sheet "Berita":
  * A=id | B=judul | C=isi | D=tanggal | E=url_foto | F=penulis
@@ -48,7 +48,9 @@ function isValidSessionToken(token) {
 }
 
 /**
- * Memicu build ulang di Cloudflare Pages via Deploy Hook
+ * Memicu build ulang di Vercel via Deploy Hook
+ * Deploy Hook dibuat di: Vercel Dashboard → Project → Settings → Git → Deploy Hooks
+ * URL hook disimpan di Script Properties dengan key: DEPLOY_HOOK_URL
  */
 function triggerRebuild() {
   try {
@@ -59,12 +61,13 @@ function triggerRebuild() {
         method: 'post',
         muteHttpExceptions: true
       });
-      Logger.log('Deploy hook berhasil dipanggil ke Cloudflare Pages.');
+      Logger.log('Deploy hook berhasil dipanggil ke Vercel.');
     }
   } catch (err) {
     Logger.log('Peringatan: Gagal memicu deploy hook: ' + err.toString());
   }
 }
+
 
 /**
  * Helper untuk menghapus file foto dari Google Drive berdasarkan URL.
@@ -258,7 +261,7 @@ function doPost(e) {
       }
 
       if (deleted) {
-        // Picu deploy hook Cloudflare jika terkonfigurasi
+        // Picu deploy hook Vercel jika terkonfigurasi
         triggerRebuild();
 
         return jsonResponse({
@@ -334,7 +337,7 @@ function doPost(e) {
     // Kolom: [id, judul, isi, tanggal, url_foto, penulis]
     sheet.appendRow([id, judul, isi, tanggal, urlFoto, penulis]);
 
-    // Picu deploy hook Cloudflare jika terkonfigurasi
+    // Picu deploy hook Vercel jika terkonfigurasi
     triggerRebuild();
 
     return jsonResponse({

@@ -11,8 +11,8 @@ const breadcrumbs = [{ label: "Berita", href: "/berita" }];
 ---
 
 <PageLayout 
-  title="Warta & Berita Madrasah" 
-  description="Informasi, prestasi, dan dokumentasi agenda kegiatan terkini MA Margajaya Sukadana - Ciamis."
+  title="Warta & Publikasi Berita Madrasah" 
+  description="Kumpulan warta resmi, publikasi kegiatan santri, agenda kepesantrenan, dan pengumuman terbaru civitas akademika MA Margajaya Sukadana, Ciamis."
   breadcrumbs={breadcrumbs}
 >
   <section class="py-8 md:py-14 bg-slate-50/50 min-h-screen relative overflow-hidden" data-motion-section>
@@ -63,7 +63,10 @@ const breadcrumbs = [{ label: "Berita", href: "/berita" }];
                   <img 
                     src={heroArticle.url_foto} 
                     alt={heroArticle.judul} 
-                    referrerpolicy="no-referrer" 
+                    referrerpolicy="no-referrer"
+                    loading="eager"
+                    width="800"
+                    height="500"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
                   />
                 ) : (
@@ -135,7 +138,10 @@ const breadcrumbs = [{ label: "Berita", href: "/berita" }];
                       <img 
                         src={item.url_foto} 
                         alt={item.judul} 
-                        referrerpolicy="no-referrer" 
+                        referrerpolicy="no-referrer"
+                        loading="lazy"
+                        width="600"
+                        height="375"
                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                       />
                       <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-md bg-black/40 border border-white/20">

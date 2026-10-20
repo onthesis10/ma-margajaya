@@ -11,12 +11,37 @@ interface Props {
   breadcrumbs: { label: string; href: string }[];
   showContact?: boolean;
   showPPDBCTA?: boolean;
+  /** URL gambar OG (opsional, fallback ke logo sekolah) */
+  image?: string;
+  /** Tipe halaman untuk og:type dan JSON-LD ('website' atau 'article') */
+  type?: 'website' | 'article';
+  /** Tanggal terbit ISO 8601 — khusus halaman berita */
+  publishedTime?: string;
+  /** Nama penulis — khusus halaman berita */
+  author?: string;
 }
 
-const { title, description, breadcrumbs, showContact = true, showPPDBCTA = true } = Astro.props;
+const { 
+  title, 
+  description, 
+  breadcrumbs, 
+  showContact = true, 
+  showPPDBCTA = true,
+  image,
+  type,
+  publishedTime,
+  author,
+} = Astro.props;
 ---
 
-<MainLayout title={title} description={description}>
+<MainLayout 
+  title={title} 
+  description={description}
+  image={image}
+  type={type}
+  publishedTime={publishedTime}
+  author={author}
+>
   <PageHeader title={title} description={description} />
   <Breadcrumb items={breadcrumbs} />
   
@@ -25,3 +50,4 @@ const { title, description, breadcrumbs, showContact = true, showPPDBCTA = true 
   {showPPDBCTA && <PPDBCTASection />}
   {showContact && <ContactSection />}
 </MainLayout>
+

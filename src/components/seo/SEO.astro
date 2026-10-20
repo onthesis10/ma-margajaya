@@ -1,43 +1,177 @@
 ---
+/**
+ * Komponen SEO — MA Margajaya
+ * Mengatur semua tag <head> penting untuk SEO, Open Graph, Twitter Card,
+ * dan data terstruktur (JSON-LD) sesuai standar Google.
+ *
+ * Props:
+ *   title         — Judul halaman (wajib diisi unik per halaman)
+ *   description   — Deskripsi halaman (140-160 karakter)
+ *   image         — URL absolut gambar OG (opsional, fallback ke logo sekolah)
+ *   type          — Jenis halaman: 'website' (default) atau 'article' (berita)
+ *   publishedTime — Tanggal terbit ISO 8601 (khusus type='article')
+ *   author        — Nama penulis (khusus type='article')
+ */
 import { schoolConfig } from '../../config/school.config';
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  author?: string;
 }
 
-const { 
-  title = schoolConfig.name, 
+const {
+  title = schoolConfig.name,
   description = schoolConfig.description,
-  image = schoolConfig.logo
+  image,
+  type = 'website',
+  publishedTime,
+  author = 'Humas MA Margajaya',
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || "https://example.com");
-const fullTitle = title === schoolConfig.name ? title : `${title} | ${schoolConfig.name}`;
+// Canonical URL menggunakan Astro.site (diset di astro.config.mjs)
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.mamargajaya.sch.id';
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+
+// Format judul: jika judul sudah memuat nama madrasah (seperti di Beranda), jangan duplikat
+const fullTitle =
+  title === schoolConfig.name || title.includes(schoolConfig.name) || title.startsWith('MA Margajaya')
+    ? title
+    : `${title} | ${schoolConfig.name}`;
+
+// Gambar OG: gunakan gambar yang diberikan, atau fallback ke og-default.png (1200x630 banner)
+const ogImage = image
+  ? (image.startsWith('http') ? image : `${siteUrl}${image}`)
+  : `${siteUrl}/og-default.png`;
+
+// Data JSON-LD EducationalOrganization (dipakai di semua halaman)
+const jsonLdOrganization = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: 'Madrasah Aliyah Margajaya',
+  alternateName: ['MA Margajaya', 'MA Margajaya Sukadana'],
+  url: siteUrl,
+  logo: `${siteUrl}${schoolConfig.logo}`,
+  image: `${siteUrl}/images/gedung-ma-margajaya.jpg`,
+  description: schoolConfig.description,
+  identifier: {
+    '@type': 'PropertyValue',
+    name: 'NPSN',
+    value: '69955696',
+  },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Jln. Ciilat - Gardu Margajaya, Dusun Jontor RT 01/RW 04, Desa Margajaya',
+    addressLocality: 'Sukadana',
+    addressRegion: 'Jawa Barat',
+    postalCode: '46272',
+    addressCountry: 'ID',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: schoolConfig.phone,
+    email: schoolConfig.email,
+    contactType: 'customer service',
+    availableLanguage: 'Indonesian',
+  },
+  sameAs: [
+    schoolConfig.social.instagram,
+    schoolConfig.social.facebook,
+  ].filter(Boolean),
+  foundingOrganization: {
+    '@type': 'Organization',
+    name: 'Majelis Pendidikan dan Pengajaran PUI Kabupaten Ciamis',
+  },
+};
+
+// Data JSON-LD NewsArticle (hanya untuk halaman berita / type='article')
+const jsonLdArticle = type === 'article' ? {
+  '@context': 'https://schema.org',
+  '@type': 'NewsArticle',
+  headline: title,
+  description: description,
+  image: ogImage,
+  datePublished: publishedTime ?? new Date().toISOString(),
+  dateModified: publishedTime ?? new Date().toISOString(),
+  author: {
+    '@type': 'Person',
+    name: author,
+  },
+  publisher: {
+    '@type': 'EducationalOrganization',
+    name: 'Madrasah Aliyah Margajaya',
+    logo: {
+      '@type': 'ImageObject',
+      url: `${siteUrl}${schoolConfig.logo}`,
+    },
+  },
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': canonicalURL.toString(),
+  },
+  isAccessibleForFree: true,
+  inLanguage: 'id',
+} : null;
 ---
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/svg+xml" href={schoolConfig.favicon} />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="canonical" href={canonicalURL} />
+
+<!-- Preconnect font (non-blocking, lebih cepat dari @import di CSS) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<!-- Stylesheet font: Fraunces (serif) + Plus Jakarta Sans (sans-serif) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" />
 
 <!-- Primary Meta Tags -->
 <title>{fullTitle}</title>
 <meta name="title" content={fullTitle} />
 <meta name="description" content={description} />
+<meta name="author" content={author} />
+<meta name="robots" content="index, follow" />
+<meta name="language" content="Indonesian" />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
+<meta property="og:site_name" content={schoolConfig.name} />
+<meta property="og:locale" content="id_ID" />
+<meta property="og:type" content={type === 'article' ? 'article' : 'website'} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={new URL(image, Astro.url)} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={fullTitle} />
+{type === 'article' && publishedTime && (
+  <meta property="article:published_time" content={publishedTime} />
+)}
+{type === 'article' && (
+  <meta property="article:author" content={author} />
+)}
+{type === 'article' && (
+  <meta property="article:section" content="Warta Madrasah" />
+)}
 
-<!-- Twitter -->
+<!-- Twitter Card -->
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={canonicalURL} />
 <meta property="twitter:title" content={fullTitle} />
 <meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image, Astro.url)} />
+<meta property="twitter:image" content={ogImage} />
+
+<!-- JSON-LD: EducationalOrganization (semua halaman) -->
+<script type="application/ld+json" set:html={JSON.stringify(jsonLdOrganization)} />
+
+<!-- JSON-LD: NewsArticle (hanya halaman berita) -->
+{jsonLdArticle && (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
+)}
+

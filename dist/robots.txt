@@ -3,4 +3,5 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/
 
-Sitemap: https://mamargajaya.sch.id/sitemap.xml
+# Sitemap dihasilkan otomatis oleh @astrojs/sitemap saat build
+Sitemap: https://www.mamargajaya.sch.id/sitemap-index.xml
