@@ -68,7 +68,7 @@ const currentPath = Astro.url.pathname;
   <!-- Main Navbar -->
   <div id="nav-container" class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between transition-all duration-300">
     <!-- Brand Logo: MA Margajaya + Ponpes Darul Muawanah -->
-    <a href="/" class="flex items-center gap-1.5 lg:gap-2 group shrink-0">
+    <a href="/" class="flex items-center gap-1 group shrink-0">
 
       <!-- Logo MA Margajaya (Utama) -->
       <img
@@ -85,22 +85,22 @@ const currentPath = Astro.url.pathname;
       />
 
       <!-- Separator Vertikal (sembunyikan di lg, tampil xl+) -->
-      <div class="hidden xl:block w-px h-8 bg-white/20 shrink-0 mx-1"></div>
+      <div class="hidden xl:block w-px h-6 bg-white/20 shrink-0 mx-1"></div>
 
       <!-- Teks Identitas (sembunyikan di lg, tampil xl+) -->
-      <div class="hidden xl:block leading-none">
-        <div class="font-bold text-[13px] tracking-wide text-white group-hover:text-gold transition-colors uppercase font-sans leading-tight">
+      <div class="hidden xl:block">
+        <div class="font-bold text-[11px] tracking-normal text-white group-hover:text-gold transition-colors uppercase font-sans leading-none">
           {schoolConfig.shortName}
         </div>
-        <div class="text-[9px] text-white/60 uppercase tracking-[0.1em] font-medium mt-0.5">
-          {schoolConfig.ponpesName} · Sukadana
+        <div class="text-[8px] text-white/60 uppercase tracking-[0.06em] font-medium leading-none mt-0.5">
+          {schoolConfig.ponpesName}
         </div>
       </div>
 
     </a>
     
     <!-- Tab Bar Links (Minimalist Floating Glass Dropdown, No Chevron, Clean & Subtle) -->
-    <nav class="hidden lg:flex items-center gap-6 xl:gap-8 h-full">
+    <nav class="hidden lg:flex items-center gap-4 xl:gap-6 h-full">
       {navigation.map((item) => {
         const isActive = item.href === '/' ? currentPath === '/' : currentPath.startsWith(item.href);
         const hasSub = item.subItems && item.subItems.length > 0;
