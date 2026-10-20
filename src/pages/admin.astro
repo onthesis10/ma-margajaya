@@ -1874,8 +1874,8 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
           const result = await response.json();
           if (result.status === 'success') {
-            await new Promise(r => setTimeout(r, 400));
-            triggerVercelDeploy(false);
+            await new Promise(r => setTimeout(r, 600));
+            await triggerVercelDeploy(false);
             showAlert('success', `
               <div class="flex items-start sm:items-center gap-3.5">
                 <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center shrink-0 border border-emerald-500/30">
@@ -1986,7 +1986,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
           const result = await response.json();
 
           if (result.status === 'success') {
-            triggerVercelDeploy(false);
+            await triggerVercelDeploy(false);
 
             showAlert('success', `
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
