@@ -1,7 +1,7 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import Container from '../../components/ui/Container.astro';
-import { fetchNewsArticles, formatIndonesianDate, estimateReadingTime } from '../../lib/news';
+import { fetchNewsArticles, formatIndonesianDate, estimateReadingTime, getArticleExcerpt, stripHtml } from '../../lib/news';
 
 const articles = await fetchNewsArticles();
 const heroArticle = articles.length > 0 ? articles[0] : null;
@@ -67,7 +67,7 @@ const breadcrumbs = [{ label: "Berita", href: "/berita" }];
               <a 
                 href={`/berita/${heroArticle.slug}`}
                 class="news-card block group rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/80 hover:border-emerald-400 shadow-[0_15px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_-12px_rgba(5,150,70,0.15)] transition-all duration-300 overflow-hidden"
-                data-search-text={`${heroArticle.judul} ${heroArticle.isi}`.toLowerCase()}
+                data-search-text={`${heroArticle.judul} ${stripHtml(heroArticle.isi)}`.toLowerCase()}
               >
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 p-6 sm:p-8 lg:p-10 items-center">
                   
@@ -108,7 +108,7 @@ const breadcrumbs = [{ label: "Berita", href: "/berita" }];
                     </h2>
 
                     <p class="text-sm text-slate-600 leading-relaxed line-clamp-3 font-light">
-                      {heroArticle.isi}
+                      {getArticleExcerpt(heroArticle.isi, 240)}
                     </p>
 
                     <div class="pt-3 flex items-center justify-between border-t border-slate-100 text-xs">
@@ -144,7 +144,7 @@ const breadcrumbs = [{ label: "Berita", href: "/berita" }];
                   <a 
                     href={`/berita/${item.slug}`}
                     class="news-card group rounded-3xl bg-white border border-slate-200/70 hover:border-emerald-400 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden"
-                    data-search-text={`${item.judul} ${item.isi}`.toLowerCase()}
+                    data-search-text={`${item.judul} ${stripHtml(item.isi)}`.toLowerCase()}
                   >
                     <div>
                       {item.url_foto ? (
@@ -185,7 +185,7 @@ const breadcrumbs = [{ label: "Berita", href: "/berita" }];
                           {item.judul}
                         </h3>
                         <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed font-light">
-                          {item.isi}
+                          {getArticleExcerpt(item.isi, 160)}
                         </p>
                       </div>
                     </div>

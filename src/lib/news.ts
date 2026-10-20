@@ -55,11 +55,58 @@ export function formatIndonesianDate(rawDate: string): string {
 }
 
 /**
- * Estimasi durasi membaca warta
+ * Menghapus seluruh tag HTML dari teks agar aman ditampilkan sebagai
+ * ringkasan/kutipan (excerpt) kartu warta, search filter, atau meta description.
+ */
+export function stripHtml(html: string): string {
+  if (!html) return '';
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+    .replace(/<\/(p|div|h[1-6]|li|blockquote|tr)>/gi, ' ')
+    .replace(/<br\s*[\/]?>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Mengambil ringkasan teks bersih (excerpt) dengan panjang tertentu
+ */
+export function getArticleExcerpt(content: string, maxLength = 160): string {
+  const clean = stripHtml(content);
+  if (!clean) return '';
+  if (clean.length <= maxLength) return clean;
+  const cutIndex = clean.lastIndexOf(' ', maxLength);
+  return (cutIndex > maxLength * 0.7 ? clean.substring(0, cutIndex) : clean.substring(0, maxLength)) + '…';
+}
+
+/**
+ * Membersihkan HTML artikel dari tag wrapper asing, atribut Angular/React,
+ * dan inline style yang merusak tampilan, agar rapi dan aman di Tailwind Typography.
+ */
+export function sanitizeArticleHtml(html: string): string {
+  if (!html) return '';
+  return html
+    .replace(/<(script|style|iframe|object|embed)[^>]*>[\s\S]*?<\/\1>/gi, '')
+    .replace(/\s+(_ngcontent[^\s=>]*|_nghost[^\s=>]*|inline-copy-host|ng-[a-z0-9_-]+)(?:="[^"]*"|='[^']*'|=[^\s>]+)?/gi, '')
+    .replace(/\s+class="[^"]*(markdown-main-panel|md-content|enable-luminous)[^"]*"/gi, '')
+    .replace(/\s+id="model-response-[^"]*"/gi, '');
+}
+
+/**
+ * Estimasi durasi membaca warta berdasarkan kata riil (bukan tag HTML)
  */
 export function estimateReadingTime(text: string): string {
   if (!text) return '1 Menit Baca';
-  const words = text.trim().split(/\s+/).length;
+  const clean = stripHtml(text);
+  const words = clean.trim().split(/\s+/).filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(words / 180));
   return `${minutes} Menit Baca`;
 }

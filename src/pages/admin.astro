@@ -1207,10 +1207,12 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
 
     function syncHiddenTextarea() {
       if (isiHidden && isiEditor) {
-        // Store the full innerHTML so rich formatting (bold, italic,
-        // underline, lists, blockquotes, headings) is preserved in Sheets
-        // and rendered correctly on the public article page.
-        const html = isiEditor.innerHTML;
+        // Simpan innerHTML dengan memfilter atribut framework eksternal (_ngcontent, class asing, style liar)
+        let html = isiEditor.innerHTML;
+        html = html
+          .replace(/\s+(_ngcontent[^\s=>]*|_nghost[^\s=>]*|inline-copy-host|ng-[a-z0-9_-]+)(?:="[^"]*"|='[^']*'|=[^\s>]+)?/gi, '')
+          .replace(/\s+class="[^"]*(markdown-main-panel|md-content|enable-luminous)[^"]*"/gi, '')
+          .replace(/\s+id="model-response-[^"]*"/gi, '');
         isiHidden.value = html;
         // Validate required: check visible text only
         const hasText = (isiEditor.innerText || '').trim().length > 0;
@@ -1242,6 +1244,23 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
       isiEditor.addEventListener('keyup', updateToolbarState);
       isiEditor.addEventListener('mouseup', updateToolbarState);
       isiEditor.addEventListener('selectionchange', updateToolbarState);
+
+      // Tangani event paste agar tidak membawa wrapper DOM/atribut asing dari ChatGPT, Gemini, dll
+      isiEditor.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        if (document.queryCommandSupported('insertText')) {
+          document.execCommand('insertText', false, text);
+        } else {
+          const selection = window.getSelection();
+          if (!selection.rangeCount) return;
+          selection.deleteFromDocument();
+          selection.getRangeAt(0).insertNode(document.createTextNode(text));
+          selection.collapseToEnd();
+        }
+        updateWordCount();
+        syncHiddenTextarea();
+      });
 
       // Keyboard shortcuts
       isiEditor.addEventListener('keydown', (e) => {

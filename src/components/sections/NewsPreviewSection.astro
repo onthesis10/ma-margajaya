@@ -1,6 +1,6 @@
 ---
 import Container from '../ui/Container.astro';
-import { fetchNewsArticles, formatIndonesianDate } from '../../lib/news';
+import { fetchNewsArticles, formatIndonesianDate, getArticleExcerpt } from '../../lib/news';
 
 const articles = await fetchNewsArticles();
 const hero = articles.length > 0 ? articles[0] : null;
@@ -90,7 +90,7 @@ const recent = articles.length > 1 ? articles.slice(1, 3) : [];
 
             <div class="space-y-3">
               <p class="text-sm text-ink-soft leading-relaxed line-clamp-3">
-                {hero.isi}
+                {getArticleExcerpt(hero.isi, 200)}
               </p>
             </div>
 
@@ -145,7 +145,7 @@ const recent = articles.length > 1 ? articles.slice(1, 3) : [];
                         {item.judul}
                       </h4>
                       <p class="text-xs text-ink-soft leading-relaxed line-clamp-3">
-                        {item.isi}
+                        {getArticleExcerpt(item.isi, 140)}
                       </p>
                     </div>
                     <div class="pt-3 border-t border-hair">
