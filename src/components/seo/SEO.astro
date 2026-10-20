@@ -21,6 +21,7 @@ interface Props {
   type?: 'website' | 'article';
   publishedTime?: string;
   author?: string;
+  breadcrumbs?: { label: string; href: string }[];
 }
 
 const {
@@ -30,6 +31,7 @@ const {
   type = 'website',
   publishedTime,
   author = 'Humas MA Margajaya',
+  breadcrumbs,
 } = Astro.props;
 
 // Canonical URL menggunakan Astro.site (diset di astro.config.mjs)
@@ -115,6 +117,26 @@ const jsonLdArticle = type === 'article' ? {
   isAccessibleForFree: true,
   inLanguage: 'id',
 } : null;
+
+// Data JSON-LD BreadcrumbList (jika halaman memiliki remah roti / breadcrumbs)
+const jsonLdBreadcrumb = breadcrumbs && breadcrumbs.length > 0 ? {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Beranda',
+      item: siteUrl,
+    },
+    ...breadcrumbs.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 2,
+      name: item.label,
+      item: item.href.startsWith('http') ? item.href : `${siteUrl}${item.href}`,
+    })),
+  ],
+} : null;
 ---
 
 <!-- Global Metadata -->
@@ -173,5 +195,10 @@ const jsonLdArticle = type === 'article' ? {
 <!-- JSON-LD: NewsArticle (hanya halaman berita) -->
 {jsonLdArticle && (
   <script type="application/ld+json" set:html={JSON.stringify(jsonLdArticle)} />
+)}
+
+<!-- JSON-LD: BreadcrumbList (navigasi remah roti untuk cuplikan Google) -->
+{jsonLdBreadcrumb && (
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLdBreadcrumb)} />
 )}
 

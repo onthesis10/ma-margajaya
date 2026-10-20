@@ -16,6 +16,8 @@ interface Props {
   publishedTime?: string;
   /** Nama penulis — khusus halaman berita */
   author?: string;
+  /** Data remah roti navigasi (breadcrumbs) untuk JSON-LD BreadcrumbList */
+  breadcrumbs?: { label: string; href: string }[];
 }
 
 const { 
@@ -25,6 +27,7 @@ const {
   type,
   publishedTime,
   author,
+  breadcrumbs,
 } = Astro.props;
 ---
 
@@ -38,6 +41,7 @@ const {
       type={type}
       publishedTime={publishedTime}
       author={author}
+      breadcrumbs={breadcrumbs}
     />
   </head>
   <body class="flex flex-col min-h-screen">
