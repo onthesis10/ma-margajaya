@@ -2,7 +2,7 @@ export const schoolConfig = {
   name: "Madrasah Aliyah Margajaya",
   shortName: "MA Margajaya",
   tagline: "Berakhlak Mulia & Berprestasi",
-  description: "Website resmi MA Margajaya Sukadana, Ciamis. Pendidikan Islam terpadu bersama Ponpes Darul Muawanah di bawah naungan Kemenag dan Yayasan PUI Ciamis.",
+  description: "Website resmi Madrasah Aliyah Margajaya Sukadana, Ciamis. Pendidikan Islam bersama Ponpes Darul Muawanah di bawah naungan Kemenag dan Yayasan PUI Ciamis.",
   principal: "Anih Hidayatul Kamilah, M.Pd.",
 
   logo: "/logo/logo-ma-margajaya.png",
