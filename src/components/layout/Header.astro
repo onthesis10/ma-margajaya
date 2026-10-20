@@ -68,31 +68,31 @@ const currentPath = Astro.url.pathname;
   <!-- Main Navbar -->
   <div id="nav-container" class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between transition-all duration-300">
     <!-- Brand Logo: MA Margajaya + Ponpes Darul Muawanah -->
-    <a href="/" class="flex items-center gap-2 group shrink-0">
+    <a href="/" class="flex items-center gap-1.5 lg:gap-2 group shrink-0">
 
       <!-- Logo MA Margajaya (Utama) -->
       <img
         src={schoolConfig.logo}
         alt={`Logo ${schoolConfig.name}`}
-        class="h-10 w-auto object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105 shrink-0"
+        class="h-9 lg:h-9 xl:h-10 w-auto object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105 shrink-0"
       />
 
       <!-- Logo Ponpes Darul Muawanah (tepat di samping logo MA) -->
       <img
         src={schoolConfig.ponpesLogo}
         alt={`Logo ${schoolConfig.ponpesName}`}
-        class="h-10 w-auto object-contain drop-shadow transition-transform duration-300 group-hover:scale-105 shrink-0 opacity-90 group-hover:opacity-100"
+        class="h-9 lg:h-9 xl:h-10 w-auto object-contain drop-shadow transition-transform duration-300 group-hover:scale-105 shrink-0 opacity-90 group-hover:opacity-100"
       />
 
-      <!-- Separator Vertikal -->
-      <div class="w-px h-8 bg-white/20 shrink-0 mx-1"></div>
+      <!-- Separator Vertikal (sembunyikan di lg, tampil xl+) -->
+      <div class="hidden xl:block w-px h-8 bg-white/20 shrink-0 mx-1"></div>
 
-      <!-- Teks Identitas -->
-      <div class="leading-none">
-        <div class="font-bold text-[13px] xl:text-[14px] tracking-wide text-white group-hover:text-gold transition-colors uppercase font-sans leading-tight">
+      <!-- Teks Identitas (sembunyikan di lg, tampil xl+) -->
+      <div class="hidden xl:block leading-none">
+        <div class="font-bold text-[13px] tracking-wide text-white group-hover:text-gold transition-colors uppercase font-sans leading-tight">
           {schoolConfig.shortName}
         </div>
-        <div class="text-[9px] text-white/60 uppercase tracking-[0.1em] font-medium mt-0.5 max-w-[160px] xl:max-w-none">
+        <div class="text-[9px] text-white/60 uppercase tracking-[0.1em] font-medium mt-0.5">
           {schoolConfig.ponpesName} · Sukadana
         </div>
       </div>
