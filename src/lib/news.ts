@@ -10,15 +10,21 @@ export interface NewsArticle {
 
 /**
  * Format thumbnail Google Drive agar dapat di-load cepat dan andal oleh browser & crawler medsos (FB, WA, Twitter)
- * Menggunakan direct Google CDN endpoint lh3.googleusercontent.com/d/ID=w1200 tanpa redirect 302
+ * Menggunakan direct Google CDN endpoint lh3.googleusercontent.com/d/ID=w1000-rj tanpa redirect 302
+ *
+ * PENTING:
+ *   - Parameter '-rj' (Request JPEG) memaksa Google CDN menyajikan gambar terkompresi JPEG
+ *     berukuran < 300 KB (bahkan jika file aslinya berupa PNG besar berukuran beberapa MB).
+ *   - WhatsApp crawler memiliki batasan ketat ukuran og:image maksimal 300 KB. Gambar yang
+ *     melebihi 300 KB (seperti PNG 1.68 MB pada artikel Antologi) otomatis digugurkan oleh scraper WhatsApp.
  */
-export function formatDriveImageUrl(url: string, width = 1200): string {
+export function formatDriveImageUrl(url: string, width = 1000): string {
   if (!url) return '';
   const str = String(url).trim();
   const match = str.match(/\/d\/([a-zA-Z0-9_-]+)/) || str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
   if (match && match[1]) {
     const cleanId = match[1].replace(/=.*$/, '');
-    return `https://lh3.googleusercontent.com/d/${cleanId}=w${width}`;
+    return `https://lh3.googleusercontent.com/d/${cleanId}=w${width}-rj`;
   }
   return str;
 }
@@ -121,7 +127,7 @@ const fallbackArticles: NewsArticle[] = [
     judul: 'Peringatan Maulid Nabi Muhammad SAW: MA Margajaya Gelar Muludan Penuh Khidmat',
     isi: 'Dalam rangka memperingati kelahiran Nabi Muhammad SAW, keluarga besar MA Margajaya menggelar acara Muludan yang berlangsung khidmat di lingkungan madrasah. Acara yang diikuti oleh seluruh siswa, dewan guru, serta pengurus Pondok Pesantren Darul Muawanah ini diawali dengan pembacaan Shalawat dan Marhaban, dilanjutkan dengan tausiyah yang mengupas keteladanan akhlak Rasulullah SAW sebagai suri tauladan dalam kehidupan sehari-hari.\n\nRangkaian kegiatan turut diisi dengan lomba-lomba bernuansa islami antar kelas, seperti lomba adzan, tilawah Al-Qur\'an, dan kaligrafi, yang bertujuan menumbuhkan semangat cinta terhadap nilai-nilai keislaman sejak dini di kalangan siswa. Selain itu, acara ini juga menjadi momentum bagi madrasah untuk mempererat silaturahmi antara siswa, guru, dan wali santri yang turut hadir menyaksikan jalannya kegiatan.\n\nKepala MA Margajaya dalam sambutannya menyampaikan bahwa peringatan Maulid Nabi bukan sekadar seremonial tahunan, melainkan momen untuk merefleksikan dan meneladani akhlak mulia Rasulullah SAW dalam kehidupan sehari-hari, sejalan dengan visi madrasah "Berakhlak Mulia & Berprestasi". Acara ditutup dengan doa bersama dan pembagian santunan kepada anak yatim di lingkungan sekitar madrasah.',
     tanggal: '2026-08-30T17:00:00.000Z',
-    url_foto: 'https://lh3.googleusercontent.com/d/1H1iYgoYDwzIwc78QV83xPh4UtxDiiHhM=w1200',
+    url_foto: 'https://lh3.googleusercontent.com/d/1H1iYgoYDwzIwc78QV83xPh4UtxDiiHhM=w1000-rj',
     penulis: 'Mansur Sumansur'
   },
   {
@@ -130,7 +136,7 @@ const fallbackArticles: NewsArticle[] = [
     judul: 'Peringatan Maulid Nabi di MA Margajaya',
     isi: 'Peringatan Maulid Nabi Muhammad SAW di lingkungan MA Margajaya yang diikuti oleh dewan guru dan seluruh siswa madrasah.',
     tanggal: '2026-08-30T17:00:00.000Z',
-    url_foto: 'https://lh3.googleusercontent.com/d/1id46NwYOyelkIk88gnGwK_u2zEFSyiHI=w1200',
+    url_foto: 'https://lh3.googleusercontent.com/d/1id46NwYOyelkIk88gnGwK_u2zEFSyiHI=w1000-rj',
     penulis: 'Humas MA Margajaya'
   }
 ];
