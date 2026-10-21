@@ -1,7 +1,7 @@
 ---
 import AdminLayout from '../layouts/AdminLayout.astro';
 const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || 'https://script.google.com/macros/s/AKfycbwboX_4labGuJ9412coI1JrXzpxb11B3xJOlmloGnEsTsRui-yIdssRFl8i2CGga1IF/exec';
-const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://api.vercel.com/v1/integrations/deploy/prj_umwjoNnXfJTjqzpiHS7qcLu3kVpH/rUwycrCtVI';
+const vercelDeployHook = '';
 ---
 
 <AdminLayout title="Admin Portal — MA Margajaya Sukadana">
@@ -1109,7 +1109,7 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
     }
 
     const FALLBACK_API_URL = "https://script.google.com/macros/s/AKfycbwboX_4labGuJ9412coI1JrXzpxb11B3xJOlmloGnEsTsRui-yIdssRFl8i2CGga1IF/exec";
-    const FALLBACK_DEPLOY_HOOK = "https://api.vercel.com/v1/integrations/deploy/prj_umwjoNnXfJTjqzpiHS7qcLu3kVpH/rUwycrCtVI";
+    const FALLBACK_DEPLOY_HOOK = "";
 
     function getApiUrl() {
       return (localStorage.getItem('margajaya_api_url') || '').trim() || API_URL || FALLBACK_API_URL;
@@ -1598,10 +1598,17 @@ const vercelDeployHook = import.meta.env.PUBLIC_VERCEL_DEPLOY_HOOK || 'https://a
         loginError.classList.add('hidden');
 
         try {
+          // Client ID untuk pembatasan percobaan (rate-limiting) login di backend
+          let adminCid = localStorage.getItem('margajaya_admin_cid');
+          if (!adminCid) {
+            adminCid = 'adm_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+            localStorage.setItem('margajaya_admin_cid', adminCid);
+          }
+
           const res = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'login', password: pwd })
+            body: JSON.stringify({ action: 'login', password: pwd, cid: adminCid })
           });
           const data = await res.json();
           if (data.status === 'success' && data.token) {

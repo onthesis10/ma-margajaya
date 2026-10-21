@@ -27,15 +27,36 @@ const SCRIPT_PROP_DEPLOY_HOOK = 'DEPLOY_HOOK_URL';
 // Durasi cache (detik)
 const CACHE_SESSION_TTL  = 21600; // 6 jam – session token admin
 const CACHE_HIT_TTL      = 21600; // 6 jam – dedupe kunjungan per cid+slug
-const CACHE_STATS_TTL    = 600;   // 10 menit – cache statistik
+// Rate limiting login admin
+const RATE_LIMIT_MAX_ATTEMPTS = 5;
+const RATE_LIMIT_LOCK_TTL     = 600; // 10 menit (600 detik)
 
 /**
- * Helper untuk mengambil password admin dari Script Properties
+ * Helper untuk mengambil password admin dari Script Properties.
+ * TIDAK ADA fallback kata sandi hardcoded demi keamanan sistem.
  */
 function getAdminPassword() {
   const props = PropertiesService.getScriptProperties();
   const pass = props.getProperty(SCRIPT_PROP_PASSWORD);
-  return pass || 'Margajaya2026!';
+  return pass ? String(pass).trim() : null;
+}
+
+/**
+ * Perbandingan string waktu-konstan (constant-time comparison)
+ * Mencegah timing attack (serangan analisis durasi respons)
+ */
+function constantTimeCompare(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  var lenA = a.length;
+  var lenB = b.length;
+  var result = lenA ^ lenB;
+  var maxLen = Math.max(lenA, lenB);
+  for (var i = 0; i < maxLen; i++) {
+    var charA = i < lenA ? a.charCodeAt(i) : 0;
+    var charB = i < lenB ? b.charCodeAt(i) : 0;
+    result |= (charA ^ charB);
+  }
+  return result === 0;
 }
 
 /**
@@ -412,14 +433,40 @@ function doPost(e) {
       throw new Error('Tidak ada payload data yang diterima.');
     }
 
-    const adminPass = getAdminPassword();
-
     // =========================================================================
     // AKSI 1: AUTENTIKASI LOGIN (action: "login")
+    // Dilindungi: Server-side validation, constant-time compare, rate limiting 5x/10m
     // =========================================================================
     if (data.action === 'login') {
+      const adminPass = getAdminPassword();
+      if (!adminPass) {
+        return jsonResponse({
+          status: 'error',
+          message: 'Konfigurasi keamanan belum lengkap: ADMIN_PASSWORD belum diatur di Script Properties.'
+        });
+      }
+
+      const cache = CacheService.getScriptCache();
+      const clientKey = data.cid ? String(data.cid).trim().substring(0, 64) : 'admin_default';
+      const lockKey = 'login_lock_' + clientKey;
+      const failKey = 'login_fails_' + clientKey;
+
+      // 1. Cek apakah IP/klien sedang dalam masa lockout (5x salah)
+      if (cache.get(lockKey)) {
+        return jsonResponse({
+          status: 'error',
+          message: 'Akses diblokir sementara: Terlalu banyak percobaan kata sandi yang salah (5x). Silakan coba lagi setelah 10 menit.'
+        });
+      }
+
       const inputPass = String(data.password || '').trim();
-      if (inputPass && inputPass === adminPass) {
+      const isMatch = constantTimeCompare(inputPass, adminPass);
+
+      if (isMatch) {
+        // Reset counter kesalahan saat login berhasil
+        cache.remove(failKey);
+        cache.remove(lockKey);
+
         const sessionToken = generateSessionToken();
         return jsonResponse({
           status: 'success',
@@ -427,10 +474,23 @@ function doPost(e) {
           message: 'Autentikasi berhasil.'
         });
       } else {
-        return jsonResponse({
-          status: 'error',
-          message: 'Kata sandi administrator tidak sesuai.'
-        });
+        // Catat percobaan gagal ke CacheService (TTL 10 menit)
+        let fails = parseInt(cache.get(failKey) || '0', 10) + 1;
+        if (fails >= RATE_LIMIT_MAX_ATTEMPTS) {
+          cache.put(lockKey, 'locked', RATE_LIMIT_LOCK_TTL);
+          cache.remove(failKey);
+          return jsonResponse({
+            status: 'error',
+            message: 'Batas percobaan gagal terlampaui (5x). Akses login diblokir selama 10 menit demi keamanan.'
+          });
+        } else {
+          cache.put(failKey, String(fails), RATE_LIMIT_LOCK_TTL);
+          const remaining = RATE_LIMIT_MAX_ATTEMPTS - fails;
+          return jsonResponse({
+            status: 'error',
+            message: 'Kata sandi administrator tidak sesuai. Sisa kesempatan: ' + remaining + ' kali sebelum dikunci 10 menit.'
+          });
+        }
       }
     }
 
