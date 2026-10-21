@@ -372,9 +372,9 @@ function doPost(e) {
       dedupeCache.put(dedupeKey, '1', CACHE_HIT_TTL);
 
       // Tulis ke views_daily dengan LockService (tunggu maks 5 detik)
-      var lock = LockService.getScriptLock();
-      var hasLock = lock.tryLock(5000);
-      if (!hasLock) return textResponse('busy');
+      var hitLock = LockService.getScriptLock();
+      var hasHitLock = hitLock.tryLock(5000);
+      if (!hasHitLock) return textResponse('busy');
 
       try {
         var viewsSheet = getOrCreateViewsSheet(ss0);
@@ -400,7 +400,7 @@ function doPost(e) {
         statsCache.remove('stats_v1');
 
       } finally {
-        lock.releaseLock();
+        hitLock.releaseLock();
       }
 
       return textResponse('ok');
