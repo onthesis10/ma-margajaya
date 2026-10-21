@@ -1,9 +1,22 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
 import Container from '../components/ui/Container.astro';
+import PhotoCard from '../components/ui/PhotoCard.astro';
 import { facilities } from '../data/facilities';
 
 const breadcrumbs = [{ label: "Fasilitas", href: "/fasilitas" }];
+
+// Bento 2D pattern for 8 facility items (4-column grid, seamless packing)
+const facilityBentoLayout = [
+  { col: 2, row: 2 }, // 0: Gedung & Kampus Terpadu (Hero Besar)
+  { col: 1, row: 1 }, // 1: Masjid & Majelis Santri
+  { col: 1, row: 1 }, // 2: Masjid Utama Darul Muawanah
+  { col: 2, row: 1 }, // 3: Laboratorium Komputer (Wide)
+  { col: 1, row: 1 }, // 4: Perpustakaan & Sumber Belajar
+  { col: 1, row: 1 }, // 5: Lapangan Olahraga Terbuka
+  { col: 2, row: 2 }, // 6: Asrama Pondok Pesantren (Hero Besar)
+  { col: 2, row: 1 }, // 7: Aula Pertemuan Serbaguna (Wide)
+];
 ---
 
 <PageLayout 
@@ -11,7 +24,7 @@ const breadcrumbs = [{ label: "Fasilitas", href: "/fasilitas" }];
   description="Sarana prasarana belajar MA Margajaya di Kompleks Ponpes Darul Muawanah Sukadana: gedung kelas, masjid santri, asrama pondok, dan area olahraga."
   breadcrumbs={breadcrumbs}
 >
-  <section class="py-16 md:py-24 bg-white relative overflow-hidden" data-motion-section>
+  <section class="py-14 sm:py-20 bg-white relative overflow-hidden" data-motion-section>
     
     <!-- Ambient Background Blobs -->
     <div class="glow-blob w-[500px] h-[500px] bg-emerald-500/8 -top-32 -left-32 pointer-events-none"></div>
@@ -20,8 +33,8 @@ const breadcrumbs = [{ label: "Fasilitas", href: "/fasilitas" }];
 
     <Container>
 
-      <!-- ══ HEADER EDITORIAL (Identik dengan Kesiswaan) ══ -->
-      <div class="text-center max-w-3xl mx-auto mb-14" data-motion-title>
+      <!-- ══ HEADER EDITORIAL ══ -->
+      <div class="text-center max-w-3xl mx-auto mb-10" data-motion-title>
         <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-[0.25em] mb-4">
           Sarana &amp; Prasarana
         </div>
@@ -29,103 +42,80 @@ const breadcrumbs = [{ label: "Fasilitas", href: "/fasilitas" }];
           Fasilitas &amp; <em class="italic text-gold text-shimmer-gold">Lingkungan Belajar.</em>
         </h2>
         <p class="text-ink-soft text-base mt-3 leading-relaxed">
-          Eksplorasi setiap sarana pendukung pembelajaran santri MA Margajaya di Kompleks Ponpes Darul Muawanah — geser atau drag ke samping untuk menjelajah seluruh fasilitas.
+          Eksplorasi sarana pendukung pembelajaran dan kehidupan santri MA Margajaya di Kompleks Ponpes Darul Muawanah. Klik kartu untuk melihat detail fasilitas.
         </p>
       </div>
 
-    </Container>
-
-    <!-- ══ EDITORIAL HORIZONTAL GALLERY SHOWCASE (Persis 1:1 Kesiswaan) ══ -->
-    <div class="w-full bg-white relative mb-12">
-
-      <!-- Horizontal Scrollable Track Container -->
-      <div 
-        id="fasilitas-gallery-track" 
-        class="w-full overflow-x-auto select-none cursor-grab active:cursor-grabbing border-t border-b border-neutral-200/90 bg-white scroll-smooth"
-        style="scrollbar-width: none; -ms-overflow-style: none;"
-      >
-        <div class="flex items-end min-w-max">
-          {facilities.map((item) => (
-            <div class="w-[290px] sm:w-[330px] md:w-[360px] lg:w-[390px] border-r border-neutral-200/90 px-5 sm:px-7 pt-12 pb-10 flex flex-col justify-end shrink-0 transition-colors duration-300 hover:bg-neutral-50/60 group/column">
-              
-              <!-- Clean Name Header -->
-              <div class="mb-3">
-                <span class="text-xs sm:text-[13px] font-sans font-medium text-neutral-800 tracking-tight">
-                  {item.title}
-                </span>
-              </div>
-
-              <!-- Rounded Image Card with Distinct Staggered Height -->
-              <div 
-                class={`relative w-full ${item.heightClass} rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-sm group hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 ease-out bg-neutral-900`}
+      <!-- ══ FASILITAS BENTO GRID (FRAMED MOSAIC) ══ -->
+      <div class="gal-bento-frame mb-16">
+        <div id="fasilitas-grid" class="gal-bento-grid">
+          {facilities.map((item, idx) => {
+            const layout = facilityBentoLayout[idx] ?? { col: 1, row: 1 };
+            return (
+              <div
+                class="gal-bento-cell"
+                data-col={layout.col}
+                data-row={layout.row}
               >
-                <!-- Background Image -->
-                <img 
-                  src={item.image} 
-                  alt={item.title} 
-                  loading="lazy" 
-                  class="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out pointer-events-none"
+                <PhotoCard
+                  id={`fasilitas-${item.id}`}
+                  src={item.image}
+                  alt={item.title}
+                  title={item.title}
+                  titleAccent={item.subtitle.split(' ')[0] || item.category}
+                  category={item.category}
+                  meta={item.specs.join(' · ')}
+                  description={`${item.subtitle}. ${item.description}`}
+                  width={900}
+                  height={600}
+                  variant="lightbox"
+                  priority={idx === 0}
+                  index={idx}
+                  total={facilities.length}
                 />
-
-                <!-- Smooth Hover Gradient Overlay -->
-                <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out flex flex-col justify-end p-6 text-white">
-                  <div class="transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                    <h3 class="font-serif text-2xl font-bold text-white leading-tight mb-1">
-                      {item.title}
-                    </h3>
-                    <p class="text-xs text-white/70 line-clamp-1 mb-2 font-medium">
-                      {item.subtitle}
-                    </p>
-                    <p class="text-xs text-white/90 line-clamp-3 leading-relaxed font-light">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-
               </div>
-
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-    </div>
+      <!-- ══ CTA CARD ══ -->
+      <div class="mt-8 mb-4" data-motion-visual>
+        <div class="p-8 sm:p-12 lg:p-14 rounded-3xl bg-gradient-to-r from-emerald-950 via-[#075B2A] to-slate-950 text-white shadow-2xl pure-glow-card pure-glow-gold flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 max-w-6xl mx-auto border border-white/15 relative overflow-hidden">
+          <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-gold/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="space-y-3 max-w-xl">
+            <span class="inline-block px-3 py-1 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-soft">
+              Kunjungi Madrasah
+            </span>
+            <div class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-snug">
+              Ingin Melihat Langsung Fasilitas Kami?
+            </div>
+            <p class="text-white/80 text-sm sm:text-base leading-relaxed font-light">
+              Kami menyambut hangat kunjungan silaturahmi calon santri dan orang tua di Kompleks Pondok Pesantren Darul Muawanah Sukadana, Ciamis.
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 lg:ml-auto shrink-0 w-full sm:w-auto">
+            <a href="/ppdb" class="glow-button inline-flex items-center justify-center gap-2 px-7 py-4 rounded-xl bg-gradient-to-r from-gold via-amber-400 to-gold text-blue-deep font-bold text-xs uppercase tracking-widest shadow-xl shadow-gold/25 hover:shadow-[0_0_30px_rgba(232,185,35,0.6)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-gold-soft/60">
+              <span>Daftar PPDB Sekarang</span>
+              <span class="text-sm font-bold">&rarr;</span>
+            </a>
+            <a href="/kontak" class="brutal-glass-card inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-white hover:text-gold font-semibold text-xs uppercase tracking-widest transition-all duration-300">
+              <span>Hubungi Kami</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </Container>
 
   </section>
 </PageLayout>
 
 <script>
   import '../scripts/beranda-motion';
+  import { initPhotoCards } from '../scripts/photo-card';
 
-  // Smooth Horizontal Gallery Drag
-  const track = document.getElementById('fasilitas-gallery-track');
-
-  if (track) {
-    let isDown = false;
-    let startX = 0;
-    let scrollLeft = 0;
-
-    track.addEventListener('mousedown', (e) => {
-      isDown = true;
-      track.classList.add('cursor-grabbing');
-      track.classList.remove('cursor-grab', 'scroll-smooth');
-      startX = e.pageX - track.offsetLeft;
-      scrollLeft = track.scrollLeft;
-    });
-
-    window.addEventListener('mouseup', () => {
-      if (!isDown) return;
-      isDown = false;
-      track.classList.remove('cursor-grabbing');
-      track.classList.add('cursor-grab', 'scroll-smooth');
-    });
-
-    track.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - track.offsetLeft;
-      const walk = (x - startX) * 1.5; // Drag sensitivity
-      track.scrollLeft = scrollLeft - walk;
-    });
-  }
+  document.addEventListener('DOMContentLoaded', () => {
+    initPhotoCards();
+  });
 </script>

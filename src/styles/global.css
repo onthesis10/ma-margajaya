@@ -2,6 +2,8 @@
 @import './tokens.css';
 @import './utilities.css';
 @import './glow.css';
+@import './photo-card.css';
+
 
 @tailwind base;
 @tailwind components;

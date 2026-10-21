@@ -1,0 +1,888 @@
+/* ==========================================================================
+   LIVING PHOTO CARDS — Editorial Frame · Bento Mosaic · DESIGN-IMAGE-CARDS.md
+   MA Margajaya · Tokens: Emerald Madrasah, Gold, Warm Museum Paper
+   ========================================================================== */
+
+/* ── Ken Burns animation ── */
+@keyframes pc-kb {
+  0%   { transform: scale(1.00); }
+  100% { transform: scale(1.07); }
+}
+
+/* ── Panel transitions ── */
+@keyframes pc-panel-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes pc-panel-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.96); }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .pc-img,
+  .pc-panel-img { animation: none !important; }
+  .pc-inner     { transition: none !important; }
+  .pc-word      { color: #0F172A !important; transition: none !important; }
+  .pc-panel     { animation: none !important; }
+}
+
+/* ==========================================================================
+   CARD BASE — Bento Item
+   ========================================================================== */
+
+.pc-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  overflow: hidden;
+  border-radius: 18px;
+  border: none;
+  background: #05411D;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  outline: none;
+  box-shadow: 0 4px 18px rgba(5, 65, 29, 0.08);
+  transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s cubic-bezier(.22,1,.36,1);
+}
+
+.pc-card:hover,
+.pc-card:focus-visible {
+  box-shadow: 0 16px 36px rgba(5, 65, 29, 0.22);
+}
+
+/* Bento Tile Cell Overrides */
+.gal-bento-cell .pc-card {
+  border: none !important;
+  border-radius: 18px !important;
+  box-shadow: none !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  transform: none !important;
+}
+
+/* Cards inside horizontal showcase (fasilitas, kesiswaan) */
+.horizontal-track-card .pc-card {
+  border-radius: 28px !important;
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+.pc-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
+
+.pc-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.pc-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: pc-kb 16s ease-in-out alternate infinite;
+  will-change: transform;
+  filter: contrast(1.04) saturate(1.08);
+  transition: transform 0.6s cubic-bezier(.22,1,.36,1);
+}
+
+.pc-card:hover .pc-img,
+.pc-card:focus-visible .pc-img {
+  transform: scale(1.08);
+}
+
+/* Scrim gradient over card */
+.pc-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(3, 40, 18, 0.94) 0%,
+    rgba(4, 52, 23, 0.55) 42%,
+    rgba(5, 65, 29, 0.12) 75%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.pc-card:hover .pc-scrim {
+  opacity: 0.95;
+}
+
+/* Category chip on card */
+.pc-chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 4px 10px;
+  background: rgba(5, 65, 29, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+}
+
+/* Card title bar */
+.pc-title-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 16px 18px;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.pc-title-text {
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(0.88rem, 1.15vw, 1.05rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+}
+
+/* Hover CTA badge */
+.pc-cta-label {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 3;
+  padding: 5px 12px;
+  background: var(--color-gold, #E8B923);
+  color: #05411D;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 6px;
+  transform: translateY(12px);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(.22,1,.36,1), opacity 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.pc-card:hover .pc-cta-label,
+.pc-card:focus-visible .pc-cta-label {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* ==========================================================================
+   BENTO GRID SYSTEM — Borderless, Clean Minimalist Grid
+   ========================================================================== */
+
+/* Outer Frame Wrapper: Clean borderless container */
+.gal-bento-frame {
+  position: relative;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  box-shadow: none;
+}
+
+/* Inner Grid: Clean modern 16px gap, transparent background (no borders) */
+.gal-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 220px;
+  grid-auto-flow: dense;
+  gap: 16px;
+  background: transparent;
+}
+
+/* Bento Tile Cells: Borderless, smooth rounded corners, clean subtle elevation */
+.gal-bento-cell {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #06180f;
+  border: none;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.08);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, opacity 0.35s ease;
+}
+
+.gal-bento-cell:hover {
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.2);
+}
+
+.gal-bento-cell[data-col="1"] { grid-column: span 1; }
+.gal-bento-cell[data-col="2"] { grid-column: span 2; }
+.gal-bento-cell[data-row="1"] { grid-row: span 1; }
+.gal-bento-cell[data-row="2"] { grid-row: span 2; }
+
+/* Large hero tiles have proportional title typography */
+.gal-bento-cell[data-col="2"][data-row="2"] .pc-title-text {
+  font-size: clamp(1.15rem, 1.8vw, 1.45rem);
+  font-weight: 800;
+  -webkit-line-clamp: 2;
+}
+
+/* Hide category chip & CTA label in bento cells for clean minimal look */
+.gal-bento-cell .pc-chip,
+.gal-bento-cell .pc-cta-label {
+  display: none !important;
+}
+
+/* Bento card scrim — smooth gradient that keeps text crystal clear */
+.gal-bento-cell .pc-scrim {
+  background: linear-gradient(
+    to top,
+    rgba(2, 18, 9, 0.88) 0%,
+    rgba(2, 18, 9, 0.45) 45%,
+    rgba(2, 18, 9, 0.08) 70%,
+    transparent 100%
+  );
+}
+
+/* Filter chips — clean, calm, modern pills */
+.pc-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 32px;
+  justify-content: center;
+}
+
+.pc-chip-filter {
+  padding: 8px 20px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 9999px;
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.pc-chip-filter:hover {
+  background: #F1F5F9;
+  color: #0F172A;
+  border-color: #CBD5E1;
+}
+
+.pc-chip-filter.is-active {
+  background: #087A35;
+  color: #ffffff;
+  border-color: #087A35;
+  box-shadow: 0 4px 14px rgba(8, 122, 53, 0.25);
+}
+
+.pc-chip-filter:focus-visible {
+  outline: 2px solid #087A35;
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   PANEL — State 3: Editorial Museum Dialog
+   ========================================================================== */
+
+/* Modal Backdrop */
+.pc-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(4, 40, 18, 0.84);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.pc-panel[hidden] {
+  display: none !important;
+}
+
+.pc-panel.is-closing {
+  animation: pc-panel-out 0.22s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+.pc-panel:not([hidden]):not(.is-closing) {
+  animation: pc-panel-in 0.35s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+/* The Editorial Frame: Clean, borderless modern modal */
+.pc-frame {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  width: 100%;
+  max-width: 1000px;
+  max-height: calc(100svh - 48px);
+  border: none;
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.45);
+}
+
+/* ── LEFT PANEL ── */
+.pc-panel-left {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: #ffffff;
+  border-right: 1px solid #F1F5F9;
+  overflow-y: auto;
+  min-height: 480px;
+}
+
+/* Custom scrollbar */
+.pc-panel-left::-webkit-scrollbar { width: 5px; }
+.pc-panel-left::-webkit-scrollbar-track { background: #F8FAFC; }
+.pc-panel-left::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+
+/* ══ Top Box: Clean modern title ══ */
+.pc-box-top {
+  padding: 32px 34px 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.pc-panel-badge-row {
+  margin-bottom: 12px;
+}
+
+.pc-panel-cat-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background: #ECFDF5;
+  border: 1px solid #D1FAE5;
+  color: var(--color-blue, #087A35);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.pc-title-canvas {
+  position: relative;
+  display: block;
+}
+
+/* Editorial display title — Fraunces serif consistent with website header/beranda */
+.pc-panel-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-blue-ink, #05411D);
+  margin: 0;
+  word-break: break-word;
+}
+
+/* ══ Clean Divider Line ══ */
+.pc-panel-divider-bar {
+  width: 100%;
+  height: 1px;
+  background: #F1F5F9;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* ══ Bottom Box: Watermark + Body Paragraph + Solid Button + Meta ══ */
+.pc-box-bottom {
+  padding: 24px 34px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1 1 auto;
+  gap: 20px;
+  background: #ffffff;
+}
+
+.pc-panel-editorial-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.pc-panel-watermark-wrap {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-panel-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.pc-panel-desc {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #475569;
+  margin: 0;
+  word-wrap: break-word;
+}
+
+/* Word reveal */
+.pc-word {
+  display: inline;
+  color: #334155;
+  transition: color 0.3s ease;
+}
+
+/* ══ Footer Row: Solid Clean Button + Right Meta ══ */
+.pc-panel-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.pc-panel-btn-solid {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  background: #087A35;
+  color: #ffffff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.pc-panel-btn-solid:hover,
+.pc-panel-btn-solid:focus-visible {
+  background: #05411D;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(8, 122, 53, 0.28);
+  outline: none;
+}
+
+.pc-btn-arr {
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.pc-panel-btn-solid:hover .pc-btn-arr {
+  transform: translateX(4px);
+}
+
+.pc-panel-meta-right {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+  text-align: right;
+  letter-spacing: 0.12em;
+  line-height: 1.45;
+}
+
+.pc-meta-line-1 {
+  color: var(--color-blue-ink, #05411D);
+  font-weight: 800;
+}
+
+.pc-meta-line-2 {
+  color: #64748B;
+  font-size: 10px;
+}
+
+.pc-btn-arr {
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.pc-panel-btn:hover .pc-btn-arr {
+  transform: translateX(3px);
+}
+
+.pc-panel-counter-badge {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748B;
+  letter-spacing: 0.12em;
+}
+
+.pc-counter-current {
+  color: var(--color-blue, #087A35);
+  font-size: 14px;
+}
+
+.pc-counter-sep {
+  margin: 0 3px;
+  opacity: 0.5;
+}
+
+/* ── RIGHT PANEL (IMAGE & CONTROLS) ── */
+.pc-panel-right {
+  position: relative;
+  overflow: hidden;
+  background: #05411D;
+  min-height: 380px;
+}
+
+.pc-panel-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: pc-kb 18s ease-in-out alternate infinite;
+  will-change: transform;
+}
+
+.pc-panel-img-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(5, 65, 29, 0.45) 0%, transparent 35%);
+  pointer-events: none;
+}
+
+/* Clean Minimalist Circular Close Button (top-right) */
+.pc-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 20;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  padding: 0;
+}
+
+.pc-close-btn:hover {
+  background: #ffffff;
+  color: #0F172A;
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+}
+
+.pc-close-btn:active {
+  transform: scale(0.95);
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+/* Tablet (max-width: 960px) */
+@media (max-width: 960px) {
+  .gal-bento-frame {
+    border: none !important;
+  }
+  .gal-bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 200px;
+    gap: 12px;
+  }
+  .gal-bento-cell[data-col="2"] {
+    grid-column: span 2;
+  }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+  .pc-panel {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .pc-frame {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    max-height: 94svh;
+    border: none !important;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .pc-panel-right {
+    min-height: 220px;
+    max-height: 36svh;
+  }
+
+  .pc-panel-left {
+    border-right: none !important;
+    border-top: 1px solid #F1F5F9 !important;
+    padding: 24px 20px 20px;
+    min-height: auto;
+  }
+
+  .pc-panel-title {
+    font-size: clamp(1.25rem, 5.5vw, 1.6rem);
+  }
+
+  .pc-panel-desc {
+    font-size: 0.9rem;
+  }
+
+  .gal-bento-frame {
+    border: none !important;
+  }
+
+  .gal-bento-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 220px;
+    gap: 12px;
+  }
+
+  .gal-bento-cell[data-col="2"],
+  .gal-bento-cell[data-col="1"] {
+    grid-column: span 1;
+  }
+
+  .gal-bento-cell[data-row="2"],
+  .gal-bento-cell[data-row="1"] {
+    grid-row: span 1;
+  }
+}
+
+/* ==========================================================================
+   APPLE MACOS / IOS SLIDESHOW & SHOWCASE STYLES
+   Organisasi & Ekstrakurikuler Showcase · Kesiswaan
+   ========================================================================== */
+
+.ios-showcase-container {
+  position: relative;
+  width: 100%;
+}
+
+.ios-showcase-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 12px 20px 28px;
+}
+
+.ios-showcase-track::-webkit-scrollbar {
+  display: none;
+}
+
+.ios-card-item {
+  scroll-snap-align: center;
+  position: relative;
+  flex-shrink: 0;
+  width: 310px;
+  height: 520px;
+  border-radius: 28px;
+  overflow: hidden;
+  text-align: left;
+  background: #06180f;
+  border: none;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.22);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+}
+
+@media (min-width: 640px) {
+  .ios-showcase-track {
+    gap: 24px;
+    padding: 16px 40px 32px;
+  }
+  .ios-card-item {
+    width: 360px;
+    height: 550px;
+    border-radius: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ios-card-item {
+    width: 390px;
+    height: 570px;
+  }
+}
+
+.ios-card-item:hover,
+.ios-card-item:focus-visible {
+  box-shadow: 0 24px 50px -12px rgba(8, 122, 53, 0.35);
+}
+
+.ios-card-img-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #042514;
+}
+
+.ios-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+  filter: contrast(1.05) saturate(1.1) brightness(0.96);
+}
+
+.ios-card-item:hover .ios-card-img,
+.ios-card-item:focus-visible .ios-card-img {
+  transform: scale(1.07);
+  filter: contrast(1.08) saturate(1.15) brightness(1.02);
+}
+
+/* Hover Reveal Overlay — hidden at rest, slides up on hover */
+.ios-hover-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  /* Gradient scrim — invisible at rest, appears on hover */
+  background: linear-gradient(
+    to top,
+    rgba(3, 20, 11, 0.92) 0%,
+    rgba(4, 30, 16, 0.65) 45%,
+    rgba(5, 40, 20, 0.10) 75%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: inherit;
+}
+
+.ios-card-item:hover .ios-hover-overlay,
+.ios-card-item:focus-visible .ios-hover-overlay {
+  opacity: 1;
+}
+
+.ios-hover-content {
+  width: 100%;
+  padding: 24px 22px;
+  transform: translateY(16px);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ios-card-item:hover .ios-hover-content,
+.ios-card-item:focus-visible .ios-hover-content {
+  transform: translateY(0);
+}
+
+/* macOS / iOS Carousel Controls */
+.ios-nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1E293B;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.ios-nav-btn:hover {
+  background: #087A35;
+  color: #ffffff;
+  border-color: #087A35;
+  box-shadow: 0 8px 20px rgba(8, 122, 53, 0.3);
+  transform: scale(1.05);
+}
+
+.ios-nav-btn:active {
+  transform: scale(0.94);
+}
+
+.ios-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Pagination indicator dots */
+.ios-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: #CBD5E1;
+  border: none;
+  padding: 0;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.ios-indicator-dot:hover {
+  background: #94A3B8;
+}
+
+.ios-indicator-dot.is-active {
+  width: 28px;
+  background: #087A35;
+}
+

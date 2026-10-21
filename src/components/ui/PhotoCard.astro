@@ -1,0 +1,312 @@
+---
+/**
+ * PhotoCard.astro — Living Photo Card + Editorial Panel
+ * Spec: DESIGN-IMAGE-CARDS.md & Visual Reference
+ *
+ * State 1 & 2: Living Bento Card (flush in frame, Ken Burns, subtle scrim)
+ * State 3: Editorial Museum Dialog Panel (exact split box layout, condensed serif, script accent overlay, solid rectangular button)
+ */
+
+interface Props {
+  id: string;
+  src: string;
+  alt: string;
+  title: string;
+  titleAccent?: string;
+  category: string;
+  meta?: string;
+  description?: string;
+  href?: string;
+  ctaLabel?: string;
+  width?: number;
+  height?: number;
+  variant?: 'lightbox' | 'expand' | 'ios-slide';
+  priority?: boolean;
+  index: number;
+  total: number;
+}
+
+const {
+  id,
+  src,
+  alt,
+  title,
+  titleAccent,
+  category,
+  meta = '',
+  description = '',
+  href,
+  ctaLabel = 'LIHAT DETAIL',
+  width  = 900,
+  height = 600,
+  variant = 'lightbox',
+  priority = false,
+  index = 0,
+  total = 1,
+} = Astro.props;
+
+// Split meta into Date and Location if formatted with " · "
+const metaParts = meta ? meta.split('·').map(s => s.trim()).filter(Boolean) : [];
+const dateInfo = metaParts[0] || '';
+const locationInfo = metaParts.length > 1 ? metaParts.slice(1).join(' · ') : '';
+
+// Word list for reveal animation
+const bodyText = description || title;
+const descWords = bodyText.trim().split(/\s+/).filter(Boolean);
+
+// Ken Burns stagger (each card starts at a different point)
+const kbDelay = `-${(index % 8) * 1.75}s`;
+
+// Counter string
+const pad = (n: number) => String(n + 1).padStart(2, '0');
+const counterCurrent = pad(index);
+const counterTotal = String(total).padStart(2, '0');
+
+// Unique panel ID
+const panelId = `pc-panel-${id}`;
+const titleId = `${panelId}-title`;
+---
+
+{(variant === 'lightbox' || variant === 'ios-slide') && (
+  <>
+    {/* ── CARD ELEMENT ─────────────────────────── */}
+    {variant === 'ios-slide' ? (
+      <button
+        type="button"
+        class="ios-card-item group"
+        data-photo-card
+        data-category={category}
+        aria-haspopup="dialog"
+        aria-label={`Lihat detail organisasi: ${title}`}
+      >
+        {/* Background Image with Closeup Clarity & Micro-zoom */}
+        <div class="ios-card-img-wrap">
+          <img
+            src={src}
+            alt={alt}
+            width={width}
+            height={height}
+            loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+            class="ios-card-img"
+          />
+        </div>
+
+        {/* Hover Reveal Overlay — slides up from bottom on hover */}
+        <div class="ios-hover-overlay">
+          <div class="ios-hover-content">
+            <div class="flex items-baseline justify-between gap-2 mb-1.5">
+              <h3 class="font-serif font-bold text-2xl sm:text-[28px] text-white tracking-tight leading-snug">
+                {title}
+              </h3>
+              {titleAccent && (
+                <span class="font-serif italic text-gold text-sm font-normal shrink-0">
+                  {titleAccent}
+                </span>
+              )}
+            </div>
+
+            <p class="text-xs font-bold text-emerald-300 mb-2.5 tracking-[0.2em] uppercase font-sans">
+              {category}
+            </p>
+
+            {description && (
+              <p class="text-xs sm:text-[13px] text-white/90 line-clamp-3 leading-relaxed font-sans font-light mb-4">
+                {description}
+              </p>
+            )}
+
+            <div class="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-white/90">
+              <span>{ctaLabel}</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </div>
+          </div>
+        </div>
+      </button>
+    ) : href ? (
+      <a
+        href={href}
+        class="pc-card"
+        data-photo-card
+        data-category={category}
+        aria-haspopup="dialog"
+        aria-label={`Lihat warta: ${title}`}
+      >
+        <div class="pc-inner" data-card-inner>
+          {/* Image with subtle Ken Burns */}
+          <div class="pc-img-wrap">
+            <img
+              src={src}
+              alt={alt}
+              width={width}
+              height={height}
+              loading={priority ? 'eager' : 'lazy'}
+              decoding="async"
+              class="pc-img"
+              style={`animation-delay: ${kbDelay};`}
+            />
+          </div>
+
+          {/* Bottom scrim gradient */}
+          <div class="pc-scrim" aria-hidden="true"></div>
+
+          {/* Category chip — top left */}
+          <span class="pc-chip" aria-hidden="true">{category}</span>
+
+          {/* Title — bottom left */}
+          <div class="pc-title-bar">
+            <span class="pc-title-text">{title}</span>
+          </div>
+
+          {/* Hover CTA label — rises on hover */}
+          <span class="pc-cta-label" aria-hidden="true">DETAIL &rarr;</span>
+        </div>
+      </a>
+    ) : (
+      <button
+        type="button"
+        class="pc-card"
+        data-photo-card
+        data-category={category}
+        aria-haspopup="dialog"
+        aria-label={`Lihat detail: ${title}`}
+      >
+        <div class="pc-inner" data-card-inner>
+          {/* Image with subtle Ken Burns */}
+          <div class="pc-img-wrap">
+            <img
+              src={src}
+              alt={alt}
+              width={width}
+              height={height}
+              loading={priority ? 'eager' : 'lazy'}
+              decoding="async"
+              class="pc-img"
+              style={`animation-delay: ${kbDelay};`}
+            />
+          </div>
+
+          {/* Bottom scrim gradient */}
+          <div class="pc-scrim" aria-hidden="true"></div>
+
+          {/* Category chip — top left */}
+          <span class="pc-chip" aria-hidden="true">{category}</span>
+
+          {/* Title — bottom left */}
+          <div class="pc-title-bar">
+            <span class="pc-title-text">{title}</span>
+          </div>
+
+          {/* Hover CTA label — rises on hover */}
+          <span class="pc-cta-label" aria-hidden="true">DETAIL &rarr;</span>
+        </div>
+      </button>
+    )}
+
+    {/* ── PANEL DIALOG (EDITORIAL MUSEUM REFERENCE SPEC) ─────── */}
+    <div
+      id={panelId}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      class="pc-panel"
+      hidden
+      aria-hidden="true"
+      data-photo-panel
+    >
+      <div class="pc-frame">
+
+        {/* ── LEFT PANEL: Split Box Structure ── */}
+        <div class="pc-panel-left">
+
+          {/* ══ TOP BOX: Clean modern title ══ */}
+          <div class="pc-box-top">
+            <div class="pc-panel-badge-row">
+              <span class="pc-panel-cat-badge">{category}</span>
+            </div>
+
+            <div class="pc-title-canvas">
+              <h2 id={titleId} class="pc-panel-title">
+                {title}
+              </h2>
+            </div>
+          </div>
+
+          {/* ══ HORIZONTAL DIVIDER BAR ══ */}
+          <div class="pc-panel-divider-bar" role="presentation"></div>
+
+          {/* ══ BOTTOM BOX: Watermark + Paragraph + Solid Button + Meta ══ */}
+          <div class="pc-box-bottom">
+            <div class="pc-panel-editorial-body">
+              {/* Logo MA Margajaya official emblem */}
+              <div class="pc-panel-watermark-wrap" aria-hidden="true">
+                <img
+                  src="/logo/logo-ma-margajaya.png"
+                  alt="Logo MA Margajaya"
+                  width="60"
+                  height="60"
+                  class="pc-panel-logo-img"
+                  loading="lazy"
+                />
+              </div>
+
+              {/* Body text with word-level flow and proper spacing */}
+              <p class="pc-panel-desc">
+                {descWords.map((word) => (
+                  <><span class="pc-word" data-word>{word}</span>{' '}</>
+                ))}
+              </p>
+            </div>
+
+            {/* Bottom Actions Row: Link (if any) + Right Meta */}
+            <div class="pc-panel-footer">
+              {href && (
+                <a href={href} class="pc-panel-btn-solid">
+                  <span>{ctaLabel}</span>
+                  <span class="pc-btn-arr" aria-hidden="true">&rarr;</span>
+                </a>
+              )}
+
+              <div class="pc-panel-meta-right">
+                {dateInfo && <div class="pc-meta-line-1">{dateInfo.toUpperCase()}</div>}
+                <div class="pc-meta-line-2">{counterCurrent} / {counterTotal}</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ── RIGHT PANEL: Image & Close Button ── */}
+        <div class="pc-panel-right">
+          <img
+            src={src}
+            alt={alt}
+            width={width}
+            height={height}
+            loading="lazy"
+            decoding="async"
+            class="pc-panel-img"
+          />
+
+          {/* Scrim overlay */}
+          <div class="pc-panel-img-scrim" aria-hidden="true"></div>
+
+          {/* Clean Minimal Close Button */}
+          <button
+            type="button"
+            class="pc-close-btn"
+            data-close-panel
+            aria-label="Tutup pratinjau foto"
+            title="Tutup (Esc)"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </>
+)}
