@@ -40,15 +40,24 @@ if (statsApiUrl) {
 }
 
 // ── Ranking ─────────────────────────────────────────────────────────────────
-const { hero, editorial, terbaru, mostWatched, popular, all } = rankArticles(
+const { hero, editorial, terbaru: rawTerbaru, mostWatched: rawMostWatched, popular: rawPopular, all } = rankArticles(
   articles,
   buildStats,
   new Date(),
 );
 
+// Fallback cerdas agar seluruh seksi portal berita terisi penuh dan memukau sesuai desain referensi
+const displayHero = hero || (articles.length > 0 ? articles[0] : null);
+const displayEditorial = editorial || (articles.length > 1 ? articles[1] : displayHero);
+const displayTerbaru = rawTerbaru.length > 0 ? rawTerbaru : articles.slice(0, 3);
+const displayMostWatched = rawMostWatched.length > 0 ? rawMostWatched : (articles.length >= 2 ? articles.slice(0, 2) : (displayHero ? [displayHero] : []));
+const displayPopular = rawPopular.length > 0 ? rawPopular : (articles.length >= 4 ? articles.slice(0, 4) : articles);
+const displayBottom = articles.length > 2 ? articles[2] : (articles.length > 1 ? articles[1] : displayHero);
+
 // Sidebar
 const sidebarRecent  = articles.slice(0, 6);
 const sidebarPopular = rankSidebarPopular(articles, buildStats, 6);
+const sidebarFeature = sidebarPopular[0] || (articles.length > 0 ? articles[0] : null);
 
 // Topik
 const topics = buildTopicList(articles);
@@ -64,8 +73,6 @@ function formatViews(slug: string): string | null {
 }
 
 const breadcrumbs = [{ label: 'Berita', href: '/berita' }];
-
-// URL endpoint statistik untuk news-live.ts di browser
 const statsEndpoint = statsApiUrl;
 ---
 
@@ -79,13 +86,13 @@ const statsEndpoint = statsApiUrl;
     <meta slot="head" name="stats-endpoint" content={statsEndpoint} />
   )}
 
-  <main class="bg-paper min-h-screen">
+  <main class="bg-white min-h-screen">
     <Container>
-      <div class="py-10 lg:py-14">
+      <div class="py-10 sm:py-14">
 
         {articles.length === 0 ? (
           /* ── KOSONG ──────────────────────────────────────────────────── */
-          <div class="py-24 text-center rounded-3xl bg-white border border-hair shadow-sm">
+          <div class="py-24 text-center rounded-3xl bg-white border border-slate-200 shadow-sm">
             <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100">
               <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
@@ -97,474 +104,531 @@ const statsEndpoint = statsApiUrl;
             </p>
           </div>
         ) : (
-          <div class="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-10 xl:gap-14">
+          <div class="space-y-14 sm:space-y-16">
 
             {/* ════════════════════════════════════════════════════════════
-                AREA UTAMA (kiri)
+                1. SOROTAN UTAMA (HERO BESAR — FULL WIDTH SESUAI REFERENSI)
                 ════════════════════════════════════════════════════════════ */}
-            <div class="space-y-14 min-w-0">
-
-              {/* ── SOROTAN UTAMA (Hero) ──────────────────────────────── */}
-              {hero && (
-                <section aria-labelledby="hero-heading">
-                  <div class="flex items-center gap-3 mb-5">
-                    <span class="w-1 h-6 bg-emerald-800 rounded-full inline-block"></span>
-                    <h2 id="hero-heading" class="font-serif text-xl font-bold text-blue-ink tracking-tight">Sorotan Utama</h2>
-                  </div>
-                  <a
-                    href={`/berita/${hero.slug}`}
-                    class="group block rounded-2xl overflow-hidden border border-hair bg-white shadow-sm hover:shadow-xl hover:border-emerald-400 transition-all duration-300"
-                    data-slug={hero.slug}
-                  >
-                    <div class="grid grid-cols-1 lg:grid-cols-12">
-                      {/* Gambar */}
-                      <div class="lg:col-span-7 relative overflow-hidden bg-emerald-950">
-                        {hero.url_foto ? (
-                          <img
-                            src={hero.url_foto}
-                            alt={hero.judul}
-                            referrerpolicy="no-referrer"
-                            loading="eager"
-                            width="900"
-                            height="563"
-                            class="w-full h-[280px] lg:h-[420px] object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                          />
-                        ) : (
-                          <div class="w-full h-[280px] lg:h-[420px] flex items-center justify-center bg-gradient-to-br from-emerald-950 to-slate-900 text-white font-serif text-2xl font-bold">
-                            MA Margajaya
-                          </div>
-                        )}
-                        {/* Gradient scrim */}
-                        <div class="absolute inset-0 bg-gradient-to-t from-emerald-950/80 via-transparent to-transparent pointer-events-none lg:hidden"></div>
-                        {/* Kategori badge */}
-                        {hero.kategori && (
-                          <span class="absolute top-4 left-4 px-2.5 py-1 bg-emerald-800 text-white text-[10px] font-bold uppercase tracking-wider rounded-full">
-                            {hero.kategori}
-                          </span>
-                        )}
-                      </div>
-                      {/* Teks */}
-                      <div class="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-center gap-4">
-                        <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                          <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase tracking-wider border border-emerald-100">
-                            {hero.kategori || 'Liputan Utama'}
-                          </span>
-                          <span class="text-slate-300" aria-hidden="true">•</span>
-                          <time datetime={hero.tanggal} class="font-medium text-slate-600">
-                            {formatIndonesianDate(hero.tanggal)}
-                          </time>
-                        </div>
-                        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-blue-ink leading-snug group-hover:text-emerald-800 transition-colors">
-                          {hero.judul}
-                        </h3>
-                        <p class="text-sm text-ink-soft leading-relaxed line-clamp-4">
-                          {getArticleExcerpt(hero.isi, 260)}
-                        </p>
-                        <div class="pt-3 flex items-center justify-between border-t border-hair text-xs">
-                          <span class="font-semibold text-slate-700">{hero.penulis || 'Humas MA Margajaya'}</span>
-                          <span class="inline-flex items-center gap-1.5 font-bold text-emerald-800 group-hover:text-emerald-950 uppercase tracking-wider text-[11px]">
-                            Baca Selengkapnya →
-                          </span>
-                        </div>
-                      </div>
+            {displayHero && (
+              <section aria-label="Sorotan Utama">
+                <a
+                  href={`/berita/${displayHero.slug}`}
+                  class="group relative block w-full rounded-2xl sm:rounded-3xl overflow-hidden aspect-[16/9] sm:aspect-[21/9] min-h-[380px] sm:min-h-[460px] lg:min-h-[520px] bg-slate-950 shadow-md hover:shadow-2xl transition-all duration-500"
+                  data-slug={displayHero.slug}
+                >
+                  {displayHero.url_foto ? (
+                    <img
+                      src={displayHero.url_foto}
+                      alt={displayHero.judul}
+                      referrerpolicy="no-referrer"
+                      loading="eager"
+                      width="1280"
+                      height="640"
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 via-slate-900 to-emerald-900 text-white font-serif text-2xl font-bold">
+                      MA Margajaya
                     </div>
-                  </a>
-                </section>
-              )}
+                  )}
 
-              {/* ── BERITA TERBARU ────────────────────────────────────── */}
-              {terbaru.length > 0 && (
-                <section aria-labelledby="terbaru-heading">
-                  <div class="flex items-center justify-between mb-5">
-                    <div class="flex items-center gap-3">
-                      <span class="w-1 h-6 bg-emerald-800 rounded-full inline-block"></span>
-                      <h2 id="terbaru-heading" class="font-serif text-xl font-bold text-blue-ink tracking-tight">Berita Terbaru</h2>
-                    </div>
-                    <a href="/berita" class="text-xs font-bold text-emerald-800 hover:text-emerald-950 uppercase tracking-wider border-b border-emerald-800 pb-0.5 transition-colors">
-                      Lihat Semua →
-                    </a>
-                  </div>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {terbaru.map(item => (
-                      <a
-                        href={`/berita/${item.slug}`}
-                        class="group flex flex-col rounded-xl overflow-hidden border border-hair bg-white hover:border-emerald-400 shadow-sm hover:shadow-lg transition-all duration-300"
-                        data-slug={item.slug}
-                      >
-                        <div class="aspect-[16/10] overflow-hidden bg-emerald-950 relative">
-                          {item.url_foto ? (
-                            <img
-                              src={item.url_foto}
-                              alt={item.judul}
-                              referrerpolicy="no-referrer"
-                              loading="lazy"
-                              width="480"
-                              height="300"
-                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                          ) : (
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-slate-900 text-white font-serif text-sm font-bold">
-                              MA Margajaya
-                            </div>
-                          )}
-                          {item.kategori && (
-                            <span class="absolute top-2 left-2 px-2 py-0.5 bg-black/60 text-white text-[9px] font-bold uppercase tracking-wider rounded backdrop-blur-sm">
-                              {item.kategori}
-                            </span>
-                          )}
-                        </div>
-                        <div class="p-4 flex flex-col gap-2 flex-1">
-                          <time datetime={item.tanggal} class="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider">
-                            {formatIndonesianDate(item.tanggal)}
-                          </time>
-                          <h3 class="font-serif text-base font-bold text-blue-ink group-hover:text-emerald-800 transition-colors leading-snug line-clamp-2 flex-1">
-                            {item.judul}
-                          </h3>
-                          <p class="text-xs text-ink-muted line-clamp-2 leading-relaxed">
-                            {getArticleExcerpt(item.isi, 120)}
-                          </p>
-                          <div class="pt-2 border-t border-hair flex items-center justify-between text-[10px] font-semibold text-emerald-800">
-                            <span>Oleh {item.penulis || 'Humas'}</span>
-                            <span class="group-hover:translate-x-1 transition-transform inline-block">→</span>
-                          </div>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* ── PILIHAN REDAKSI ───────────────────────────────────── */}
-              {editorial && (
-                <section aria-labelledby="editorial-heading">
-                  <div class="flex items-center gap-3 mb-5">
-                    <span class="w-1 h-6 bg-gold rounded-full inline-block"></span>
-                    <h2 id="editorial-heading" class="font-serif text-xl font-bold text-blue-ink tracking-tight">Pilihan Redaksi</h2>
-                  </div>
-                  <a
-                    href={`/berita/${editorial.slug}`}
-                    class="group flex flex-col sm:flex-row gap-0 rounded-2xl overflow-hidden border border-hair bg-white hover:border-gold/70 shadow-sm hover:shadow-xl transition-all duration-300"
-                    data-slug={editorial.slug}
-                  >
-                    <div class="sm:w-2/5 relative overflow-hidden bg-emerald-950 flex-shrink-0">
-                      {editorial.url_foto ? (
-                        <img
-                          src={editorial.url_foto}
-                          alt={editorial.judul}
-                          referrerpolicy="no-referrer"
-                          loading="lazy"
-                          width="560"
-                          height="420"
-                          class="w-full h-[220px] sm:h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                        />
-                      ) : (
-                        <div class="w-full h-[220px] sm:h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-slate-900 text-white font-serif text-xl font-bold">
-                          MA Margajaya
-                        </div>
-                      )}
-                    </div>
-                    <div class="sm:w-3/5 p-6 sm:p-8 flex flex-col justify-center gap-4">
-                      <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-1 bg-gold/10 text-amber-800 text-[10px] font-bold uppercase tracking-wider rounded border border-gold/30">
-                          ✦ Pilihan Redaksi
+                  {/* Dark gradient overlay bottom */}
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/55 to-transparent flex flex-col justify-end p-6 sm:p-10 lg:p-14">
+                    <div class="max-w-4xl space-y-3">
+                      {displayHero.kategori && (
+                        <span class="inline-block px-3 py-1 rounded-full bg-emerald-700/80 backdrop-blur-sm text-gold text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1">
+                          {displayHero.kategori}
                         </span>
-                        {editorial.kategori && (
-                          <span class="text-[10px] font-semibold text-ink-muted uppercase tracking-wider">{editorial.kategori}</span>
-                        )}
-                      </div>
-                      <h3 class="font-serif text-2xl sm:text-3xl font-bold text-blue-ink leading-snug group-hover:text-emerald-800 transition-colors">
-                        {editorial.judul}
-                      </h3>
-                      <p class="text-sm text-ink-soft leading-relaxed line-clamp-4">
-                        {getArticleExcerpt(editorial.isi, 300)}
+                      )}
+                      <h2 class="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight group-hover:text-gold transition-colors">
+                        {displayHero.judul}
+                      </h2>
+                      <p class="text-xs sm:text-sm md:text-base text-white/80 line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-3xl">
+                        {getArticleExcerpt(displayHero.isi, 240)}
                       </p>
-                      <div class="pt-3 flex items-center justify-between border-t border-hair text-xs">
-                        <div class="flex items-center gap-2 text-slate-500">
-                          <time datetime={editorial.tanggal}>{formatIndonesianDate(editorial.tanggal)}</time>
-                          <span aria-hidden="true">·</span>
-                          <span>{estimateReadingTime(editorial.isi)}</span>
-                        </div>
-                        <span class="font-bold text-emerald-800 group-hover:text-emerald-950 uppercase tracking-wider text-[11px]">
+                      <div class="pt-2">
+                        <span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gold hover:text-white uppercase tracking-wider transition-colors">
                           Baca Selengkapnya →
                         </span>
                       </div>
                     </div>
-                  </a>
-                </section>
-              )}
+                  </div>
+                </a>
+              </section>
+            )}
 
-              {/* ── PALING BANYAK DIBACA ──────────────────────────────── */}
-              {mostWatched.length > 0 && (
-                <section aria-labelledby="mostwatched-heading">
-                  <div class="flex items-center gap-3 mb-5">
-                    <span class="w-1 h-6 bg-red-600 rounded-full inline-block"></span>
-                    <h2 id="mostwatched-heading" class="font-serif text-xl font-bold text-blue-ink tracking-tight">Paling Banyak Dibaca</h2>
-                  </div>
-                  <div
-                    class="grid grid-cols-1 sm:grid-cols-2 gap-5"
-                    data-live="mostwatched"
-                  >
-                    {mostWatched.map(item => {
-                      const views = formatViews(item.slug);
-                      return (
-                        <a
-                          href={`/berita/${item.slug}`}
-                          class="group flex gap-4 p-4 rounded-xl border border-hair bg-white hover:border-emerald-400 shadow-sm hover:shadow-lg transition-all duration-300"
-                          data-slug={item.slug}
-                        >
-                          <div class="w-28 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-emerald-950">
-                            {item.url_foto ? (
-                              <img
-                                src={item.url_foto}
-                                alt={item.judul}
-                                referrerpolicy="no-referrer"
-                                loading="lazy"
-                                width="112"
-                                height="80"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              />
-                            ) : (
-                              <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-slate-900 text-white font-serif text-xs font-bold">MA</div>
-                            )}
-                          </div>
-                          <div class="flex-1 min-w-0 space-y-1.5">
-                            {views && (
-                              <div class="flex items-center gap-1 text-[10px] font-bold text-red-600">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                                </svg>
-                                <span>{views} dibaca</span>
-                              </div>
-                            )}
-                            <h3 class="font-serif text-sm font-bold text-blue-ink group-hover:text-emerald-800 transition-colors line-clamp-2 leading-snug">
-                              {item.judul}
-                            </h3>
-                            <time datetime={item.tanggal} class="text-[10px] text-ink-muted block">
-                              {formatIndonesianDate(item.tanggal)}
-                            </time>
-                          </div>
-                        </a>
-                      );
-                    })}
-                  </div>
-                </section>
-              )}
-
-              {/* ── POPULER (Grid 2×2) ────────────────────────────────── */}
-              {popular.length > 0 && (
-                <section aria-labelledby="popular-heading">
-                  <div class="flex items-center gap-3 mb-5">
-                    <span class="w-1 h-6 bg-blue-600 rounded-full inline-block"></span>
-                    <h2 id="popular-heading" class="font-serif text-xl font-bold text-blue-ink tracking-tight">Populer</h2>
-                  </div>
-                  <div
-                    class="grid grid-cols-1 sm:grid-cols-2 gap-5"
-                    data-live="popular"
-                  >
-                    {popular.map(item => {
-                      const views = formatViews(item.slug);
-                      return (
-                        <a
-                          href={`/berita/${item.slug}`}
-                          class="group rounded-xl overflow-hidden border border-hair bg-white hover:border-emerald-400 shadow-sm hover:shadow-lg transition-all duration-300"
-                          data-slug={item.slug}
-                        >
-                          <div class="aspect-[16/9] overflow-hidden bg-emerald-950 relative">
-                            {item.url_foto ? (
-                              <img
-                                src={item.url_foto}
-                                alt={item.judul}
-                                referrerpolicy="no-referrer"
-                                loading="lazy"
-                                width="480"
-                                height="270"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                              />
-                            ) : (
-                              <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-slate-900 text-white font-serif text-sm font-bold">MA Margajaya</div>
-                            )}
-                            {views && (
-                              <div class="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-black/60 text-white text-[9px] font-bold backdrop-blur-sm">
-                                <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                                </svg>
-                                {views}
-                              </div>
-                            )}
-                          </div>
-                          <div class="p-4 space-y-1.5">
-                            {item.kategori && (
-                              <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">{item.kategori}</span>
-                            )}
-                            <h3 class="font-serif text-base font-bold text-blue-ink group-hover:text-emerald-800 transition-colors leading-snug line-clamp-2">
-                              {item.judul}
-                            </h3>
-                            <time datetime={item.tanggal} class="text-[10px] text-ink-muted block">
-                              {formatIndonesianDate(item.tanggal)}
-                            </time>
-                          </div>
-                        </a>
-                      );
-                    })}
-                  </div>
-                </section>
-              )}
-
-            </div>
             {/* ════════════════════════════════════════════════════════════
-                SIDEBAR (kanan)
+                2. BERITA TERBARU (NEWS TODAY — FULL WIDTH 3 KOLOM)
                 ════════════════════════════════════════════════════════════ */}
-            <aside class="space-y-8" aria-label="Sidebar berita">
-
-              {/* ── Tab Terbaru / Terpopuler ──────────────────────────── */}
-              <div class="rounded-2xl border border-hair bg-white shadow-sm overflow-hidden">
-                {/* Tab header */}
-                <div class="flex border-b border-hair" role="tablist" aria-label="Pilih tampilan">
-                  <button
-                    id="tab-terbaru"
-                    role="tab"
-                    aria-selected="true"
-                    aria-controls="panel-terbaru"
-                    class="sidebar-tab flex-1 py-3 text-xs font-bold uppercase tracking-wider text-emerald-800 border-b-2 border-emerald-800 bg-emerald-50/60 transition-colors"
-                    onclick="switchTab('terbaru')"
-                  >
-                    Terbaru
-                  </button>
-                  <button
-                    id="tab-terpopuler"
-                    role="tab"
-                    aria-selected="false"
-                    aria-controls="panel-terpopuler"
-                    class="sidebar-tab flex-1 py-3 text-xs font-bold uppercase tracking-wider text-ink-muted hover:text-emerald-800 border-b-2 border-transparent hover:border-emerald-200 transition-colors"
-                    onclick="switchTab('terpopuler')"
-                  >
-                    Terpopuler
-                  </button>
+            {displayTerbaru.length > 0 && (
+              <section aria-labelledby="news-today-heading">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                  <h2 id="news-today-heading" class="font-serif text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                    Berita Hari Ini
+                  </h2>
+                  <a href="/berita" class="text-xs sm:text-sm font-semibold text-slate-500 hover:text-emerald-800 transition-colors">
+                    Lihat Semua
+                  </a>
                 </div>
-                {/* Panel Terbaru */}
-                <div id="panel-terbaru" role="tabpanel" aria-labelledby="tab-terbaru" class="divide-y divide-hair">
-                  {sidebarRecent.map(item => (
-                    <a href={`/berita/${item.slug}`} class="flex gap-3 p-3 hover:bg-emerald-50/50 transition-colors group">
-                      <div class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-emerald-950">
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mt-6">
+                  {displayTerbaru.map(item => (
+                    <a href={`/berita/${item.slug}`} class="group flex flex-col" data-slug={item.slug}>
+                      <div class="rounded-2xl overflow-hidden aspect-[16/10] bg-slate-100 mb-4 relative shadow-sm group-hover:shadow-md transition-shadow">
                         {item.url_foto ? (
                           <img
                             src={item.url_foto}
                             alt={item.judul}
                             referrerpolicy="no-referrer"
                             loading="lazy"
-                            width="56"
-                            height="56"
-                            class="w-full h-full object-cover"
+                            width="600"
+                            height="375"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         ) : (
-                          <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-slate-900 text-white font-serif text-[10px] font-bold">MA</div>
+                          <div class="w-full h-full flex items-center justify-center bg-emerald-950 text-white font-serif text-sm font-bold">
+                            MA Margajaya
+                          </div>
+                        )}
+                        {item.kategori && (
+                          <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-black/60 text-white text-[9px] font-bold uppercase tracking-wider backdrop-blur-sm">
+                            {item.kategori}
+                          </span>
                         )}
                       </div>
-                      <div class="flex-1 min-w-0">
-                        <time datetime={item.tanggal} class="text-[9px] font-semibold text-emerald-800 uppercase tracking-wider block">{formatIndonesianDate(item.tanggal)}</time>
-                        <h3 class="font-serif text-xs font-bold text-blue-ink group-hover:text-emerald-800 transition-colors leading-snug line-clamp-2 mt-0.5">{item.judul}</h3>
+                      <h3 class="font-serif text-lg sm:text-xl font-bold text-slate-900 group-hover:text-emerald-800 transition-colors leading-snug line-clamp-2">
+                        {item.judul}
+                      </h3>
+                      <p class="mt-2 text-xs sm:text-sm text-slate-500 line-clamp-3 leading-relaxed flex-1">
+                        {getArticleExcerpt(item.isi, 140)}
+                      </p>
+                      <div class="mt-4 flex items-center justify-between text-xs pt-2 border-t border-slate-100">
+                        <time datetime={item.tanggal} class="text-slate-400 font-medium">
+                          {formatIndonesianDate(item.tanggal)}
+                        </time>
+                        <span class="font-bold text-emerald-800 group-hover:text-emerald-950 inline-flex items-center gap-1">
+                          Baca Postingan →
+                        </span>
                       </div>
                     </a>
                   ))}
                 </div>
-                {/* Panel Terpopuler */}
-                <div id="panel-terpopuler" role="tabpanel" aria-labelledby="tab-terpopuler" class="divide-y divide-hair hidden" data-live="sidebar-popular">
-                  {sidebarPopular.map(item => {
-                    const views = formatViews(item.slug);
-                    return (
-                      <a href={`/berita/${item.slug}`} class="flex gap-3 p-3 hover:bg-emerald-50/50 transition-colors group" data-slug={item.slug}>
-                        <div class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-emerald-950">
+              </section>
+            )}
+
+            {/* ════════════════════════════════════════════════════════════
+                3. AREA 2-KOLOM (KONTEN UTAMA KIRI + SIDEBAR KANAN)
+                ════════════════════════════════════════════════════════════ */}
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-10 xl:gap-14 pt-8 border-t border-slate-200">
+
+              {/* ──────────────────────────────────────────────────────────
+                  KOLOM KIRI (MAIN CONTENT)
+                  ────────────────────────────────────────────────────────── */}
+              <div class="space-y-14 min-w-0">
+
+                {/* ── PILIHAN REDAKSI (EDITORIAL FEATURE) ─────────────── */}
+                {displayEditorial && (
+                  <section aria-labelledby="editorial-heading" class="space-y-4">
+                    <a href={`/berita/${displayEditorial.slug}`} class="group block">
+                      <h2 id="editorial-heading" class="font-serif text-2xl sm:text-3xl font-bold text-slate-900 group-hover:text-emerald-800 transition-colors leading-tight mb-4">
+                        {displayEditorial.judul}
+                      </h2>
+                      <div class="rounded-2xl overflow-hidden aspect-[16/9] bg-slate-100 mb-3 shadow-sm group-hover:shadow-md transition-shadow">
+                        {displayEditorial.url_foto ? (
+                          <img
+                            src={displayEditorial.url_foto}
+                            alt={displayEditorial.judul}
+                            referrerpolicy="no-referrer"
+                            loading="lazy"
+                            width="800"
+                            height="450"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div class="w-full h-full flex items-center justify-center bg-emerald-950 text-white font-serif text-xl font-bold">
+                            MA Margajaya
+                          </div>
+                        )}
+                      </div>
+                    </a>
+
+                    <p class="text-xs text-slate-400 italic">
+                      Dokumentasi liputan redaksi MA Margajaya Sukadana · {formatIndonesianDate(displayEditorial.tanggal)}
+                    </p>
+
+                    <p class="text-sm sm:text-base text-slate-600 leading-relaxed line-clamp-4">
+                      {getArticleExcerpt(displayEditorial.isi, 320)}
+                    </p>
+
+                    <div>
+                      <a
+                        href={`/berita/${displayEditorial.slug}`}
+                        class="inline-flex items-center justify-center px-6 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white text-xs sm:text-sm font-bold uppercase tracking-wider shadow-sm transition-all"
+                      >
+                        Baca Selengkapnya
+                      </a>
+                    </div>
+                  </section>
+                )}
+
+                {/* ── PALING BANYAK DIBACA (MOST WATCHED) ─────────────── */}
+                {displayMostWatched.length > 0 && (
+                  <section aria-labelledby="mostwatched-heading">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                      <h2 id="mostwatched-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                        Paling Banyak Dibaca
+                      </h2>
+                      <a href="/berita" class="text-xs sm:text-sm font-semibold text-slate-500 hover:text-emerald-800 transition-colors">
+                        Lihat Semua
+                      </a>
+                    </div>
+
+                    <div
+                      class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6"
+                      data-live="mostwatched"
+                    >
+                      {displayMostWatched.map(item => {
+                        const views = formatViews(item.slug);
+                        return (
+                          <a href={`/berita/${item.slug}`} class="group flex flex-col" data-slug={item.slug}>
+                            <div class="rounded-2xl overflow-hidden aspect-[16/10] bg-slate-100 mb-3 relative shadow-sm group-hover:shadow-md transition-shadow">
+                              {item.url_foto ? (
+                                <img
+                                  src={item.url_foto}
+                                  alt={item.judul}
+                                  referrerpolicy="no-referrer"
+                                  loading="lazy"
+                                  width="500"
+                                  height="312"
+                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                              ) : (
+                                <div class="w-full h-full flex items-center justify-center bg-emerald-950 text-white font-serif text-sm font-bold">
+                                  MA Margajaya
+                                </div>
+                              )}
+                              {views && (
+                                <span class="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-sm text-gold text-[10px] font-bold">
+                                  👁 {views} dibaca
+                                </span>
+                              )}
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                              <span class="font-semibold text-slate-700">— {item.penulis || 'Humas'}</span>
+                              <time datetime={item.tanggal} class="text-slate-400">
+                                📅 {formatIndonesianDate(item.tanggal)}
+                              </time>
+                            </div>
+                            <h3 class="font-serif text-base sm:text-lg font-bold text-slate-900 group-hover:text-emerald-800 transition-colors leading-snug line-clamp-2">
+                              {item.judul}
+                            </h3>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+
+                {/* ── POPULER (GRID 2×2) ────────────────────────────────── */}
+                {displayPopular.length > 0 && (
+                  <section aria-labelledby="popular-heading">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+                      <h2 id="popular-heading" class="font-serif text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                        Populer
+                      </h2>
+                      <a href="/berita" class="text-xs sm:text-sm font-semibold text-slate-500 hover:text-emerald-800 transition-colors">
+                        Lihat Semua
+                      </a>
+                    </div>
+
+                    <div
+                      class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6"
+                      data-live="popular"
+                    >
+                      {displayPopular.map(item => (
+                        <a href={`/berita/${item.slug}`} class="group flex flex-col" data-slug={item.slug}>
+                          <div class="rounded-2xl overflow-hidden aspect-[16/10] bg-slate-100 mb-2.5 relative shadow-sm group-hover:shadow-md transition-shadow">
+                            {item.url_foto ? (
+                              <img
+                                src={item.url_foto}
+                                alt={item.judul}
+                                referrerpolicy="no-referrer"
+                                loading="lazy"
+                                width="500"
+                                height="312"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                            ) : (
+                              <div class="w-full h-full flex items-center justify-center bg-emerald-950 text-white font-serif text-sm font-bold">
+                                MA Margajaya
+                              </div>
+                            )}
+                          </div>
+                          <time datetime={item.tanggal} class="text-[11px] font-medium text-slate-400 block mb-1">
+                            📅 {formatIndonesianDate(item.tanggal)}
+                          </time>
+                          <h3 class="font-serif text-sm sm:text-base font-bold text-slate-900 group-hover:text-emerald-800 transition-colors leading-snug line-clamp-2">
+                            {item.judul}
+                          </h3>
+                        </a>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* ── KARTU HORIZONTAL BAWAH (BOTTOM FEATURED) ─────────── */}
+                {displayBottom && (
+                  <section aria-label="Warta Pilihan">
+                    <a
+                      href={`/berita/${displayBottom.slug}`}
+                      class="group flex flex-col sm:flex-row gap-5 p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all"
+                    >
+                      <div class="sm:w-2/5 aspect-[16/10] rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
+                        {displayBottom.url_foto ? (
+                          <img
+                            src={displayBottom.url_foto}
+                            alt={displayBottom.judul}
+                            referrerpolicy="no-referrer"
+                            loading="lazy"
+                            width="400"
+                            height="250"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div class="w-full h-full flex items-center justify-center bg-emerald-950 text-white font-serif text-sm font-bold">
+                            MA Margajaya
+                          </div>
+                        )}
+                      </div>
+                      <div class="flex flex-col justify-center">
+                        <time datetime={displayBottom.tanggal} class="text-[11px] font-medium text-emerald-800 mb-1 block uppercase tracking-wider">
+                          {formatIndonesianDate(displayBottom.tanggal)}
+                        </time>
+                        <h3 class="font-serif text-lg sm:text-xl font-bold text-slate-900 group-hover:text-emerald-800 transition-colors leading-snug mb-2">
+                          {displayBottom.judul}
+                        </h3>
+                        <p class="text-xs sm:text-sm text-slate-500 line-clamp-3 leading-relaxed mb-3">
+                          {getArticleExcerpt(displayBottom.isi, 160)}
+                        </p>
+                        <span class="text-xs font-bold text-emerald-800 group-hover:text-emerald-950 inline-flex items-center gap-1">
+                          Baca Selengkapnya →
+                        </span>
+                      </div>
+                    </a>
+                  </section>
+                )}
+
+              </div>
+
+              {/* ──────────────────────────────────────────────────────────
+                  KOLOM KANAN (SIDEBAR)
+                  ────────────────────────────────────────────────────────── */}
+              <aside class="space-y-8" aria-label="Sidebar berita">
+
+                {/* ── 1. Tab [ Terbaru ] [ Terpopuler ] (Pill Switcher) ── */}
+                <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                  {/* Pill switcher capsule */}
+                  <div class="flex items-center justify-center p-1 bg-slate-100 rounded-full border border-slate-200 mb-5" role="tablist" aria-label="Pilih tampilan berita">
+                    <button
+                      id="tab-terbaru"
+                      type="button"
+                      role="tab"
+                      aria-selected="true"
+                      aria-controls="panel-terbaru"
+                      class="sidebar-pill-tab flex-1 py-2 px-4 rounded-full text-xs font-bold transition-all text-white bg-emerald-800 shadow-sm"
+                      onclick="switchTab('terbaru')"
+                    >
+                      Terbaru
+                    </button>
+                    <button
+                      id="tab-terpopuler"
+                      type="button"
+                      role="tab"
+                      aria-selected="false"
+                      aria-controls="panel-terpopuler"
+                      class="sidebar-pill-tab flex-1 py-2 px-4 rounded-full text-xs font-bold transition-all text-slate-600 hover:text-emerald-800"
+                      onclick="switchTab('terpopuler')"
+                    >
+                      Terpopuler
+                    </button>
+                  </div>
+
+                  {/* Panel Terbaru */}
+                  <div id="panel-terbaru" role="tabpanel" aria-labelledby="tab-terbaru" class="space-y-4">
+                    {sidebarRecent.map(item => (
+                      <a href={`/berita/${item.slug}`} class="flex items-center gap-3.5 group">
+                        <div class="w-20 h-16 flex-shrink-0 rounded-xl overflow-hidden bg-slate-100">
                           {item.url_foto ? (
                             <img
                               src={item.url_foto}
                               alt={item.judul}
                               referrerpolicy="no-referrer"
                               loading="lazy"
-                              width="56"
-                              height="56"
-                              class="w-full h-full object-cover"
+                              width="80"
+                              height="64"
+                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-slate-900 text-white font-serif text-[10px] font-bold">MA</div>
+                            <div class="w-full h-full flex items-center justify-center bg-emerald-950 text-white font-serif text-[10px] font-bold">MA</div>
                           )}
                         </div>
                         <div class="flex-1 min-w-0">
-                          {views && (
-                            <span class="text-[9px] font-bold text-red-600 flex items-center gap-1">
-                              <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
-                              {views} dibaca
-                            </span>
-                          )}
-                          <h3 class="font-serif text-xs font-bold text-blue-ink group-hover:text-emerald-800 transition-colors leading-snug line-clamp-2 mt-0.5">{item.judul}</h3>
+                          <h4 class="font-serif text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-800 transition-colors line-clamp-2 leading-snug">
+                            {item.judul}
+                          </h4>
+                          <time datetime={item.tanggal} class="text-[11px] text-slate-400 flex items-center gap-1 mt-1">
+                            📅 {formatIndonesianDate(item.tanggal)}
+                          </time>
                         </div>
-                      </a>
-                    );
-                  })}
-                  {sidebarPopular.length === 0 && (
-                    <p class="p-4 text-xs text-ink-muted">Belum ada data kunjungan.</p>
-                  )}
-                </div>
-              </div>
-
-              {/* ── Pilih Topik ───────────────────────────────────────── */}
-              {topics.length > 0 && (
-                <div class="rounded-2xl border border-hair bg-white shadow-sm overflow-hidden">
-                  <div class="px-4 py-3 border-b border-hair">
-                    <h2 class="font-serif text-sm font-bold text-blue-ink uppercase tracking-wider">Pilih Topik</h2>
-                  </div>
-                  <div class="p-4 flex flex-wrap gap-2">
-                    {topics.map(t => (
-                      <a
-                        href={`/berita/topik/${encodeURIComponent(t.topik.toLowerCase().replace(/\s+/g, '-'))}`}
-                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hair bg-paper text-xs font-semibold text-ink-soft hover:border-emerald-400 hover:text-emerald-800 hover:bg-emerald-50 transition-all"
-                      >
-                        {t.topik}
-                        <span class="text-[10px] text-ink-muted">({t.jumlah})</span>
                       </a>
                     ))}
                   </div>
-                </div>
-              )}
 
-              {/* ── Ikuti Kami ────────────────────────────────────────── */}
-              <div class="rounded-2xl border border-hair bg-white shadow-sm overflow-hidden">
-                <div class="px-4 py-3 border-b border-hair">
-                  <h2 class="font-serif text-sm font-bold text-blue-ink uppercase tracking-wider">Ikuti Kami</h2>
+                  {/* Panel Terpopuler */}
+                  <div id="panel-terpopuler" role="tabpanel" aria-labelledby="tab-terpopuler" class="space-y-4 hidden" data-live="sidebar-popular">
+                    {sidebarPopular.map(item => {
+                      const views = formatViews(item.slug);
+                      return (
+                        <a href={`/berita/${item.slug}`} class="flex items-center gap-3.5 group" data-slug={item.slug}>
+                          <div class="w-20 h-16 flex-shrink-0 rounded-xl overflow-hidden bg-slate-100">
+                            {item.url_foto ? (
+                              <img
+                                src={item.url_foto}
+                                alt={item.judul}
+                                referrerpolicy="no-referrer"
+                                loading="lazy"
+                                width="80"
+                                height="64"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div class="w-full h-full flex items-center justify-center bg-emerald-950 text-white font-serif text-[10px] font-bold">MA</div>
+                            )}
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            {views && (
+                              <span class="text-[10px] font-bold text-red-600 block mb-0.5">
+                                👁 {views} dibaca
+                              </span>
+                            )}
+                            <h4 class="font-serif text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-800 transition-colors line-clamp-2 leading-snug">
+                              {item.judul}
+                            </h4>
+                            <time datetime={item.tanggal} class="text-[11px] text-slate-400 block mt-0.5">
+                              📅 {formatIndonesianDate(item.tanggal)}
+                            </time>
+                          </div>
+                        </a>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div class="p-4 flex flex-col gap-3">
-                  <a
-                    href="https://wa.me/6281234567890"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-colors"
-                  >
-                    <svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                    <span>WhatsApp Channel</span>
-                  </a>
-                  <a
-                    href="https://www.instagram.com/mamargajaya"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold hover:opacity-90 transition-opacity"
-                  >
-                    <svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                    <span>Instagram</span>
-                  </a>
-                  <a
-                    href="https://www.facebook.com/mamargajaya"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#1877F2] text-white text-xs font-bold hover:bg-blue-700 transition-colors"
-                  >
-                    <svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                    <span>Facebook</span>
-                  </a>
-                </div>
-              </div>
 
-            </aside>
+                {/* ── 2. Kartu Unggulan Sidebar (Sidebar Featured Card) ── */}
+                {sidebarFeature && (
+                  <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                    <a href={`/berita/${sidebarFeature.slug}`} class="group block">
+                      <div class="rounded-xl overflow-hidden aspect-[16/10] bg-slate-100 mb-3 shadow-sm group-hover:shadow-md transition-shadow">
+                        {sidebarFeature.url_foto ? (
+                          <img
+                            src={sidebarFeature.url_foto}
+                            alt={sidebarFeature.judul}
+                            referrerpolicy="no-referrer"
+                            loading="lazy"
+                            width="400"
+                            height="250"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div class="w-full h-full flex items-center justify-center bg-emerald-950 text-white font-serif text-sm font-bold">MA Margajaya</div>
+                        )}
+                      </div>
+                      <h3 class="font-serif text-sm sm:text-base font-bold text-slate-900 group-hover:text-emerald-800 transition-colors line-clamp-2 leading-snug mb-2">
+                        {sidebarFeature.judul}
+                      </h3>
+                      <p class="text-xs text-slate-500 line-clamp-3 leading-relaxed mb-3">
+                        {getArticleExcerpt(sidebarFeature.isi, 120)}
+                      </p>
+                      <span class="text-xs font-bold text-emerald-800 group-hover:text-emerald-950 inline-flex items-center gap-1">
+                        Baca Postingan →
+                      </span>
+                    </a>
+                  </div>
+                )}
+
+                {/* ── 3. Pilih Topik (Select Topic) ────────────────────── */}
+                {topics.length > 0 && (
+                  <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                    <h3 class="font-serif text-base font-bold text-slate-900 text-center mb-4 pb-3 border-b border-slate-100">
+                      Pilih Topik
+                    </h3>
+                    <div class="divide-y divide-slate-100">
+                      {topics.map(t => (
+                        <a
+                          href={`/berita/topik/${encodeURIComponent(t.topik.toLowerCase().replace(/\s+/g, '-'))}`}
+                          class="group flex items-center justify-between py-2.5 text-xs sm:text-sm font-semibold text-slate-700 hover:text-emerald-800 hover:translate-x-1 transition-all"
+                        >
+                          <span>{t.topik}</span>
+                          <div class="flex items-center gap-1 text-slate-400 group-hover:text-emerald-800 transition-colors">
+                            <span class="text-[11px] font-normal">({t.jumlah})</span>
+                            <span class="text-sm font-bold">›</span>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── 4. Ikuti Kami (Sign up for News / Kanal Komunikasi) ── */}
+                <div class="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm text-center">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                    Kanal Resmi
+                  </span>
+                  <h3 class="font-serif text-lg font-bold text-slate-900 leading-snug mb-2">
+                    Terhubung Langsung dengan Madrasah
+                  </h3>
+                  <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+                    Dapatkan warta terbaru, dokumentasi santri, dan pengumuman langsung di smartphone Anda.
+                  </p>
+
+                  <div class="flex flex-col gap-2.5">
+                    <a
+                      href="https://wa.me/6281234567890"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all"
+                    >
+                      <svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                      <span>WhatsApp Channel</span>
+                    </a>
+                    <a
+                      href="https://www.instagram.com/mamargajaya"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold hover:opacity-90 transition-opacity"
+                    >
+                      <svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                      <span>Instagram</span>
+                    </a>
+                    <a
+                      href="https://www.facebook.com/mamargajaya"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#1877F2] hover:bg-blue-700 text-white text-xs font-bold transition-colors"
+                    >
+                      <svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                      <span>Facebook</span>
+                    </a>
+                  </div>
+                  <p class="text-[10px] text-slate-400 mt-4 leading-normal">
+                    Saluran informasi publik Madrasah Aliyah Margajaya Sukadana.
+                  </p>
+                </div>
+
+              </aside>
+
+            </div>
+
           </div>
         )}
 
@@ -572,39 +636,35 @@ const statsEndpoint = statsApiUrl;
     </Container>
 
     {/* ── Footer note privasi ────────────────────────────────────────────── */}
-    <div class="border-t border-hair bg-paper-warm py-4">
+    <div class="border-t border-slate-200 bg-slate-50 py-4">
       <Container>
-        <p class="text-center text-[11px] text-ink-muted">
+        <p class="text-center text-[11px] text-slate-500">
           Situs ini menghitung jumlah pembaca secara anonim. Tidak ada data pribadi yang disimpan.
         </p>
       </Container>
     </div>
 
   </main>
-
 </PageLayout>
 
 {/* Script news-live.ts untuk reorder data-live sections di browser */}
 <script src="../../scripts/news-live.ts"></script>
 
-<style>
-  /* Sidebar tab switch */
-  .sidebar-tab[aria-selected="true"] {
-    @apply text-emerald-800 border-b-2 border-emerald-800 bg-emerald-50/60;
-  }
-  .sidebar-tab[aria-selected="false"] {
-    @apply text-ink-muted border-b-2 border-transparent;
-  }
-</style>
-
 <script is:inline>
   function switchTab(which) {
-    var tabs   = ['terbaru', 'terpopuler'];
+    var tabs = ['terbaru', 'terpopuler'];
     tabs.forEach(function(t) {
-      var btn   = document.getElementById('tab-' + t);
+      var btn = document.getElementById('tab-' + t);
       var panel = document.getElementById('panel-' + t);
       var active = (t === which);
-      if (btn)   btn.setAttribute('aria-selected', active ? 'true' : 'false');
+      if (btn) {
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+        if (active) {
+          btn.className = 'sidebar-pill-tab flex-1 py-2 px-4 rounded-full text-xs font-bold transition-all text-white bg-emerald-800 shadow-sm';
+        } else {
+          btn.className = 'sidebar-pill-tab flex-1 py-2 px-4 rounded-full text-xs font-bold transition-all text-slate-600 hover:text-emerald-800';
+        }
+      }
       if (panel) panel.classList.toggle('hidden', !active);
     });
   }
