@@ -6,17 +6,28 @@
  * 3. Hapus Warta Berdasarkan ID beserta fotonya di Google Drive (dilindungi autentikasi)
  * 4. Ambil Semua Warta (GET - terurut tanggal terbaru)
  * 5. Trigger Rebuild (Vercel Deploy Hook) otomatis saat data berubah
+ * 6. [BARU] Pencatat kunjungan anonim: doPost action=hit + views_daily sheet
+ * 7. [BARU] Statistik tren: doGet?action=stats (cache 10 menit)
  *
  * Struktur Kolom Sheet "Berita":
- * A=id | B=judul | C=isi | D=tanggal | E=url_foto | F=penulis
+ * A=id | B=judul | C=isi | D=tanggal | E=url_foto | F=penulis | G=kategori | H=headline | I=unggulan
+ *
+ * Sheet "views_daily" (baru):
+ * A=tanggal (yyyy-MM-dd) | B=slug | C=jumlah
  */
 
 const SHEET_NAME = 'Berita';
+const SHEET_VIEWS = 'views_daily';
 const DRIVE_FOLDER_ID = '1j_oplUYFFesAewJP9JyyydJcnBZZRCFI';
 
 // Properti di Script Properties (File -> Project Settings -> Script Properties)
 const SCRIPT_PROP_PASSWORD = 'ADMIN_PASSWORD';
 const SCRIPT_PROP_DEPLOY_HOOK = 'DEPLOY_HOOK_URL';
+
+// Durasi cache (detik)
+const CACHE_SESSION_TTL  = 21600; // 6 jam – session token admin
+const CACHE_HIT_TTL      = 21600; // 6 jam – dedupe kunjungan per cid+slug
+const CACHE_STATS_TTL    = 600;   // 10 menit – cache statistik
 
 /**
  * Helper untuk mengambil password admin dari Script Properties
@@ -34,7 +45,7 @@ function getAdminPassword() {
 function generateSessionToken() {
   const token = Utilities.getUuid();
   const cache = CacheService.getScriptCache();
-  cache.put('session_' + token, 'valid', 21600);
+  cache.put('session_' + token, 'valid', CACHE_SESSION_TTL);
   return token;
 }
 
@@ -49,8 +60,6 @@ function isValidSessionToken(token) {
 
 /**
  * Memicu build ulang di Vercel via Deploy Hook
- * Deploy Hook dibuat di: Vercel Dashboard → Project → Settings → Git → Deploy Hooks
- * URL hook disimpan di Script Properties dengan key: DEPLOY_HOOK_URL
  */
 function triggerRebuild() {
   try {
@@ -68,13 +77,8 @@ function triggerRebuild() {
   }
 }
 
-
 /**
  * Helper untuk menghapus file foto dari Google Drive berdasarkan URL.
- * Mendukung URL thumbnail (drive.google.com/thumbnail?id=...)
- * maupun URL Drive langsung (drive.google.com/uc?id=... atau /file/d/...)
- * Menggunakan .setTrashed(true) agar file dipindahkan ke Trash.
- * Jika gagal atau file tidak ditemukan, fungsi menangkap error dan tidak menggagalkan proses.
  */
 function deleteDrivePhoto(urlFoto) {
   if (!urlFoto) return false;
@@ -89,7 +93,6 @@ function deleteDrivePhoto(urlFoto) {
         fileId = dMatch[1];
       }
     }
-
     if (fileId) {
       var file = DriveApp.getFileById(fileId);
       file.setTrashed(true);
@@ -111,10 +114,156 @@ function jsonResponse(obj) {
 }
 
 /**
- * Handle HTTP GET - Ambil semua berita (terurut tanggal terbaru)
+ * Helper response text/plain (dipakai untuk hit endpoint agar tidak memicu CORS preflight)
+ */
+function textResponse(msg) {
+  return ContentService.createTextOutput(msg)
+    .setMimeType(ContentService.MimeType.TEXT);
+}
+
+// ===========================================================================
+// STATISTIK: Fungsi bantu untuk sheet views_daily
+// ===========================================================================
+
+/**
+ * Pastikan sheet views_daily ada; buat jika belum ada.
+ */
+function getOrCreateViewsSheet(ss) {
+  var sheet = ss.getSheetByName(SHEET_VIEWS);
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_VIEWS);
+    sheet.appendRow(['tanggal', 'slug', 'jumlah']);
+    sheet.setFrozenRows(1);
+    // Format kolom C sebagai angka
+    sheet.getRange('C:C').setNumberFormat('0');
+    Logger.log('Sheet views_daily berhasil dibuat.');
+  }
+  return sheet;
+}
+
+/**
+ * Hitung statistik kunjungan dari sheet views_daily.
+ * Kembalikan array: [{slug, v24h, v7d, v30d, total}]
+ */
+function computeStats() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_VIEWS);
+  if (!sheet) return [];
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return [];
+
+  const now = new Date();
+  const msPerDay = 86400000;
+  const cutoff24h = new Date(now - 1 * msPerDay);
+  const cutoff7d  = new Date(now - 7 * msPerDay);
+  const cutoff30d = new Date(now - 30 * msPerDay);
+
+  // slug -> { v24h, v7d, v30d, total }
+  const map = {};
+
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    var rawDate = String(row[0] || '').trim();
+    var slug    = String(row[1] || '').trim();
+    var jumlah  = parseInt(row[2]) || 0;
+    if (!slug || jumlah <= 0) continue;
+
+    // Parse tanggal yyyy-MM-dd
+    var d = new Date(rawDate + 'T00:00:00');
+    if (isNaN(d.getTime())) continue;
+
+    if (!map[slug]) map[slug] = { v24h: 0, v7d: 0, v30d: 0, total: 0 };
+    map[slug].total += jumlah;
+    if (d >= cutoff30d) map[slug].v30d += jumlah;
+    if (d >= cutoff7d)  map[slug].v7d  += jumlah;
+    if (d >= cutoff24h) map[slug].v24h  += jumlah;
+  }
+
+  var result = [];
+  for (var s in map) {
+    result.push({ slug: s, v24h: map[s].v24h, v7d: map[s].v7d, v30d: map[s].v30d, total: map[s].total });
+  }
+  return result;
+}
+
+/**
+ * Validasi apakah slug ada di sheet Berita.
+ * Gunakan cache CacheService agar tidak membaca sheet setiap kali.
+ */
+function isValidSlug(slug, ss) {
+  if (!slug) return false;
+  var cache = CacheService.getScriptCache();
+  var cacheKey = 'slugset_v1';
+  var cached = cache.get(cacheKey);
+  var slugSet;
+
+  if (cached) {
+    try { slugSet = JSON.parse(cached); } catch(e) { slugSet = null; }
+  }
+
+  if (!slugSet) {
+    // Bangun set slug dari sheet Berita (kolom B=judul + A=id untuk generate slug)
+    var sheet = ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0];
+    var values = sheet.getDataRange().getValues();
+    slugSet = {};
+    for (var i = 1; i < values.length; i++) {
+      var id    = String(values[i][0] || '').trim();
+      var judul = String(values[i][1] || '').trim();
+      if (!id) continue;
+      // Replicate generateNewsSlug logic (harus identik dengan news.ts)
+      var cleanTitle = judul.toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .substring(0, 50);
+      var rawId = id.replace(/^news_/, '');
+      var shortId = rawId.length > 6 ? rawId.slice(-6) : rawId;
+      var generatedSlug = cleanTitle ? (cleanTitle + '-' + shortId) : ('warta-' + shortId);
+      slugSet[generatedSlug] = true;
+    }
+    cache.put(cacheKey, JSON.stringify(slugSet), 300); // cache 5 menit
+  }
+
+  return !!slugSet[slug];
+}
+
+// ===========================================================================
+// HANDLER UTAMA
+// ===========================================================================
+
+/**
+ * Handle HTTP GET
+ * - Default (tanpa action): Ambil semua berita (terurut tanggal terbaru) — TIDAK BERUBAH
+ * - ?action=stats : Statistik tren dari views_daily (cache 10 menit)
  */
 function doGet(e) {
   try {
+    var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : '';
+
+    // =========================================================================
+    // BARU: AKSI STATS — kembalikan data tren dari views_daily
+    // =========================================================================
+    if (action === 'stats') {
+      var cache = CacheService.getScriptCache();
+      var statsKey = 'stats_v1';
+      var cached = cache.get(statsKey);
+      if (cached) {
+        return jsonResponse(JSON.parse(cached));
+      }
+      var items = computeStats();
+      var payload = {
+        status: 'success',
+        updatedAt: new Date().toISOString(),
+        items: items
+      };
+      cache.put(statsKey, JSON.stringify(payload), CACHE_STATS_TTL);
+      return jsonResponse(payload);
+    }
+
+    // =========================================================================
+    // PERILAKU LAMA: Ambil semua berita (TIDAK BERUBAH)
+    // =========================================================================
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     let sheet = ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0];
     const data = sheet.getDataRange().getValues();
@@ -130,14 +279,18 @@ function doGet(e) {
     const rows = data.slice(1);
 
     // Kolom: [0]=id | [1]=judul | [2]=isi | [3]=tanggal | [4]=url_foto | [5]=penulis
+    //        [6]=kategori | [7]=headline | [8]=unggulan  (baru, kompatibel mundur)
     const result = rows.map(function(row) {
       return {
-        id:       row[0] || '',
-        judul:    row[1] || '',
-        isi:      row[2] || '',
-        tanggal:  row[3] || '',
-        url_foto: row[4] || '',
-        penulis:  row[5] || 'Humas MA Margajaya'
+        id:        row[0] || '',
+        judul:     row[1] || '',
+        isi:       row[2] || '',
+        tanggal:   row[3] || '',
+        url_foto:  row[4] || '',
+        penulis:   row[5] || 'Humas MA Margajaya',
+        kategori:  row[6] || '',
+        headline:  String(row[7] || '').toUpperCase() === 'TRUE',
+        unggulan:  String(row[8] || '').toUpperCase() === 'TRUE'
       };
     }).filter(function(item) {
       return item.judul || item.isi;
@@ -168,9 +321,77 @@ function doGet(e) {
 }
 
 /**
- * Handle HTTP POST - Autentikasi, Tambah, & Hapus Berita
+ * Handle HTTP POST - Autentikasi, Tambah, Hapus Berita + Pencatat Kunjungan (action=hit)
  */
 function doPost(e) {
+  // =========================================================================
+  // BARU: AKSI HIT — pencatat kunjungan anonim (tanpa auth, tanpa lock besar)
+  // Terima: Content-Type: text/plain JSON {slug, cid}
+  // Diakses via fetch/sendBeacon dari browser; tidak memerlukan auth token.
+  // =========================================================================
+  try {
+    var rawBody = (e && e.postData && e.postData.contents) ? e.postData.contents : '';
+    var hitData;
+    try { hitData = JSON.parse(rawBody); } catch(_) { hitData = {}; }
+
+    if (hitData && hitData.action === 'hit') {
+      var slug = String(hitData.slug || '').trim().substring(0, 200);
+      var cid  = String(hitData.cid  || '').trim().substring(0, 64);
+
+      if (!slug || !cid) return textResponse('bad_request');
+
+      // Validasi slug ada di sheet Berita
+      var ss0 = SpreadsheetApp.getActiveSpreadsheet();
+      if (!isValidSlug(slug, ss0)) return textResponse('invalid_slug');
+
+      // Dedupe: CacheService key v:{cid}:{slug} selama 6 jam
+      var dedupeCache = CacheService.getScriptCache();
+      var dedupeKey = 'v:' + cid + ':' + slug;
+      if (dedupeCache.get(dedupeKey)) return textResponse('deduped');
+      dedupeCache.put(dedupeKey, '1', CACHE_HIT_TTL);
+
+      // Tulis ke views_daily dengan LockService (tunggu maks 5 detik)
+      var lock = LockService.getScriptLock();
+      var hasLock = lock.tryLock(5000);
+      if (!hasLock) return textResponse('busy');
+
+      try {
+        var viewsSheet = getOrCreateViewsSheet(ss0);
+        var today = Utilities.formatDate(new Date(), 'Asia/Jakarta', 'yyyy-MM-dd');
+        var viewData = viewsSheet.getDataRange().getValues();
+        var found = false;
+
+        // Cari baris tanggal+slug hari ini
+        for (var vi = 1; vi < viewData.length; vi++) {
+          if (String(viewData[vi][0]).trim() === today && String(viewData[vi][1]).trim() === slug) {
+            var currentCount = parseInt(viewData[vi][2]) || 0;
+            viewsSheet.getRange(vi + 1, 3).setValue(currentCount + 1);
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          viewsSheet.appendRow([today, slug, 1]);
+        }
+
+        // Hapus cache statistik agar stats endpoint fresh
+        var statsCache = CacheService.getScriptCache();
+        statsCache.remove('stats_v1');
+
+      } finally {
+        lock.releaseLock();
+      }
+
+      return textResponse('ok');
+    }
+  } catch (hitErr) {
+    Logger.log('hit error: ' + hitErr.toString());
+    return textResponse('error');
+  }
+
+  // =========================================================================
+  // PERILAKU LAMA: Autentikasi, Tambah, Hapus (dijaga LockService 15 detik)
+  // =========================================================================
   const lock = LockService.getScriptLock();
   const hasLock = lock.tryLock(15000);
 
@@ -195,7 +416,6 @@ function doPost(e) {
 
     // =========================================================================
     // AKSI 1: AUTENTIKASI LOGIN (action: "login")
-    // Mengembalikan token sesi acak unik (UUID) yang berlaku selama 6 jam
     // =========================================================================
     if (data.action === 'login') {
       const inputPass = String(data.password || '').trim();
@@ -215,7 +435,7 @@ function doPost(e) {
     }
 
     // =========================================================================
-    // VALIDASI OTORISASI UNTUK SEMUA OPERASI TULIS (Hapus & Tambah)
+    // VALIDASI OTORISASI UNTUK SEMUA OPERASI TULIS
     // =========================================================================
     const clientToken = String(data.token || '').trim();
     if (!isValidSessionToken(clientToken)) {
@@ -244,26 +464,24 @@ function doPost(e) {
       var deleted = false;
       var photoDeleted = false;
 
-      // Loop dari baris paling bawah ke atas
       for (var i = values.length - 1; i >= 1; i--) {
         var rowId = String(values[i][0] || '').trim();
         if (rowId === targetId) {
-          // Ambil url_foto dari kolom E (index 4) sebelum baris dihapus
           var urlFoto = String(values[i][4] || '').trim();
           if (urlFoto) {
             photoDeleted = deleteDrivePhoto(urlFoto);
           }
-
           sheet.deleteRow(i + 1);
           deleted = true;
           break;
         }
       }
 
-      if (deleted) {
-        // Picu deploy hook Vercel jika terkonfigurasi
-        triggerRebuild();
+      // Invalidasi cache slug set
+      CacheService.getScriptCache().remove('slugset_v1');
 
+      if (deleted) {
+        triggerRebuild();
         return jsonResponse({
           status: 'success',
           message: 'Warta berita berhasil dihapus' + (photoDeleted ? ' beserta fotonya dari Google Drive.' : ' dari Google Sheets.'),
@@ -281,10 +499,13 @@ function doPost(e) {
     // =========================================================================
     // AKSI 3: TAMBAH WARTA BARU
     // =========================================================================
-    var judul       = (data.judul   || '').trim();
-    var isi         = (data.isi     || '').trim();
-    var tanggal     = (data.tanggal || '').trim();
-    var penulis     = (data.penulis || 'Humas MA Margajaya').trim();
+    var judul       = (data.judul     || '').trim();
+    var isi         = (data.isi       || '').trim();
+    var tanggal     = (data.tanggal   || '').trim();
+    var penulis     = (data.penulis   || 'Humas MA Margajaya').trim();
+    var kategori    = (data.kategori  || '').trim();
+    var headlineVal = data.headline   ? 'TRUE' : '';
+    var unggulanVal = data.unggulan   ? 'TRUE' : '';
     var imageBase64 = data.image_base64;
     var imageName   = data.image_name || ('foto_' + Date.now() + '.jpg');
     var imageType   = data.image_type || 'image/jpeg';
@@ -299,7 +520,6 @@ function doPost(e) {
     var urlFoto = '';
 
     if (imageBase64) {
-      // 1. Validasi Tipe File (MIME Type)
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
       if (!allowedTypes.includes(imageType.toLowerCase())) {
         return jsonResponse({
@@ -307,15 +527,12 @@ function doPost(e) {
           message: 'Format gambar tidak didukung. Harap unggah format JPG, PNG, atau WebP.'
         });
       }
-
-      // 2. Validasi Ukuran File (Maksimal ~10 MB file mentah = ~14 MB string base64)
       if (imageBase64.length > 14 * 1024 * 1024) {
         return jsonResponse({
           status: 'error',
           message: 'Ukuran foto melebihi batas maksimal 10 MB.'
         });
       }
-
       try {
         var folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
         var decodedBytes = Utilities.base64Decode(imageBase64);
@@ -334,10 +551,12 @@ function doPost(e) {
 
     var id = 'news_' + new Date().getTime();
 
-    // Kolom: [id, judul, isi, tanggal, url_foto, penulis]
-    sheet.appendRow([id, judul, isi, tanggal, urlFoto, penulis]);
+    // Kolom: [id, judul, isi, tanggal, url_foto, penulis, kategori, headline, unggulan]
+    sheet.appendRow([id, judul, isi, tanggal, urlFoto, penulis, kategori, headlineVal, unggulanVal]);
 
-    // Picu deploy hook Vercel jika terkonfigurasi
+    // Invalidasi cache slug set agar hit endpoint bisa memvalidasi slug baru
+    CacheService.getScriptCache().remove('slugset_v1');
+
     triggerRebuild();
 
     return jsonResponse({
@@ -357,7 +576,6 @@ function doPost(e) {
       status: 'error',
       message: error.toString()
     });
-
   } finally {
     lock.releaseLock();
   }
@@ -369,4 +587,12 @@ function testDriveAuth() {
   Logger.log("File tes berhasil dibuat: " + testFile.getName() + " (ID: " + testFile.getId() + ")");
   testFile.setTrashed(true);
   Logger.log("Izin Tulis Google Drive Berhasil 100%!");
+}
+
+/**
+ * Fungsi tes untuk endpoint stats (jalankan dari editor Apps Script)
+ */
+function testStats() {
+  var items = computeStats();
+  Logger.log('Stats: ' + JSON.stringify(items));
 }

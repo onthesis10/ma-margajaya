@@ -6,6 +6,12 @@ export interface NewsArticle {
   tanggal: string;
   url_foto: string;
   penulis: string;
+  /** Kategori artikel (mis. "Kegiatan", "Prestasi") — opsional, kompatibel mundur */
+  kategori?: string;
+  /** TRUE = paksa tampil sebagai Sorotan Utama */
+  headline?: boolean;
+  /** TRUE = paksa tampil di Pilihan Redaksi */
+  unggulan?: boolean;
 }
 
 /**
@@ -102,8 +108,8 @@ export function sanitizeArticleHtml(html: string): string {
   return html
     .replace(/<(script|style|iframe|object|embed)[^>]*>[\s\S]*?<\/\1>/gi, '')
     .replace(/\s+(_ngcontent[^\s=>]*|_nghost[^\s=>]*|inline-copy-host|ng-[a-z0-9_-]+)(?:="[^"]*"|='[^']*'|=[^\s>]+)?/gi, '')
-    .replace(/\s+class="[^"]*(markdown-main-panel|md-content|enable-luminous)[^"]*"/gi, '')
-    .replace(/\s+id="model-response-[^"]*"/gi, '');
+    .replace(/\s+class="[^\"]*(markdown-main-panel|md-content|enable-luminous)[^\"]*"/gi, '')
+    .replace(/\s+id="model-response-[^\"]*"/gi, '');
 }
 
 /**
@@ -128,7 +134,8 @@ const fallbackArticles: NewsArticle[] = [
     isi: 'Dalam rangka memperingati kelahiran Nabi Muhammad SAW, keluarga besar MA Margajaya menggelar acara Muludan yang berlangsung khidmat di lingkungan madrasah. Acara yang diikuti oleh seluruh siswa, dewan guru, serta pengurus Pondok Pesantren Darul Muawanah ini diawali dengan pembacaan Shalawat dan Marhaban, dilanjutkan dengan tausiyah yang mengupas keteladanan akhlak Rasulullah SAW sebagai suri tauladan dalam kehidupan sehari-hari.\n\nRangkaian kegiatan turut diisi dengan lomba-lomba bernuansa islami antar kelas, seperti lomba adzan, tilawah Al-Qur\'an, dan kaligrafi, yang bertujuan menumbuhkan semangat cinta terhadap nilai-nilai keislaman sejak dini di kalangan siswa. Selain itu, acara ini juga menjadi momentum bagi madrasah untuk mempererat silaturahmi antara siswa, guru, dan wali santri yang turut hadir menyaksikan jalannya kegiatan.\n\nKepala MA Margajaya dalam sambutannya menyampaikan bahwa peringatan Maulid Nabi bukan sekadar seremonial tahunan, melainkan momen untuk merefleksikan dan meneladani akhlak mulia Rasulullah SAW dalam kehidupan sehari-hari, sejalan dengan visi madrasah "Berakhlak Mulia & Berprestasi". Acara ditutup dengan doa bersama dan pembagian santunan kepada anak yatim di lingkungan sekitar madrasah.',
     tanggal: '2026-08-30T17:00:00.000Z',
     url_foto: 'https://lh3.googleusercontent.com/d/1H1iYgoYDwzIwc78QV83xPh4UtxDiiHhM=w1000-rj',
-    penulis: 'Mansur Sumansur'
+    penulis: 'Mansur Sumansur',
+    kategori: 'Kegiatan',
   },
   {
     id: 'news_1788172052196',
@@ -137,7 +144,8 @@ const fallbackArticles: NewsArticle[] = [
     isi: 'Peringatan Maulid Nabi Muhammad SAW di lingkungan MA Margajaya yang diikuti oleh dewan guru dan seluruh siswa madrasah.',
     tanggal: '2026-08-30T17:00:00.000Z',
     url_foto: 'https://lh3.googleusercontent.com/d/1id46NwYOyelkIk88gnGwK_u2zEFSyiHI=w1000-rj',
-    penulis: 'Humas MA Margajaya'
+    penulis: 'Humas MA Margajaya',
+    kategori: 'Kegiatan',
   }
 ];
 
@@ -192,13 +200,17 @@ export async function fetchNewsArticles(): Promise<NewsArticle[]> {
     }
 
     const articles: NewsArticle[] = rawData.map((item: any) => ({
-      id: item.id || `news_${Date.now()}`,
-      slug: generateNewsSlug(item),
-      judul: item.judul || 'Tanpa Judul',
-      isi: item.isi || '',
-      tanggal: item.tanggal || '',
+      id:       item.id || `news_${Date.now()}`,
+      slug:     generateNewsSlug(item),
+      judul:    item.judul || 'Tanpa Judul',
+      isi:      item.isi || '',
+      tanggal:  item.tanggal || '',
       url_foto: formatDriveImageUrl(item.url_foto),
-      penulis: item.penulis || 'Humas MA Margajaya'
+      penulis:  item.penulis || 'Humas MA Margajaya',
+      // Kolom baru — kompatibel mundur (fallback ke 'Warta Resmi' jika belum diisi di sheet lama)
+      kategori: (item.kategori && String(item.kategori).trim()) ? String(item.kategori).trim() : 'Warta Resmi',
+      headline: item.headline === true || String(item.headline).toUpperCase() === 'TRUE',
+      unggulan: item.unggulan === true || String(item.unggulan).toUpperCase() === 'TRUE',
     }));
 
     // Urutkan tanggal terbaru

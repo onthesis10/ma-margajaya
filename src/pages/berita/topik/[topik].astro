@@ -1,0 +1,167 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import Container from '../../../components/ui/Container.astro';
+import {
+  fetchNewsArticles,
+  formatIndonesianDate,
+  getArticleExcerpt,
+  estimateReadingTime,
+} from '../../../lib/news';
+import { buildTopicList } from '../../../lib/trending';
+
+export async function getStaticPaths() {
+  const articles = await fetchNewsArticles();
+  const topics   = buildTopicList(articles);
+
+  return topics.map(({ topik }) => {
+    const slug = topik.toLowerCase().replace(/\s+/g, '-');
+    const filtered = articles.filter(
+      a => (a.kategori || '').trim().toLowerCase() === topik.toLowerCase()
+    );
+    return {
+      params: { topik: slug },
+      props:  { topikLabel: topik, articles: filtered },
+    };
+  });
+}
+
+interface Props {
+  topikLabel: string;
+  articles: Awaited<ReturnType<typeof fetchNewsArticles>>;
+}
+
+const { topikLabel, articles } = Astro.props;
+const { topik } = Astro.params;
+
+const breadcrumbs = [
+  { label: 'Berita', href: '/berita' },
+  { label: topikLabel, href: `/berita/topik/${topik}` },
+];
+
+const allArticles = await fetchNewsArticles();
+const allTopics   = buildTopicList(allArticles);
+---
+
+<PageLayout
+  title={`Berita Topik: ${topikLabel} — MA Margajaya`}
+  description={`Kumpulan berita dan publikasi bertopik "${topikLabel}" dari MA Margajaya Sukadana, Ciamis. ${articles.length} artikel tersedia.`}
+  breadcrumbs={breadcrumbs}
+>
+  <main class="bg-paper min-h-screen">
+
+    <Container>
+      <div class="pt-8 pb-4 flex flex-wrap items-center justify-between gap-3 border-b border-hair">
+        <div class="flex items-center gap-3">
+          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider rounded-full border border-emerald-200">
+            Topik: {topikLabel}
+          </span>
+          <span class="text-xs text-ink-muted">· {articles.length} artikel ditemukan</span>
+        </div>
+        <a href="/berita" class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 hover:text-emerald-950 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Kembali ke Portal Berita
+        </a>
+      </div>
+      <div class="py-10 grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-10 xl:gap-14">
+
+        {/* Daftar artikel */}
+        <div>
+          {articles.length === 0 ? (
+            <div class="py-20 text-center rounded-2xl border border-hair bg-white">
+              <p class="font-serif text-xl text-slate-700">Belum ada artikel di topik ini.</p>
+              <a href="/berita" class="mt-4 inline-block text-xs font-bold text-emerald-800 uppercase tracking-wider border-b border-emerald-800 pb-0.5">
+                ← Kembali ke Portal Berita
+              </a>
+            </div>
+          ) : (
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {articles.map(item => (
+                <a
+                  href={`/berita/${item.slug}`}
+                  class="group flex flex-col rounded-xl overflow-hidden border border-hair bg-white hover:border-emerald-400 shadow-sm hover:shadow-lg transition-all duration-300"
+                >
+                  <div class="aspect-[16/10] overflow-hidden bg-emerald-950 relative">
+                    {item.url_foto ? (
+                      <img
+                        src={item.url_foto}
+                        alt={item.judul}
+                        referrerpolicy="no-referrer"
+                        loading="lazy"
+                        width="480"
+                        height="300"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-950 to-slate-900 text-white font-serif text-sm font-bold">
+                        MA Margajaya
+                      </div>
+                    )}
+                  </div>
+                  <div class="p-4 flex flex-col gap-2 flex-1">
+                    <time datetime={item.tanggal} class="text-[10px] font-semibold text-emerald-800 uppercase tracking-wider">
+                      {formatIndonesianDate(item.tanggal)}
+                    </time>
+                    <h2 class="font-serif text-base font-bold text-blue-ink group-hover:text-emerald-800 transition-colors leading-snug line-clamp-2 flex-1">
+                      {item.judul}
+                    </h2>
+                    <p class="text-xs text-ink-muted line-clamp-2 leading-relaxed">
+                      {getArticleExcerpt(item.isi, 120)}
+                    </p>
+                    <div class="pt-2 border-t border-hair flex items-center justify-between text-[10px] font-semibold text-emerald-800">
+                      <span class="flex items-center gap-1 text-ink-muted">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9"/>
+                          <path stroke-linecap="round" d="M12 7v5l3 3"/>
+                        </svg>
+                        {estimateReadingTime(item.isi)}
+                      </span>
+                      <span class="group-hover:translate-x-1 transition-transform inline-block">→</span>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar: semua topik */}
+        <aside aria-label="Daftar topik">
+          <div class="rounded-2xl border border-hair bg-white shadow-sm overflow-hidden sticky top-4">
+            <div class="px-4 py-3 border-b border-hair">
+              <h2 class="font-serif text-sm font-bold text-blue-ink uppercase tracking-wider">Semua Topik</h2>
+            </div>
+            <div class="divide-y divide-hair">
+              {allTopics.map(t => {
+                const tSlug = t.topik.toLowerCase().replace(/\s+/g, '-');
+                const isActive = tSlug === topik;
+                return (
+                  <a
+                    href={`/berita/topik/${encodeURIComponent(tSlug)}`}
+                    class={`flex items-center justify-between px-4 py-3 text-xs font-semibold transition-colors ${
+                      isActive
+                        ? 'bg-emerald-50 text-emerald-800'
+                        : 'text-ink-soft hover:text-emerald-800 hover:bg-emerald-50/50'
+                    }`}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <span>{t.topik}</span>
+                    <span class="text-ink-muted">{t.jumlah}</span>
+                  </a>
+                );
+              })}
+            </div>
+            <div class="px-4 py-3 border-t border-hair">
+              <a href="/berita" class="text-xs font-bold text-emerald-800 hover:text-emerald-950 flex items-center gap-1 transition-colors">
+                ← Semua Berita
+              </a>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </Container>
+
+  </main>
+</PageLayout>
