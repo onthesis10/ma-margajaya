@@ -60,8 +60,26 @@ Setiap ada pembaruan kode pada `Code.gs`, Anda harus memperbarui deployment akti
    - Setelah 5 kali gagal berturut-turut, sistem memblokir akses login selama 10 menit (600 detik).
    - Setiap percobaan salah menampilkan sisa kesempatan yang tersedia.
    - Counter otomatis direset begitu login berhasil.
-3. **Perbandingan Waktu-Konstan (`constantTimeCompare`)**:
+3. Perbandingan Waktu-Konstan (`constantTimeCompare`):
    - Mencegah serangan *timing attack* dengan memastikan waktu pemrosesan verifikasi kata sandi seragam terlepas dari karakter mana yang cocok atau tidak cocok.
-4. **Validasi Sesi Dinamis**:
+4. Validasi Sesi Dinamis:
    - Saat login berhasil, backend menerbitkan session token UUID yang disimpan di `CacheService` selama 6 jam.
    - Seluruh operasi tulis (tambah warta, hapus warta) memvalidasi token sesi ini di server.
+
+---
+
+## 5. Cara Mengubah Kata Sandi di Kemudian Hari
+
+Mengubah kata sandi sangat mudah dan **tidak memerlukan perubahan kode apa pun di website**:
+
+1. Buka Google Apps Script editor (`script.google.com` atau dari spreadsheet: **Ekstensi** → **Apps Script**).
+2. Klik ikon ⚙️ **Project Settings** di bilah sisi kiri.
+3. Gulir ke bagian **Script Properties**, lalu klik tombol **Edit script properties**.
+4. Cari baris `ADMIN_PASSWORD`, lalu ganti isinya dengan kata sandi baru Anda.
+5. Klik **Save script properties**.
+
+> 💡 **Catatan Praktis**:
+> - Perubahan kata sandi **langsung aktif seketika** di server saat tombol simpan diklik.
+> - **TIDAK PERLU** melakukan Deploy ulang Web App.
+> - **TIDAK PERLU** melakukan build ulang Astro atau git commit/push di laptop Anda.
+> - Administrator cukup login di halaman `/admin` menggunakan kata sandi yang baru.
