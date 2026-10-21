@@ -57,7 +57,7 @@ const jsonLdOrganization = {
   alternateName: ['MA Margajaya', 'MA Margajaya Sukadana'],
   url: siteUrl,
   logo: `${siteUrl}${schoolConfig.logo}`,
-  image: `${siteUrl}/images/gedung-ma-margajaya.jpg`,
+  image: `${siteUrl}/images/opt/gedung-ma-margajaya.webp`,
   description: schoolConfig.description,
   identifier: {
     '@type': 'PropertyValue',
@@ -150,13 +150,22 @@ const jsonLdBreadcrumb = breadcrumbs && breadcrumbs.length > 0 ? {
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="canonical" href={canonicalURL} />
 
-<!-- Preconnect font (non-blocking, lebih cepat dari @import di CSS) -->
+<!-- Preconnect font (non-blocking) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<!-- Stylesheet font: Fraunces (serif) + Plus Jakarta Sans (sans-serif) + Pinyon Script (editorial script accent) -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Pinyon+Script&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" />
-<!-- Preload critical font subset untuk mencegah FOIT pada nama sekolah di header -->
-<link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KU7NSg.woff2" />
+<!--
+  Font: Fraunces (serif headline) — sumbu ital+wght saja (tanpa opsz), subset latin
+        Plus Jakarta Sans (sans-serif body) — bobot 300–800, subset latin
+        Pinyon Script — editorial accent
+-->
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Pinyon+Script&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap&subset=latin"
+/>
+<!-- Preload LCP hero image di beranda -->
+{canonicalURL.pathname === '/' && (
+  <link rel="preload" as="image" href="/images/opt/hero-bg-2.webp" type="image/webp" fetchpriority="high" />
+)}
 
 <!-- Primary Meta Tags -->
 <title>{fullTitle}</title>

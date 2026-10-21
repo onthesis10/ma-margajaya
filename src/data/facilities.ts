@@ -18,7 +18,7 @@ export const facilities: FacilityItem[] = [
     description: "Gedung madrasah modern terintegrasi di lingkungan asri Kompleks Pondok Pesantren Darul Muawanah Sukadana, dilengkapi halaman luas dan suasana belajar kondusif.",
     specs: ["Ruang Kelas Sejuk", "Ventilasi Asri", "Proyektor Multimedia"],
     heightClass: "h-[340px] sm:h-[370px] md:h-[390px]",
-    image: "/images/gedung-ma-margajaya.jpg"
+    image: "/images/opt/gedung-ma-margajaya.webp"
   },
   {
     id: "masjid",
@@ -28,7 +28,7 @@ export const facilities: FacilityItem[] = [
     description: "Masjid pesantren sebagai pusat shalat berjamaah 5 waktu, qiyamul lail, dan pengajian kitab kuning bersama asatidz Darul Muawanah.",
     specs: ["Shalat 5 Waktu Berjamaah", "Kajian Kitab Kuning", "Majelis Ta'lim Rutin"],
     heightClass: "h-[440px] sm:h-[480px] md:h-[510px]",
-    image: "/images/fasilitas-masjid.png"
+    image: "/images/opt/fasilitas-masjid.webp"
   },
   {
     id: "masjid-utama",
@@ -38,7 +38,7 @@ export const facilities: FacilityItem[] = [
     description: "Masjid utama kompleks Darul Muawanah yang masih terus dikembangkan, berfungsi sebagai pusat ibadah santri, kegiatan pondok, dan pengajian masyarakat sekitar Sukadana.",
     specs: ["Kapasitas Besar", "Mimbar Kajian", "Terbuka untuk Masyarakat"],
     heightClass: "h-[540px] sm:h-[600px] md:h-[640px]",
-    image: "/images/fasilitas-halaman.png"
+    image: "/images/opt/fasilitas-halaman.webp"
   },
   {
     id: "lab-komputer",
@@ -48,7 +48,7 @@ export const facilities: FacilityItem[] = [
     description: "Fasilitas komputasi berkecepatan tinggi untuk ujian berbasis komputer (CBT/ANBK) dan pengembangan literasi digital santri.",
     specs: ["PC Modern", "Jaringan Fiber Optic", "Server ANBK Mandiri"],
     heightClass: "h-[380px] sm:h-[410px] md:h-[430px]",
-    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&q=75&auto=format"
   },
   {
     id: "perpustakaan",
@@ -58,7 +58,7 @@ export const facilities: FacilityItem[] = [
     description: "Koleksi ribuan buku kurikulum merdeka, kitab rujukan klasik pesantren, dan area baca tenang yang mendukung budaya literasi santri.",
     specs: ["Koleksi Buku Lengkap", "Kitab Kuning & Klasik", "Area Baca Nyaman"],
     heightClass: "h-[500px] sm:h-[560px] md:h-[590px]",
-    image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=600&q=75&auto=format"
   },
   {
     id: "lapangan",
@@ -68,7 +68,7 @@ export const facilities: FacilityItem[] = [
     description: "Sarana olahraga serbaguna untuk futsal, voli, latihan panahan Al-Ramyi, dan baris-berbaris Paskibra santri MA Margajaya.",
     specs: ["Lapangan Voli & Futsal", "Area Panahan Outdoor", "Lapangan Upacara"],
     heightClass: "h-[350px] sm:h-[380px] md:h-[400px]",
-    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=75&auto=format"
   },
   {
     id: "asrama",
@@ -78,7 +78,7 @@ export const facilities: FacilityItem[] = [
     description: "Lingkungan pondok santri terpisah putra & putri dengan bimbingan penuh asatidz pembina, menanamkan adab, disiplin, dan kemandirian.",
     specs: ["Kamar Bersih & Tertata", "Bimbingan 24 Jam", "Lingkungan Aman & Nyaman"],
     heightClass: "h-[480px] sm:h-[530px] md:h-[560px]",
-    image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600&q=75&auto=format"
   },
   {
     id: "aula",
@@ -88,6 +88,6 @@ export const facilities: FacilityItem[] = [
     description: "Pusat kegiatan akbar madrasah: seminar pendidikan, perayaan hari besar Islam, dan prosesi khidmat pelepasan wisuda santri.",
     specs: ["Panggung Representatif", "Kapasitas 400 Orang", "Sistem Tata Suara Prima"],
     heightClass: "h-[440px] sm:h-[490px] md:h-[520px]",
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&q=80"
+    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&q=75&auto=format"
   }
 ];

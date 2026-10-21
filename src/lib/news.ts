@@ -24,7 +24,7 @@ export interface NewsArticle {
  *   - WhatsApp crawler memiliki batasan ketat ukuran og:image maksimal 300 KB. Gambar yang
  *     melebihi 300 KB (seperti PNG 1.68 MB pada artikel Antologi) otomatis digugurkan oleh scraper WhatsApp.
  */
-export function formatDriveImageUrl(url: string, width = 1000): string {
+export function formatDriveImageUrl(url: string, width = 600): string {
   if (!url) return '';
   const str = String(url).trim();
   const match = str.match(/\/d\/([a-zA-Z0-9_-]+)/) || str.match(/id=([a-zA-Z0-9_-]+)/) || str.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);

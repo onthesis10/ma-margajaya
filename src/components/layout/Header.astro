@@ -72,15 +72,23 @@ const currentPath = Astro.url.pathname;
 
       <!-- Logo MA Margajaya (Utama) -->
       <img
-        src={schoolConfig.logo}
+        src="/logo/logo-ma-margajaya-sm.png"
         alt={`Logo ${schoolConfig.name}`}
+        width="40"
+        height="36"
+        loading="eager"
+        decoding="async"
         class="h-9 lg:h-9 xl:h-10 w-auto object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105 shrink-0"
       />
 
       <!-- Logo Ponpes Darul Muawanah (tepat di samping logo MA) -->
       <img
-        src={schoolConfig.ponpesLogo}
+        src="/logo/logo-ponpes-darul-muawanah-sm.png"
         alt={`Logo ${schoolConfig.ponpesName}`}
+        width="47"
+        height="36"
+        loading="eager"
+        decoding="async"
         class="h-9 lg:h-9 xl:h-10 w-auto object-contain drop-shadow transition-transform duration-300 group-hover:scale-105 shrink-0 opacity-90 group-hover:opacity-100"
       />
 
@@ -270,8 +278,9 @@ const currentPath = Astro.url.pathname;
     });
   }
 
-  // Live Clock Logic
+  // Live Clock Logic — pause when tab is hidden
   function updateClock() {
+    if (document.hidden) return;
     const clockElement = document.getElementById('live-clock');
     if (!clockElement) return;
     const now = new Date();
@@ -293,23 +302,47 @@ const currentPath = Astro.url.pathname;
   updateClock();
 
   // ID / EN Language Toggle & Translator Integration
-  function setLanguage(lang: 'id' | 'en') {
-    localStorage.setItem('ma_lang', lang);
-    updateLangUI(lang);
+  // Google Translate script dimuat LAZY: hanya saat tombol bahasa pertama kali diklik
+  let gtLoaded = false;
 
+  function loadGoogleTranslate() {
+    if (gtLoaded || document.getElementById('google-translate-script')) return;
+    gtLoaded = true;
+
+    (window as any).googleTranslateElementInit = function() {
+      new (window as any).google.translate.TranslateElement({
+        pageLanguage: 'id',
+        includedLanguages: 'id,en',
+        autoDisplay: false,
+      }, 'google_translate_element');
+    };
+
+    const s = document.createElement('script');
+    s.id = 'google-translate-script';
+    s.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.body.appendChild(s);
+  }
+
+  function applyTranslation(lang: 'id' | 'en') {
     document.cookie = `googtrans=/id/${lang}; path=/; domain=${window.location.hostname}`;
     document.cookie = `googtrans=/id/${lang}; path=/;`;
 
-    const gElem = document.getElementById('google_translate_element');
-    if (gElem) {
-      const select = document.querySelector('.goog-te-combo') as HTMLSelectElement | null;
-      if (select) {
-        select.value = lang;
-        select.dispatchEvent(new Event('change'));
-      } else {
-        window.location.reload();
-      }
+    const select = document.querySelector('.goog-te-combo') as HTMLSelectElement | null;
+    if (select) {
+      select.value = lang;
+      select.dispatchEvent(new Event('change'));
+    } else {
+      // Script belum siap — muat ulang agar cookie googtrans aktif
+      window.location.reload();
     }
+  }
+
+  function setLanguage(lang: 'id' | 'en') {
+    localStorage.setItem('ma_lang', lang);
+    updateLangUI(lang);
+    loadGoogleTranslate();
+    // Tunggu sebentar agar widget selesai init jika baru dimuat
+    setTimeout(() => applyTranslation(lang), gtLoaded && !document.querySelector('.goog-te-combo') ? 1200 : 0);
   }
 
   function updateLangUI(lang: 'id' | 'en') {
@@ -338,19 +371,8 @@ const currentPath = Astro.url.pathname;
 
   const savedLang = (localStorage.getItem('ma_lang') as 'id' | 'en') || 'id';
   updateLangUI(savedLang);
-
-  if (!document.getElementById('google-translate-script')) {
-    const s = document.createElement('script');
-    s.id = 'google-translate-script';
-    s.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    document.body.appendChild(s);
-
-    (window as any).googleTranslateElementInit = function() {
-      new (window as any).google.translate.TranslateElement({
-        pageLanguage: 'id',
-        includedLanguages: 'id,en',
-        autoDisplay: false
-      }, 'google_translate_element');
-    };
+  // Jika sebelumnya user memilih EN, muat translate widget saat load agar cookie aktif
+  if (savedLang === 'en') {
+    loadGoogleTranslate();
   }
 </script>

@@ -1,34 +1,34 @@
 import { animate, inView, stagger } from 'motion';
 
 /**
- * Beranda Framer Motion & Interactive Cursor Proximity Glow Engine
+ * Beranda Motion & Interactive Cursor Proximity Glow Engine
  * MA Margajaya Official Portal
+ *
+ * Performance rules:
+ * - Mouse effects (glow/tilt/ambient) only run on pointer:fine devices (no touchscreens)
+ * - requestIdleCallback ensures this module never delays LCP or TTI
  */
+
+const hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 export function initBerandaInteractions() {
   if (typeof window === 'undefined') return;
 
-  // 1. Ambient Background Cursor Follower
-  initAmbientCursorGlow();
+  // Mouse-only effects — skip entirely on touch devices
+  if (hasHover) {
+    initAmbientCursorGlow();
+    initSpotlightGlowCards();
+    initTiltCards();
+  }
 
-  // 2. Card Proximity Spotlight & Border Glow (Event Delegated for 100% dynamic support)
-  initSpotlightGlowCards();
-
-  // 3. 3D Subtle Tilt on Cursor Movement (Event Delegated)
-  initTiltCards();
-
-  // 4. Framer Motion Scroll Reveals & Spring Animations
+  // Scroll animations & counters run on all devices
   initScrollAnimations();
-
-  // 5. Dynamic Stats Counter Animation
   initStatsCounters();
-
-  // 6. Sambutan: Photo Slide-in & Typing Effect
   initSambutanAnimations();
 }
 
 /**
- * 1. Global Ambient Cursor Follower
+ * 1. Global Ambient Cursor Follower (hover devices only)
  */
 function initAmbientCursorGlow() {
   let ambientGlow = document.getElementById('ambient-cursor-glow');
@@ -44,7 +44,6 @@ function initAmbientCursorGlow() {
   let currentX = mouseX;
   let currentY = mouseY;
   let isMoving = false;
-  let rafId: number | null = null;
 
   function updatePosition() {
     currentX += (mouseX - currentX) * 0.12;
@@ -55,7 +54,7 @@ function initAmbientCursorGlow() {
     }
 
     if (Math.abs(mouseX - currentX) > 0.1 || Math.abs(mouseY - currentY) > 0.1) {
-      rafId = requestAnimationFrame(updatePosition);
+      requestAnimationFrame(updatePosition);
     } else {
       isMoving = false;
     }
@@ -71,7 +70,7 @@ function initAmbientCursorGlow() {
 
     if (!isMoving) {
       isMoving = true;
-      rafId = requestAnimationFrame(updatePosition);
+      requestAnimationFrame(updatePosition);
     }
   }, { passive: true });
 
@@ -81,20 +80,28 @@ function initAmbientCursorGlow() {
 }
 
 /**
- * 2. Card Proximity Spotlight Glow
- * Delegated to document for instant high-fps tracking across all current & dynamic cards
+ * 2. Card Proximity Spotlight Glow (hover devices only)
+ * Event-delegated, throttled via RAF
  */
 function initSpotlightGlowCards() {
-  document.addEventListener('mousemove', (e) => {
-    const target = (e.target as HTMLElement)?.closest?.('.glow-card, .pure-glow-card, [data-glow]') as HTMLElement | null;
-    if (target) {
-      const rect = target.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+  let rafPending = false;
+  let lastE: MouseEvent | null = null;
 
-      target.style.setProperty('--mouse-x', `${x}px`);
-      target.style.setProperty('--mouse-y', `${y}px`);
-      target.style.setProperty('--glow-opacity', '1');
+  document.addEventListener('mousemove', (e) => {
+    lastE = e;
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(() => {
+        rafPending = false;
+        if (!lastE) return;
+        const target = (lastE.target as HTMLElement)?.closest?.('.glow-card, .pure-glow-card, [data-glow]') as HTMLElement | null;
+        if (target) {
+          const rect = target.getBoundingClientRect();
+          target.style.setProperty('--mouse-x', `${lastE.clientX - rect.left}px`);
+          target.style.setProperty('--mouse-y', `${lastE.clientY - rect.top}px`);
+          target.style.setProperty('--glow-opacity', '1');
+        }
+      });
     }
   }, { passive: true });
 
@@ -107,24 +114,28 @@ function initSpotlightGlowCards() {
 }
 
 /**
- * 3. 3D Subtle Card Tilt on Proximity
+ * 3. 3D Subtle Card Tilt (hover devices only, RAF-throttled)
  */
 function initTiltCards() {
+  let rafPending = false;
+  let lastE: MouseEvent | null = null;
+
   document.addEventListener('mousemove', (e) => {
-    const wrapper = (e.target as HTMLElement)?.closest?.('.tilt-card-wrapper') as HTMLElement | null;
-    if (wrapper) {
-      const inner = wrapper.querySelector<HTMLElement>('.tilt-card-inner') || wrapper;
-      const rect = wrapper.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      const rotateX = ((y - centerY) / centerY) * -5;
-      const rotateY = ((x - centerX) / centerX) * 5;
-
-      inner.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+    lastE = e;
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(() => {
+        rafPending = false;
+        if (!lastE) return;
+        const wrapper = (lastE.target as HTMLElement)?.closest?.('.tilt-card-wrapper') as HTMLElement | null;
+        if (wrapper) {
+          const inner = wrapper.querySelector<HTMLElement>('.tilt-card-inner') || wrapper;
+          const rect = wrapper.getBoundingClientRect();
+          const rotateX = ((lastE.clientY - rect.top - rect.height / 2) / (rect.height / 2)) * -5;
+          const rotateY = ((lastE.clientX - rect.left - rect.width / 2) / (rect.width / 2)) * 5;
+          inner.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+        }
+      });
     }
   }, { passive: true });
 
@@ -141,88 +152,33 @@ function initTiltCards() {
  * 4. Framer Motion Scroll Reveals & Spring Transitions
  */
 function initScrollAnimations() {
-  // Hero Entrance Animations
   const heroTitle = document.querySelector('#hero-title');
   const heroSubtitle = document.querySelector('#hero-subtitle');
   const heroBadges = document.querySelector('#hero-badge');
   const heroActions = document.querySelector('#hero-actions');
 
-  if (heroTitle) {
-    animate(
-      heroTitle,
-      { opacity: [0, 1], y: [35, 0] },
-      { duration: 0.9, ease: [0.16, 1, 0.3, 1] }
-    );
-  }
+  if (heroTitle) animate(heroTitle, { opacity: [0, 1], y: [35, 0] }, { duration: 0.9, ease: [0.16, 1, 0.3, 1] });
+  if (heroBadges) animate(heroBadges, { opacity: [0, 1], x: [-20, 0] }, { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 });
+  if (heroSubtitle) animate(heroSubtitle, { opacity: [0, 1], y: [20, 0] }, { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 });
+  if (heroActions) animate(heroActions, { opacity: [0, 1], y: [20, 0], scale: [0.96, 1] }, { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.35 });
 
-  if (heroBadges) {
-    animate(
-      heroBadges,
-      { opacity: [0, 1], x: [-20, 0] },
-      { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }
-    );
-  }
-
-  if (heroSubtitle) {
-    animate(
-      heroSubtitle,
-      { opacity: [0, 1], y: [20, 0] },
-      { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }
-    );
-  }
-
-  if (heroActions) {
-    animate(
-      heroActions,
-      { opacity: [0, 1], y: [20, 0], scale: [0.96, 1] },
-      { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.35 }
-    );
-  }
-
-  // Staggered Sections Scroll Reveal
   const motionSections = document.querySelectorAll<HTMLElement>('[data-motion-section]');
-
   motionSections.forEach((section) => {
     inView(section, () => {
-      // 1. Reveal Section Header / Title
       const titles = section.querySelectorAll<HTMLElement>('[data-motion-title]');
-      if (titles.length > 0) {
-        animate(
-          titles,
-          { opacity: [0, 1], y: [30, 0] },
-          { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
-        );
-      }
+      if (titles.length > 0) animate(titles, { opacity: [0, 1], y: [30, 0] }, { duration: 0.7, ease: [0.16, 1, 0.3, 1] });
 
-      // 2. Reveal Staggered Children / Cards
       const items = section.querySelectorAll<HTMLElement>('[data-motion-item]');
-      if (items.length > 0) {
-        animate(
-          items,
-          { opacity: [0, 1], y: [35, 0], scale: [0.97, 1] },
-          { 
-            delay: stagger(0.08, { start: 0.15 }), 
-            duration: 0.65, 
-            ease: [0.16, 1, 0.3, 1] 
-          }
-        );
-      }
+      if (items.length > 0) animate(items, { opacity: [0, 1], y: [35, 0], scale: [0.97, 1] }, { delay: stagger(0.08, { start: 0.15 }), duration: 0.65, ease: [0.16, 1, 0.3, 1] });
 
-      // 3. Reveal Single Visual Element
       const visual = section.querySelector<HTMLElement>('[data-motion-visual]');
-      if (visual) {
-        animate(
-          visual,
-          { opacity: [0, 1], scale: [0.94, 1], y: [25, 0] },
-          { duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.1 }
-        );
-      }
+      if (visual) animate(visual, { opacity: [0, 1], scale: [0.94, 1], y: [25, 0] }, { duration: 0.85, ease: [0.16, 1, 0.3, 1], delay: 0.1 });
     }, { margin: '-60px' });
   });
 }
 
 /**
- * 5. Dynamic Stats Counter Animation (Cascading Easing & Tabular Numbers)
+ * 5. Dynamic Stats Counter Animation
  */
 function initStatsCounters() {
   const statsContainer = document.querySelector('#stats-section');
@@ -231,10 +187,7 @@ function initStatsCounters() {
   const counterElements = statsContainer.querySelectorAll<HTMLElement>('[data-counter-target]');
   if (counterElements.length === 0) return;
 
-  // Set initial text to 0
-  counterElements.forEach(el => {
-    el.textContent = '0';
-  });
+  counterElements.forEach(el => { el.textContent = '0'; });
 
   let hasAnimated = false;
 
@@ -247,32 +200,25 @@ function initStatsCounters() {
       const targetNumber = parseFloat(rawTarget.replace(/[^0-9.]/g, '')) || 0;
       if (targetNumber === 0) return;
 
-      const duration = 1800; // 1.8 detik
-      const delay = index * 140; // Staggered cascade per kolom
+      const duration = 1800;
+      const delay = index * 140;
 
       setTimeout(() => {
         const startTime = performance.now();
-
-        // Ease Out Expo: cepat di awal, melambat sangat halus di akhir
         const easeOutExpo = (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
 
         const updateCounter = (now: number) => {
-          const elapsed = now - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const easedProgress = easeOutExpo(progress);
-
-          const currentVal = Math.round(targetNumber * easedProgress);
+          const progress = Math.min((now - startTime) / duration, 1);
+          const currentVal = Math.round(targetNumber * easeOutExpo(progress));
           el.textContent = currentVal.toString();
 
           if (progress < 1) {
             requestAnimationFrame(updateCounter);
           } else {
             el.textContent = targetNumber.toString();
-            // Subtle bounce pop saat angka selesai tercapai
             el.style.transform = 'scale(1.08)';
             const suffix = el.nextElementSibling as HTMLElement | null;
             if (suffix) suffix.style.transform = 'scale(1.2)';
-
             setTimeout(() => {
               el.style.transform = 'scale(1)';
               if (suffix) suffix.style.transform = '';
@@ -289,10 +235,7 @@ function initStatsCounters() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            runCounter();
-            observer.disconnect();
-          }
+          if (entry.isIntersecting) { runCounter(); observer.disconnect(); }
         });
       },
       { threshold: 0.25, rootMargin: '0px 0px -40px 0px' }
@@ -304,17 +247,24 @@ function initStatsCounters() {
 }
 
 /**
- * 6. Sambutan Section — Photo slide-from-left & Live Typing Effect
+ * 6. Sambutan Section — Photo slide-in & CSS typing-reveal effect
+ *
+ * PENTING: Teks sudah ada sepenuhnya di HTML (untuk SEO & accessibility).
+ * Efek "mengetik" hanya mengungkap teks secara visual dengan CSS clip-path/opacity,
+ * bukan membangun teks melalui JS karakter per karakter.
  */
 function initSambutanAnimations() {
   const section = document.getElementById('sambutan-section');
   if (!section) return;
 
   const photoCol = section.querySelector<HTMLElement>('[data-sambutan-photo]');
-  const typingSpans = section.querySelectorAll<HTMLElement>('[data-sambutan-typing]');
+  const typingParagraphs = section.querySelectorAll<HTMLElement>('[data-sambutan-typing]');
   const cursors = section.querySelectorAll<HTMLElement>('.sambutan-cursor');
 
-  // Hide cursors initially
+  // Sembunyikan paragraf awal (bukan kontennya — hanya opacity untuk crawlers bisa baca)
+  typingParagraphs.forEach(p => {
+    p.style.opacity = '0';
+  });
   cursors.forEach(c => { c.style.opacity = '0'; });
 
   let triggered = false;
@@ -323,7 +273,7 @@ function initSambutanAnimations() {
     if (triggered) return;
     triggered = true;
 
-    // --- Photo: slide in from left (overrides generic data-motion-visual for this section) ---
+    // Photo: slide in dari kiri
     if (photoCol) {
       animate(
         photoCol,
@@ -332,61 +282,69 @@ function initSambutanAnimations() {
       );
     }
 
-    // --- Typing: start sequentially after slide completes ---
-    const typeText = (span: HTMLElement, cursor: HTMLElement | null, delay: number, onDone?: () => void) => {
-      const fullText = span.getAttribute('data-typing-text') || '';
-      span.textContent = '';
+    // Reveal paragraf satu per satu dengan transition opacity (teks sudah di DOM)
+    const revealParagraph = (p: HTMLElement, cursor: HTMLElement | null, delay: number, onDone?: () => void) => {
+      // Tampilkan cursor blink sementara
       if (cursor) {
         cursor.style.opacity = '1';
         cursor.style.animation = 'sambutan-blink 0.75s step-end infinite';
       }
 
-      let i = 0;
-      const speed = 18; // ms per character
-
       setTimeout(() => {
-        const tick = () => {
-          if (i < fullText.length) {
-            span.textContent += fullText[i];
-            i++;
-            setTimeout(tick, speed);
-          } else {
-            // Done typing — stop blink cursor
-            if (cursor) {
-              cursor.style.animation = 'none';
-              cursor.style.opacity = '0';
-            }
-            if (onDone) onDone();
+        // Fade-in paragraf (teks sudah ada di markup)
+        p.style.transition = 'opacity 0.8s ease';
+        p.style.opacity = '1';
+
+        // Setelah durasi "reveal" selesai, sembunyikan cursor
+        const textLen = p.textContent?.length ?? 100;
+        const revealDuration = Math.min(textLen * 15, 2000); // maks 2 detik
+
+        setTimeout(() => {
+          if (cursor) {
+            cursor.style.animation = 'none';
+            cursor.style.opacity = '0';
           }
-        };
-        tick();
+          if (onDone) onDone();
+        }, revealDuration);
       }, delay);
     };
 
-    if (typingSpans.length >= 2) {
-      const span1 = typingSpans[0] as HTMLElement;
-      const span2 = typingSpans[1] as HTMLElement;
-      const cursor1 = span1.parentElement?.querySelector<HTMLElement>('.sambutan-cursor') || null;
-      const cursor2 = span2.parentElement?.querySelector<HTMLElement>('.sambutan-cursor') || null;
-      const text1Len = (span1.getAttribute('data-typing-text') || '').length;
+    if (typingParagraphs.length >= 2) {
+      const p1 = typingParagraphs[0];
+      const p2 = typingParagraphs[1];
+      const c1 = p1.parentElement?.querySelector<HTMLElement>('.sambutan-cursor') || null;
+      const c2 = p2.parentElement?.querySelector<HTMLElement>('.sambutan-cursor') || null;
+      const p1TextLen = p1.textContent?.length ?? 100;
 
-      // Start p1 typing after photo slide (700ms), then p2 starts after p1 finishes
-      typeText(span1, cursor1, 700, () => {
-        typeText(span2, cursor2, 200);
+      revealParagraph(p1, c1, 700, () => {
+        revealParagraph(p2, c2, 200);
       });
-    } else if (typingSpans.length === 1) {
-      const span1 = typingSpans[0] as HTMLElement;
-      const cursor1 = span1.parentElement?.querySelector<HTMLElement>('.sambutan-cursor') || null;
-      typeText(span1, cursor1, 700);
+    } else if (typingParagraphs.length === 1) {
+      const p1 = typingParagraphs[0];
+      const c1 = p1.parentElement?.querySelector<HTMLElement>('.sambutan-cursor') || null;
+      revealParagraph(p1, c1, 700);
     }
   }, { margin: '-60px' });
 }
 
-// Auto-initialize when DOM is ready
-if (typeof document !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initBerandaInteractions);
+// Defer execution: setelah LCP & browser idle
+if (typeof window !== 'undefined') {
+  const run = () => {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBerandaInteractions, { once: true });
+    } else {
+      initBerandaInteractions();
+    }
+  };
+
+  if ('requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(run, { timeout: 3000 });
   } else {
-    initBerandaInteractions();
+    // Fallback untuk Safari: defer 200ms setelah load event
+    if (document.readyState === 'complete') {
+      setTimeout(run, 200);
+    } else {
+      window.addEventListener('load', () => setTimeout(run, 200), { once: true });
+    }
   }
 }

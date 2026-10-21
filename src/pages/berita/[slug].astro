@@ -1,7 +1,7 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import Container from '../../components/ui/Container.astro';
-import { fetchNewsArticles, formatIndonesianDate, estimateReadingTime, sanitizeArticleHtml, stripHtml, type NewsArticle } from '../../lib/news';
+import { fetchNewsArticles, formatIndonesianDate, estimateReadingTime, sanitizeArticleHtml, stripHtml, formatDriveImageUrl, type NewsArticle } from '../../lib/news';
 
 export async function getStaticPaths() {
   const articles = await fetchNewsArticles();
@@ -216,7 +216,7 @@ if (plainText.length >= 140) {
         {article.url_foto && (
           <div class="rounded-3xl overflow-hidden shadow-lg border border-slate-200/80 bg-slate-900">
             <img 
-              src={article.url_foto} 
+              src={formatDriveImageUrl(article.url_foto, 1200)} 
               alt={article.judul} 
               referrerpolicy="no-referrer"
               loading="eager"

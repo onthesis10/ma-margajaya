@@ -14,20 +14,39 @@ const searchEmbedUrl = `https://maps.google.com/maps?q=MA+Margajaya+Sukadana+Cia
       <!-- ══ SISI KIRI: GOOGLE MAPS EMBED PREMIUM ══ -->
       <div class="order-2 lg:order-1" data-motion-visual>
 
-        <!-- Map Container -->
-        <div class="relative group rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-hair-strong" style="aspect-ratio: 4/3;">
+        <!-- Map Container with Lightweight Facade (loads interactive iframe on user interaction) -->
+        <div id="map-facade-container" class="relative group rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 border border-hair-strong bg-slate-900" style="aspect-ratio: 4/3;" data-map-url={searchEmbedUrl}>
 
-          <!-- Google Maps iframe - fully clickable & navigable -->
-          <iframe
-            src={searchEmbedUrl}
-            width="100%"
-            height="100%"
-            style="border:0; width:100%; height:100%; display:block; position:absolute; inset:0;"
-            allowfullscreen
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            title="Lokasi MA Margajaya Sukadana Ciamis"
-          ></iframe>
+          <!-- Static Map Preview Background -->
+          <div id="map-static-bg" class="absolute inset-0 bg-[#e8ece9] flex flex-col items-center justify-center p-6 text-center cursor-pointer select-none">
+            <!-- Stylized Map Pattern Grid -->
+            <div class="absolute inset-0 opacity-25 pointer-events-none" style="background-image: radial-gradient(#087A35 1px, transparent 1px), radial-gradient(#087A35 1px, #e8ece9 1px); background-size: 24px 24px; background-position: 0 0, 12px 12px;"></div>
+            
+            <!-- Center Pin & CTA Badge -->
+            <div class="relative z-10 flex flex-col items-center gap-3">
+              <div class="w-14 h-14 rounded-full bg-emerald-800 text-white flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-7 h-7 text-gold" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/>
+                </svg>
+              </div>
+              <div class="space-y-1">
+                <div class="font-serif text-lg font-bold text-emerald-950">
+                  Kampus MA Margajaya
+                </div>
+                <div class="text-xs text-slate-600 max-w-xs">
+                  Sukadana · Kabupaten Ciamis, Jawa Barat
+                </div>
+              </div>
+              <button
+                type="button"
+                id="btn-load-interactive-map"
+                class="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-white bg-emerald-800 hover:bg-emerald-900 shadow-md transition-all group-hover:shadow-lg"
+              >
+                <span>Buka Peta Interaktif</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </button>
+            </div>
+          </div>
 
           <!-- Top-right floating badge — "Buka di Google Maps" -->
           <div class="absolute top-3 right-3 z-10 pointer-events-none">
@@ -151,3 +170,40 @@ const searchEmbedUrl = `https://maps.google.com/maps?q=MA+Margajaya+Sukadana+Cia
     </div>
   </Container>
 </section>
+
+<script>
+  // Map Facade: muat iframe Google Maps hanya saat pengguna mengklik tombol
+  const container = document.getElementById('map-facade-container');
+  const staticBg = document.getElementById('map-static-bg');
+  const btn = document.getElementById('btn-load-interactive-map');
+
+  function loadInteractiveMap() {
+    if (!container || !staticBg) return;
+    const mapUrl = container.getAttribute('data-map-url');
+    if (!mapUrl) return;
+
+    // Buat iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = mapUrl;
+    iframe.title = 'Lokasi MA Margajaya di Google Maps';
+    iframe.width = '100%';
+    iframe.height = '100%';
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2;';
+
+    // Hapus facade, tampilkan iframe
+    staticBg.style.opacity = '0';
+    staticBg.style.transition = 'opacity 0.4s ease';
+    setTimeout(() => staticBg.remove(), 400);
+    container.appendChild(iframe);
+
+    // Lepas listener setelah sekali klik
+    if (btn) btn.removeEventListener('click', loadInteractiveMap);
+    if (staticBg) staticBg.removeEventListener('click', loadInteractiveMap);
+  }
+
+  if (btn) btn.addEventListener('click', loadInteractiveMap);
+  if (staticBg) staticBg.addEventListener('click', loadInteractiveMap);
+</script>

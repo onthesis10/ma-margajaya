@@ -22,13 +22,17 @@ import { gallery } from '../../data/gallery';
       {gallery.slice(0, 6).map((item) => (
         <a 
           href="/galeri" 
+          aria-label={item.alt}
           class="block aspect-square overflow-hidden rounded-xl border border-hair glow-card glow-card-gold glow-hover-lift group relative"
           data-motion-item
         >
           <img 
             src={item.image} 
             alt={item.alt} 
+            width="400"
+            height="400"
             loading="lazy"
+            decoding="async"
             class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
