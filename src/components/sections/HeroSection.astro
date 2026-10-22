@@ -7,7 +7,7 @@ const articles = await fetchNewsArticles();
 const heroNews = articles.slice(0, 3);
 ---
 
-<section class="relative overflow-hidden min-h-[860px] lg:min-h-[900px] flex items-end bg-[#075B2A] text-white pb-24 pt-48 lg:pt-56">
+<section class="relative overflow-hidden min-h-[700px] sm:min-h-[800px] lg:min-h-[900px] flex items-end bg-[#075B2A] text-white pb-16 sm:pb-24 pt-28 sm:pt-40 lg:pt-56">
   <!-- LCP Hero Image: Optimized WebP, high discovery priority, eager loading -->
   <img 
     src="/images/opt/hero-bg-2.webp" 
@@ -26,7 +26,7 @@ const heroNews = articles.slice(0, 3);
   <!-- Subtle Soft Radiant Glow Orb behind Hero -->
   <div class="absolute -top-24 -left-24 w-[600px] h-[600px] bg-radial from-gold/20 via-emerald-500/10 to-transparent blur-[100px] pointer-events-none"></div>
 
-  <div class="max-w-7xl mx-auto px-6 relative w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-end">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 relative w-full z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-end">
     <div class="lg:col-span-8">
       <div id="hero-badge" class="flex items-center gap-3 mb-6">
         <span class="w-7 h-[1.5px] bg-gold drop-shadow pulse-glow"></span>
@@ -34,7 +34,7 @@ const heroNews = articles.slice(0, 3);
           Penerimaan Santri &amp; Siswa Baru &middot; MA Margajaya
         </span>
       </div>
-      <h1 id="hero-title" class="text-5xl sm:text-7xl md:text-[92px] lg:text-[110px] font-serif leading-[0.92] tracking-[-0.03em] drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] mb-8">
+      <h1 id="hero-title" class="text-[2.6rem] leading-[0.9] sm:text-5xl md:text-7xl lg:text-[100px] xl:text-[110px] font-serif tracking-[-0.03em] drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] mb-6 sm:mb-8">
         <span class="sr-only">MA Margajaya Sukadana — </span>Berakhlak.<br/>
         <em class="italic text-gold text-shimmer-gold drop-shadow-[0_4px_24px_rgba(232,185,35,0.4)]">Berprestasi.</em>
       </h1>
@@ -51,7 +51,40 @@ const heroNews = articles.slice(0, 3);
       </div>
     </div>
 
-    <!-- Right Column: Warta & Agenda Terkini -->
+    <!-- Mobile News Carousel (visible on mobile, hidden on md+) -->
+    <div class="md:hidden w-full mt-8 pb-2">
+      <div class="text-[10px] tracking-[0.3em] uppercase text-gold-soft font-bold mb-3 flex items-center gap-2">
+        <span class="w-4 h-[1.5px] bg-gold pulse-glow"></span>
+        <span>Warta &amp; Agenda Terkini</span>
+      </div>
+      {heroNews.length > 0 ? (
+        <div 
+          class="flex gap-3 overflow-x-auto pb-3"
+          style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;"
+        >
+          {heroNews.map(item => (
+            <a
+              href={`/berita/${item.slug}`}
+              class="shrink-0 w-[72vw] max-w-[280px] bg-white/[0.07] backdrop-blur-sm border border-white/20 rounded-2xl p-4 block"
+              style="scroll-snap-align: start;"
+            >
+              <div class="text-[10px] tracking-[0.18em] uppercase text-gold-soft font-bold mb-2 flex items-center gap-1.5">
+                <svg class="w-2.5 h-2.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>{formatIndonesianDate(item.tanggal)}</span>
+              </div>
+              <div class="font-serif text-base leading-snug text-white/90 line-clamp-3 mb-2">
+                {item.judul}
+              </div>
+              <div class="text-[10px] text-gold-soft font-bold uppercase tracking-widest flex items-center gap-1">
+                <span>Baca</span><span>&rarr;</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : null}
+    </div>
+
+    <!-- Right Column: Warta & Agenda Terkini (desktop only) -->
     <div class="lg:col-span-4 border-l border-white/20 pl-8 hidden md:block glow-card glow-card-dark p-6 rounded-2xl bg-white/[0.03] backdrop-blur-sm">
       <div class="text-[10px] tracking-[0.32em] uppercase text-gold-soft font-bold mb-6 flex items-center gap-2">
         <span class="w-4 h-[1.5px] bg-gold pulse-glow"></span>

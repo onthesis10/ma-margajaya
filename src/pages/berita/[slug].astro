@@ -294,7 +294,7 @@ if (plainText.length >= 140) {
     copyBtn.addEventListener('click', () => {
       navigator.clipboard.writeText(window.location.href);
       if (copyLabel) {
-        copyLabel.textContent = 'Tautan Tersalin! ✨';
+        copyLabel.textContent = 'Tersalin \u2713';
         setTimeout(() => { copyLabel.textContent = 'Salin Tautan'; }, 2500);
       }
     });

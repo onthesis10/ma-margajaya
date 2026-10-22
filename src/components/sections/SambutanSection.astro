@@ -3,12 +3,12 @@ import Container from '../ui/Container.astro';
 import { schoolConfig } from '../../config/school.config';
 ---
 
-<section id="sambutan-section" class="py-24 bg-white border-b border-hair relative overflow-hidden" data-motion-section>
+<section id="sambutan-section" class="py-14 sm:py-24 bg-white border-b border-hair relative overflow-hidden" data-motion-section>
   <!-- Ambient background glow for section -->
   <div class="absolute right-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
   <Container>
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-center">
       
       <!-- Clean & Sharp Portrait Column with Tilt & Glow -->
       <div class="lg:col-span-5 order-2 lg:order-1" data-motion-visual data-sambutan-photo>
@@ -47,7 +47,7 @@ import { schoolConfig } from '../../config/school.config';
           </span>
         </div>
 
-        <h2 class="text-3xl sm:text-4xl md:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em] mb-6">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif text-blue-ink leading-[1.15] tracking-[-0.02em] mb-5 sm:mb-6">
           Membangun Karakter Santri, <br />
           <em class="italic text-blue font-normal">Menggapai Prestasi Berkelanjutan.</em>
         </h2>

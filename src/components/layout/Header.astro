@@ -76,7 +76,7 @@ const currentPath = Astro.url.pathname;
   </div>
 
   <!-- Main Navbar -->
-  <div id="nav-container" class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between transition-all duration-300">
+  <div id="nav-container" class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between transition-all duration-300">
     <!-- Brand Logo: MA Margajaya + Ponpes Darul Muawanah -->
     <a href="/" class="flex items-center gap-1 group shrink-0">
 
@@ -102,22 +102,23 @@ const currentPath = Astro.url.pathname;
         class="h-9 lg:h-9 xl:h-10 w-auto object-contain drop-shadow transition-transform duration-300 group-hover:scale-105 shrink-0 opacity-90 group-hover:opacity-100"
       />
 
-      <!-- Separator Vertikal (sembunyikan di md ke bawah, tampil sm+) -->
-      <div class="hidden sm:block w-px h-6 bg-white/20 shrink-0 mx-1.5"></div>
+      <!-- Separator Vertikal (tampil di semua ukuran layar) -->
+      <div class="w-px h-6 sm:h-7 bg-white/20 shrink-0 mx-1.5 sm:mx-2"></div>
 
-      <!-- Teks Identitas (tampil dari tablet kecil ke atas) -->
-      <div class="hidden sm:block">
+      <!-- Teks Identitas (tampil di mobile hingga desktop) -->
+      <div class="flex flex-col justify-center shrink-0">
         <div
-          class="font-bold text-[12px] tracking-wide text-white group-hover:text-gold transition-colors uppercase leading-none"
+          class="font-bold text-[11px] sm:text-[12px] xl:text-[13px] tracking-wide text-white group-hover:text-gold transition-colors uppercase leading-none"
           style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;"
         >
           {schoolConfig.shortName}
         </div>
         <div
-          class="text-[9px] text-white/90 uppercase tracking-[0.07em] font-medium leading-none mt-0.5"
+          class="text-[8.5px] sm:text-[9.5px] text-white/90 uppercase tracking-[0.05em] font-medium leading-none mt-1"
           style="font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;"
         >
-          {schoolConfig.ponpesName}
+          <span class="sm:hidden">Ponpes Darul Muawanah</span>
+          <span class="hidden sm:inline">{schoolConfig.ponpesName}</span>
         </div>
       </div>
 
@@ -178,40 +179,79 @@ const currentPath = Astro.url.pathname;
     </div>
 
     <!-- Mobile Menu Button -->
-    <button id="mobile-menu-btn" aria-label="Menu" class="lg:hidden p-2.5 rounded-lg bg-white/10 border border-white/15 text-white hover:bg-white/20 transition-colors">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <button id="mobile-menu-btn" aria-label="Buka Menu" aria-expanded="false" aria-controls="mobile-menu-panel" class="lg:hidden p-2.5 rounded-lg bg-white/10 border border-white/15 text-white hover:bg-white/20 transition-colors relative w-10 h-10 flex items-center justify-center">
+      <!-- Hamburger icon -->
+      <span id="mobile-icon-ham" class="absolute inset-0 flex items-center justify-center transition-all duration-300">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="7" x2="21" y2="7"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="17" x2="21" y2="17"/>
+        </svg>
+      </span>
+      <!-- X icon (hidden by default) -->
+      <span id="mobile-icon-x" class="absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-0 scale-75 rotate-90">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="5" y1="5" x2="19" y2="19"/>
+          <line x1="19" y1="5" x2="5" y2="19"/>
+        </svg>
+      </span>
     </button>
   </div>
 
-  <!-- Mobile Menu Panel -->
-  <div id="mobile-menu-panel" class="hidden lg:hidden bg-[#062c1d]/95 backdrop-blur-2xl border-t border-white/15 absolute w-full left-0 top-full shadow-2xl transition-all max-h-[85vh] overflow-y-auto">
-    <nav class="flex flex-col py-5 px-5 gap-1">
+  <!-- Mobile Menu Panel (Slide-down iOS-style) -->
+  <div 
+    id="mobile-menu-panel" 
+    class="lg:hidden mobile-menu-glass border-t border-white/15 absolute w-full left-0 top-full shadow-2xl overflow-y-auto"
+    style="max-height: 0; transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease; opacity: 0; pointer-events: none; -webkit-overflow-scrolling: touch;"
+    aria-hidden="true"
+  >
+    <nav class="flex flex-col py-4 px-4 gap-0.5">
       {navigation.map((item) => {
         const isActive = item.href === '/' ? currentPath === '/' : currentPath.startsWith(item.href);
         const hasSub = item.subItems && item.subItems.length > 0;
         return (
-          <div class="py-1">
-            <a 
-              href={item.href} 
-              class={`block text-[14px] font-medium py-1.5 px-3 rounded-md transition-colors ${
-                isActive 
-                  ? 'text-gold font-semibold' 
-                  : 'text-white/90 hover:text-white'
-              }`}
-            >
-              {item.label}
-            </a>
+          <div class="mobile-nav-item">
+            <!-- Parent row: link + chevron toggle if has subitems -->
+            <div class="flex items-center justify-between">
+              <a 
+                href={item.href} 
+                class={`flex-1 text-[15px] font-semibold py-3 px-3 rounded-xl transition-colors min-h-[44px] flex items-center ${
+                  isActive 
+                    ? 'text-gold' 
+                    : 'text-white/90 hover:text-white'
+                }`}
+              >
+                {item.label}
+              </a>
+              {hasSub && (
+                <button 
+                  class="mobile-submenu-toggle p-3 text-white/60 hover:text-gold transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  aria-expanded="false"
+                  aria-label={`Buka submenu ${item.label}`}
+                >
+                  <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+              )}
+            </div>
 
             {hasSub && (
-              <div class="pl-5 pr-2 py-1 space-y-0.5 border-l border-white/10 ml-3 mt-0.5">
-                {item.subItems?.map((sub) => (
-                  <a 
-                    href={sub.href}
-                    class="block py-1 px-2 text-[12px] text-white/70 hover:text-gold transition-colors"
-                  >
-                    {sub.title}
-                  </a>
-                ))}
+              <div 
+                class="mobile-submenu overflow-hidden"
+                style="max-height: 0; transition: max-height 0.28s cubic-bezier(0.16, 1, 0.3, 1);"
+              >
+                <div class="pl-4 pr-2 pb-2 space-y-0.5 border-l-2 border-gold/30 ml-4">
+                  {item.subItems?.map((sub) => (
+                    <a 
+                      href={sub.href}
+                      class="flex items-center gap-2 py-2.5 px-3 text-[13px] text-white/75 hover:text-gold transition-colors rounded-lg hover:bg-white/5 min-h-[44px]"
+                    >
+                      <span class="w-1 h-1 rounded-full bg-gold/60 shrink-0"></span>
+                      {sub.title}
+                    </a>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -220,15 +260,15 @@ const currentPath = Astro.url.pathname;
 
       <!-- Mobile Language Switcher -->
       <div class="flex items-center justify-between py-3 px-3 border-t border-white/10 mt-3">
-        <span class="text-xs text-white/70">Pilih Bahasa / Language</span>
-        <div class="flex gap-2">
-          <button id="mobile-lang-id" class="px-2.5 py-1 text-xs rounded-lg bg-white/10 text-gold font-bold">ID</button>
-          <button id="mobile-lang-en" class="px-2.5 py-1 text-xs rounded-lg bg-white/5 text-white/70 hover:text-white">EN</button>
+        <span class="text-xs text-white/60 font-medium">Pilih Bahasa</span>
+        <div class="flex gap-1.5">
+          <button id="mobile-lang-id" class="px-3 py-1.5 text-xs rounded-lg bg-white/10 text-gold font-bold min-h-[36px]">ID</button>
+          <button id="mobile-lang-en" class="px-3 py-1.5 text-xs rounded-lg bg-white/5 text-white/60 hover:text-white min-h-[36px]">EN</button>
         </div>
       </div>
 
-      <div class="pt-3 border-t border-white/10 mt-1">
-        <Button href="/ppdb" variant="primary" size="lg" className="w-full text-center justify-center shadow-lg">
+      <div class="pt-3 pb-2 border-t border-white/10 mt-1">
+        <Button href="/ppdb" variant="primary" size="lg" className="w-full text-center justify-center shadow-lg shadow-gold/20">
           DAFTAR PPDB 2026/2027 &rarr;
         </Button>
       </div>
@@ -238,11 +278,19 @@ const currentPath = Astro.url.pathname;
 
 <style is:global>
   .navbar-ios-glass {
-    background: rgba(5, 34, 22, 0.60) !important;
-    backdrop-filter: blur(28px) saturate(190%) brightness(1.05) !important;
-    -webkit-backdrop-filter: blur(28px) saturate(190%) brightness(1.05) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.35), inset 0 -0.5px 0 0 rgba(255, 255, 255, 0.1) !important;
+    background-color: #06281D !important;
+    background: rgba(5, 34, 22, 0.94) !important;
+    backdrop-filter: blur(24px) saturate(190%) brightness(1.05) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.05) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 -0.5px 0 0 rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .mobile-menu-glass {
+    background-color: #06281D !important;
+    background: rgba(6, 40, 29, 0.98) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
   }
 </style>
 
@@ -254,23 +302,31 @@ const currentPath = Astro.url.pathname;
   const topBar = document.getElementById('top-bar');
   const navContainer = document.getElementById('nav-container');
 
+  let menuOpen = false;
+
   function handleScroll() {
     if (!header) return;
+    // When mobile menu is open, keep header dark & solid!
+    if (menuOpen) {
+      header.classList.add('navbar-ios-glass');
+      header.classList.remove('bg-transparent', 'border-transparent');
+      return;
+    }
     if (window.scrollY > 20) {
       header.classList.add('navbar-ios-glass');
       header.classList.remove('bg-transparent', 'border-transparent');
       if (topBar) topBar.classList.add('opacity-0', 'h-0', 'overflow-hidden', 'py-0', 'border-b-0');
       if (navContainer) {
-        navContainer.classList.add('h-[68px]');
-        navContainer.classList.remove('h-20');
+        navContainer.classList.add('h-[60px]', 'sm:h-[68px]');
+        navContainer.classList.remove('h-16', 'sm:h-20');
       }
     } else {
       header.classList.remove('navbar-ios-glass');
       header.classList.add('bg-transparent', 'border-transparent');
       if (topBar) topBar.classList.remove('opacity-0', 'h-0', 'overflow-hidden', 'py-0', 'border-b-0');
       if (navContainer) {
-        navContainer.classList.add('h-20');
-        navContainer.classList.remove('h-[68px]');
+        navContainer.classList.add('h-16', 'sm:h-20');
+        navContainer.classList.remove('h-[60px]', 'sm:h-[68px]');
       }
     }
   }
@@ -278,15 +334,108 @@ const currentPath = Astro.url.pathname;
   window.addEventListener('scroll', handleScroll, { passive: true });
   handleScroll();
 
-  // Mobile Menu Toggle
+  // ── Mobile Menu Toggle (iOS slide-down) ──
   const btn = document.getElementById('mobile-menu-btn');
-  const panel = document.getElementById('mobile-menu-panel');
-  
-  if(btn && panel) {
+  const panel = document.getElementById('mobile-menu-panel') as HTMLElement | null;
+  const iconHam = document.getElementById('mobile-icon-ham');
+  const iconX   = document.getElementById('mobile-icon-x');
+
+  function openMenu() {
+    if (!panel) return;
+    menuOpen = true;
+    header?.classList.add('navbar-ios-glass');
+    header?.classList.remove('bg-transparent', 'border-transparent');
+    panel.style.maxHeight = 'calc(100vh - 70px)';
+    panel.style.opacity   = '1';
+    panel.style.pointerEvents = 'auto';
+    panel.setAttribute('aria-hidden', 'false');
+    btn?.setAttribute('aria-expanded', 'true');
+    btn?.setAttribute('aria-label', 'Tutup Menu');
+    // Morph icon
+    if (iconHam) { iconHam.style.opacity = '0'; iconHam.style.transform = 'scale(0.75) rotate(-90deg)'; }
+    if (iconX)   { iconX.style.opacity   = '1'; iconX.style.transform   = 'scale(1) rotate(0deg)'; }
+  }
+
+  function closeMenu() {
+    if (!panel) return;
+    menuOpen = false;
+    panel.style.maxHeight = '0';
+    panel.style.opacity   = '0';
+    panel.style.pointerEvents = 'none';
+    panel.setAttribute('aria-hidden', 'true');
+    btn?.setAttribute('aria-expanded', 'false');
+    btn?.setAttribute('aria-label', 'Buka Menu');
+    // Morph icon back
+    if (iconHam) { iconHam.style.opacity = '1'; iconHam.style.transform = 'scale(1) rotate(0deg)'; }
+    if (iconX)   { iconX.style.opacity   = '0'; iconX.style.transform   = 'scale(0.75) rotate(90deg)'; }
+    // Also collapse all open submenus
+    document.querySelectorAll('.mobile-submenu').forEach((sm: Element) => {
+      (sm as HTMLElement).style.maxHeight = '0';
+    });
+    document.querySelectorAll('.mobile-submenu-toggle').forEach((t: Element) => {
+      t.setAttribute('aria-expanded', 'false');
+      const chevron = t.querySelector('svg');
+      if (chevron) chevron.style.transform = 'rotate(0deg)';
+    });
+    // Sync header appearance with scroll position
+    handleScroll();
+  }
+
+  if (btn && panel) {
     btn.addEventListener('click', () => {
-      panel.classList.toggle('hidden');
+      menuOpen ? closeMenu() : openMenu();
     });
   }
+
+  // Close menu on resize above lg
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024 && menuOpen) {
+      closeMenu();
+    }
+  });
+
+  // Close menu on outside click
+  document.addEventListener('click', (e) => {
+    if (menuOpen && panel && !panel.contains(e.target as Node) && !btn?.contains(e.target as Node)) {
+      closeMenu();
+    }
+  });
+
+  // Close menu on nav link click
+  panel?.querySelectorAll('a[href]').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  // Accordion submenu toggle
+  document.querySelectorAll('.mobile-submenu-toggle').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const parentItem = toggle.closest('.mobile-nav-item');
+      const submenu = parentItem?.querySelector('.mobile-submenu') as HTMLElement | null;
+      const chevron  = toggle.querySelector('svg') as SVGElement | null;
+      const isOpen   = toggle.getAttribute('aria-expanded') === 'true';
+
+      // Collapse all other open submenus
+      document.querySelectorAll('.mobile-submenu-toggle[aria-expanded="true"]').forEach((other) => {
+        if (other !== toggle) {
+          other.setAttribute('aria-expanded', 'false');
+          const otherSub = other.closest('.mobile-nav-item')?.querySelector('.mobile-submenu') as HTMLElement | null;
+          const otherChev = other.querySelector('svg') as SVGElement | null;
+          if (otherSub) otherSub.style.maxHeight = '0';
+          if (otherChev) otherChev.style.transform = 'rotate(0deg)';
+        }
+      });
+
+      if (isOpen) {
+        toggle.setAttribute('aria-expanded', 'false');
+        if (submenu) submenu.style.maxHeight = '0';
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+      } else {
+        toggle.setAttribute('aria-expanded', 'true');
+        if (submenu) submenu.style.maxHeight = submenu.scrollHeight + 'px';
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+      }
+    });
+  });
 
   // Live Clock Logic — pause when tab is hidden
   function updateClock() {

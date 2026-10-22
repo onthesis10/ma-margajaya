@@ -4,7 +4,7 @@ import SectionTitle from '../ui/SectionTitle.astro';
 import { facilities } from '../../data/facilities';
 ---
 
-<section id="facilities-section" class="bg-white py-24 relative overflow-hidden" data-motion-section>
+<section id="facilities-section" class="bg-white py-14 sm:py-24 relative overflow-hidden" data-motion-section>
   <Container>
     <div class="text-center mb-16" data-motion-title>
       <SectionTitle 
@@ -17,7 +17,7 @@ import { facilities } from '../../data/facilities';
       />
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       {facilities.map((fac) => (
         <div 
           class="tilt-card-wrapper cursor-pointer"

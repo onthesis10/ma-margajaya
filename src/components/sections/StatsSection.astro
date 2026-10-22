@@ -3,13 +3,13 @@ import Container from '../ui/Container.astro';
 import { stats } from '../../data/stats';
 ---
 
-<section id="stats-section" class="bg-blue-deep py-24 relative overflow-hidden text-white" data-motion-section>
+<section id="stats-section" class="bg-blue-deep py-14 sm:py-24 relative overflow-hidden text-white" data-motion-section>
   <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,_rgba(232,185,35,0.18),_transparent_55%)] pointer-events-none"></div>
   <div class="absolute inset-0 bg-[radial-gradient(circle_at_90%_100%,_rgba(52,211,153,0.15),_transparent_60%)] pointer-events-none"></div>
   
   <Container className="relative z-10">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8" data-motion-title>
-      <h2 class="font-serif text-5xl md:text-[56px] leading-[1.1] tracking-[-0.02em] max-w-[720px]">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-10 sm:mb-16 gap-4 sm:gap-8" data-motion-title>
+      <h2 class="font-serif text-3xl sm:text-5xl md:text-[56px] leading-[1.1] tracking-[-0.02em] max-w-[720px]">
         Bukan janji. <em class="italic text-gold text-shimmer-gold">Catatan.</em><br/>
         Dedikasi madrasah dalam angka nyata.
       </h2>
@@ -21,10 +21,10 @@ import { stats } from '../../data/stats';
     <div id="stats-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 border-t border-white/20">
       {stats.map((stat, i) => (
         <div 
-          class={`p-8 lg:p-10 min-h-[220px] border-b sm:border-b-0 ${i % 2 === 0 ? 'sm:border-r' : ''} ${i !== 3 ? 'lg:border-r' : ''} border-white/10 glow-card glow-card-dark glow-hover-lift-dark cursor-pointer group transition-all duration-300`}
+          class={`p-6 lg:p-10 min-h-[180px] sm:min-h-[220px] border-b sm:border-b-0 ${i % 2 === 0 ? 'sm:border-r' : ''} ${i !== 3 ? 'lg:border-r' : ''} border-white/10 glow-card glow-card-dark glow-hover-lift-dark cursor-pointer group transition-all duration-300`}
           data-motion-item
         >
-          <div class="font-serif text-[80px] md:text-[100px] leading-[0.85] tracking-[-0.03em] mb-6 text-white group-hover:text-gold-soft transition-colors duration-300 flex items-baseline">
+          <div class="font-serif text-[60px] sm:text-[80px] md:text-[100px] leading-[0.85] tracking-[-0.03em] mb-4 sm:mb-6 text-white group-hover:text-gold-soft transition-colors duration-300 flex items-baseline">
             <span data-counter-target={stat.number} class="tabular-nums transition-transform duration-200 inline-block">{stat.number}</span>
             {stat.suffix && <em class="text-gold not-italic text-[50px] align-top ml-1 group-hover:scale-110 transition-transform">{stat.suffix}</em>}
           </div>

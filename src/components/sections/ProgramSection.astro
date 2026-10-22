@@ -4,9 +4,9 @@ import SectionTitle from '../ui/SectionTitle.astro';
 import { programs } from '../../data/programs';
 ---
 
-<section id="program-section" class="bg-white py-24 relative overflow-hidden" data-motion-section>
+<section id="program-section" class="bg-white py-14 sm:py-24 relative overflow-hidden" data-motion-section>
   <Container>
-    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6" data-motion-title>
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 sm:mb-16 gap-4 sm:gap-6" data-motion-title>
       <SectionTitle 
         kicker="Empat Pilar Belajar" 
         title="Program"
@@ -20,13 +20,13 @@ import { programs } from '../../data/programs';
   </Container>
   
   <div class="border-y border-hair-strong">
-    <div id="program-grid" class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 lg:divide-x divide-hair">
+    <div id="program-grid" class="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-hair">
       {programs.map((prog) => (
         <div 
-          class="bg-white hover:bg-paper/80 transition-all duration-300 p-8 lg:p-10 min-h-[360px] flex flex-col group glow-card glow-card-emerald glow-hover-lift cursor-pointer relative"
+          class="bg-white hover:bg-paper/80 transition-all duration-300 p-6 lg:p-10 min-h-[300px] sm:min-h-[360px] flex flex-col group glow-card glow-card-emerald glow-hover-lift cursor-pointer relative"
           data-motion-item
         >
-          <div class="font-serif text-[80px] leading-none text-gold mb-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:text-gold-soft transition-all duration-300 transform origin-left">
+          <div class="font-serif text-[56px] sm:text-[80px] leading-none text-gold mb-4 sm:mb-6 opacity-80 group-hover:opacity-100 group-hover:scale-110 group-hover:text-gold-soft transition-all duration-300 transform origin-left">
             {prog.num}
           </div>
           <h3 class="font-serif text-[28px] leading-[1.1] text-blue-ink mb-4 group-hover:text-blue transition-colors">

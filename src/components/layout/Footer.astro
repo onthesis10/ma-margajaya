@@ -3,10 +3,10 @@ import { schoolConfig } from '../../config/school.config';
 const year = new Date().getFullYear();
 ---
 
-<footer class="bg-paper border-t border-hair pt-16 pb-8">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-      <div class="col-span-1">
+<footer class="bg-paper border-t border-hair pt-12 sm:pt-16 pb-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 md:gap-12 mb-10 sm:mb-12">
+      <div class="sm:col-span-2 md:col-span-1">
         <!-- Dual Logo Footer: MA Margajaya + Ponpes Darul Muawanah -->
         <div class="flex items-center gap-3 mb-4">
           <img src="/logo/logo-ma-margajaya-sm.png" alt={`Logo ${schoolConfig.name}`} width="53" height="48" loading="lazy" decoding="async" class="h-12 w-auto object-contain" />
@@ -51,7 +51,7 @@ const year = new Date().getFullYear();
       </div>
     </div>
     
-    <div class="pt-8 border-t border-hair-strong flex flex-col md:flex-row justify-between items-center text-xs text-ink-muted">
+    <div class="pt-6 sm:pt-8 border-t border-hair-strong flex flex-col sm:flex-row justify-between items-center text-xs text-ink-muted gap-3 sm:gap-0">
       <p>&copy; {year} {schoolConfig.name}. All rights reserved.</p>
       <div class="flex items-center gap-4 mt-4 md:mt-0 flex-wrap">
         <a href={schoolConfig.social.instagram} target="_blank" rel="noopener noreferrer" class="hover:text-blue flex items-center gap-1.5 transition-colors">

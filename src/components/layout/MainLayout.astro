@@ -50,6 +50,82 @@ const {
       <slot />
     </main>
     <Footer />
+
+    <!-- Floating PPDB CTA (mobile: visible after scroll 300px, hides near footer) -->
+    <a 
+      id="floating-ppdb-cta" 
+      href="/ppdb" 
+      aria-label="Daftar PPDB Sekarang"
+      class="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 lg:hidden"
+      style="
+        display: none;
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1);
+      "
+    >
+      <span
+        class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold tracking-wider text-[#0a2918] shadow-2xl"
+        style="
+          background: linear-gradient(135deg, #E8B923 0%, #f5cc3a 50%, #d4a01b 100%);
+          box-shadow: 0 8px 32px rgba(232,185,35,0.45), 0 2px 8px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.4);
+        "
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+        <span>Daftar PPDB Sekarang</span>
+        <span class="text-base leading-none">&rarr;</span>
+      </span>
+    </a>
+
+    <script>
+      (function() {
+        const cta = document.getElementById('floating-ppdb-cta') as HTMLAnchorElement | null;
+        if (!cta) return;
+
+        let visible = false;
+
+        function showCTA() {
+          if (visible) return;
+          visible = true;
+          cta!.style.display = 'flex';
+          // Force reflow before transition
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              cta!.style.opacity = '1';
+              cta!.style.transform = 'translateX(-50%) translateY(0)';
+            });
+          });
+        }
+
+        function hideCTA() {
+          if (!visible) return;
+          visible = false;
+          cta!.style.opacity = '0';
+          cta!.style.transform = 'translateX(-50%) translateY(20px)';
+          setTimeout(() => {
+            if (!visible) cta!.style.display = 'none';
+          }, 300);
+        }
+
+        function onScroll() {
+          const scrollY  = window.scrollY;
+          const docH    = document.documentElement.scrollHeight;
+          const winH    = window.innerHeight;
+          const nearBot = docH - scrollY - winH < 200; // hide near footer
+
+          if (scrollY > 300 && !nearBot) {
+            showCTA();
+          } else {
+            hideCTA();
+          }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      })();
+    </script>
   </body>
 </html>
 

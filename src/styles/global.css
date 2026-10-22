@@ -550,3 +550,27 @@ html {
 }
 
 
+/* ======================================================
+   Mobile Responsive Utilities
+   ====================================================== */
+
+/* Hide scrollbar for hero news carousel on WebKit */
+.mobile-news-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe-area inset for floating CTA on notched phones */
+#floating-ppdb-cta {
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Prevent iOS font inflation in small containers */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Smooth momentum scrolling for carousels */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}

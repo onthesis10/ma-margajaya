@@ -7,7 +7,7 @@ const hero = articles.length > 0 ? articles[0] : null;
 const recent = articles.length > 1 ? articles.slice(1, 3) : [];
 ---
 
-<section id="berita-section" class="bg-white py-14 border-b border-hair relative overflow-hidden" data-motion-section>
+<section id="berita-section" class="bg-white py-10 sm:py-14 border-b border-hair relative overflow-hidden" data-motion-section>
   <Container>
     
     <!-- 1. HEADER BAR -->
@@ -37,7 +37,7 @@ const recent = articles.length > 1 ? articles.slice(1, 3) : [];
         <!-- 1. HEADLINE HERO (Berita Paling Baru / Terkini) -->
         <a 
           href={`/berita/${hero.slug}`}
-          class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center cursor-pointer group pb-12 border-b-2 border-hair glow-card glow-card-emerald p-4 lg:p-6 rounded-2xl glow-hover-lift block"
+          class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-center cursor-pointer group pb-8 sm:pb-12 border-b-2 border-hair glow-card glow-card-emerald p-4 lg:p-6 rounded-2xl glow-hover-lift block"
         >
           <!-- Foto Besar dengan Frosted Badge -->
           <div class="lg:col-span-7 relative overflow-hidden border border-hair aspect-[16/10] bg-paper rounded-xl">
