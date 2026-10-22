@@ -21,9 +21,9 @@ export const schoolConfig = {
 
   social: {
     instagram: "https://www.instagram.com/ma_margajaya13/",
-    facebook: "https://www.facebook.com/masmargajaya/",
+    facebook: "https://web.facebook.com/masmargajaya/?locale=id_ID&_rdc=1&_rdr#",
     youtube: "",
-    tiktok: "",
+    tiktok: "https://www.tiktok.com/@ma.margajaya",
   },
 
   mapsUrl: "https://maps.app.goo.gl/nkGWjcM8Myo9XVX58",

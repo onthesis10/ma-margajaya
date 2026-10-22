@@ -25,12 +25,18 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
-# file gambar aset (masuk public/ saja, jangan root)
+# file gambar aset (masuk public/ & src/assets/ saja, jangan root)
 *.png
 *.jpg
 *.jpeg
 *.webp
 !public/**
+!src/assets/**
+!assets-src/**
+
+# scratch & temporary files
+scratch/
+
 
 # data mentah & dokumen internal (tidak perlu di repo)
 jadwal_pelajaran_*.csv
