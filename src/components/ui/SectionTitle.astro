@@ -4,12 +4,27 @@ interface Props {
   title: string;
   titleHighlight?: string;
   className?: string;
+  align?: 'left' | 'center';
+  breakHighlight?: boolean;
 }
-const { kicker, title, titleHighlight, className = '' } = Astro.props;
+const { 
+  kicker, 
+  title, 
+  titleHighlight, 
+  className = '',
+  align = 'left',
+  breakHighlight = false
+} = Astro.props;
+
+const isCentered = align === 'center' || className.includes('text-center') || className.includes('mx-auto');
 ---
-<div class:list={["mb-12", className]}>
+<div class:list={["mb-12", className, isCentered ? "text-center" : ""]}>
   {kicker && <div class="text-[11px] font-bold tracking-[0.22em] uppercase text-ink-muted mb-4">{kicker}</div>}
-  <h2 class="text-4xl md:text-5xl lg:text-[56px] leading-[1.05] tracking-[-0.02em] font-serif text-blue-ink max-w-[720px]">
-    {title} {titleHighlight && <em class="italic text-red">{titleHighlight}</em>}
+  <h2 class:list={[
+    "text-4xl md:text-5xl lg:text-[56px] leading-[1.05] tracking-[-0.02em] font-serif text-blue-ink max-w-[720px]",
+    isCentered ? "mx-auto text-center" : ""
+  ]}>
+    {title} {breakHighlight ? <br /> : ' '}
+    {titleHighlight && <em class="italic text-red">{titleHighlight}</em>}
   </h2>
 </div>
