@@ -371,8 +371,12 @@ const currentPath = Astro.url.pathname;
 
   const savedLang = (localStorage.getItem('ma_lang') as 'id' | 'en') || 'id';
   updateLangUI(savedLang);
-  // Jika sebelumnya user memilih EN, muat translate widget saat load agar cookie aktif
-  if (savedLang === 'en') {
+
+  // Muat translate jika: (1) user sebelumnya memilih EN, atau
+  // (2) ada cookie googtrans aktif (mis. kunjungan balik setelah pilih EN)
+  const gtCookie = document.cookie.split(';').find(c => c.trim().startsWith('googtrans='));
+  const cookieHasEN = gtCookie?.includes('/id/en');
+  if (savedLang === 'en' || cookieHasEN) {
     loadGoogleTranslate();
   }
 </script>

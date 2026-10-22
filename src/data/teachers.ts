@@ -21,7 +21,7 @@ export const leadershipData = {
     name: "Anih Hidayatul Kamilah, M.Pd.",
     role: "Kepala Madrasah",
     subrole: "Penanggung Jawab Utama & Kebijakan Madrasah",
-    image: "/images/kepala-madrasah.png",
+    image: "/images/opt/kepala-madrasah.webp",
     badge: "Pimpinan Utama",
     bio: "Memimpin MA Margajaya dalam integrasi kurikulum nasional dan penguatan kultur pesantren."
   },
