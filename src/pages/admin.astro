@@ -4,7 +4,7 @@ const newsApiUrl = import.meta.env.PUBLIC_NEWS_API_URL || 'https://script.google
 const vercelDeployHook = '';
 ---
 
-<AdminLayout title="Admin Portal — MA Margajaya Sukadana">
+<AdminLayout title="Admin Portal — MA Margajaya & Ponpes Darul Muawanah">
 
   <!-- =========================================================================
        1. LOGIN GATE SCREEN (2-COLUMN SPLIT SCREEN: BRANDING LEFT + IOS LOGIN RIGHT)
@@ -12,25 +12,40 @@ const vercelDeployHook = '';
   <div id="admin-login-screen" class="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-12 z-10">
     <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
       
-      <!-- SISI KIRI: Logo Besar Tanpa Border + Tagline & Identitas Madrasah -->
+      <!-- SISI KIRI: Dual Logo (MA Margajaya & Ponpes Darul Muawanah) + Tagline & Identitas -->
       <div class="lg:col-span-7 space-y-6 sm:space-y-8 text-left py-4 lg:py-8">
         
-        <!-- Clean Logo -->
-        <div class="flex items-center gap-6">
-          <img 
-            src="/logo/logo-ma-margajaya.png" 
-            alt="Logo MA Margajaya" 
-            class="w-24 h-24 sm:w-32 sm:h-32 object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] transform hover:scale-105 transition-transform duration-500"
-          />
-          <div class="space-y-1">
-            <span class="text-xs font-bold uppercase tracking-[0.25em] text-gold block drop-shadow">
+        <!-- Dual Brand Emblem: MA Margajaya + Ponpes Darul Muawanah -->
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-6">
+          <div class="flex items-center gap-3 sm:gap-4 shrink-0 p-2 sm:p-2.5 rounded-3xl bg-black/35 border-2 border-white/15 backdrop-blur-md shadow-[4px_4px_0px_0px_#022016]">
+            <!-- Logo MA Margajaya -->
+            <img 
+              src="/logo/logo-ma-margajaya.png" 
+              alt="Logo MA Margajaya" 
+              width="80"
+              height="80"
+              class="w-16 h-16 sm:w-20 sm:h-20 md:w-22 md:h-22 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.45)] transform hover:scale-105 transition-transform duration-500 shrink-0"
+            />
+            <!-- Separator Vertikal -->
+            <div class="w-px h-12 sm:h-14 md:h-16 bg-white/20 shrink-0"></div>
+            <!-- Logo Ponpes Darul Muawanah -->
+            <img 
+              src="/logo/logo-ponpes-darul-muawanah.png" 
+              alt="Logo Pondok Pesantren Darul Muawanah" 
+              width="80"
+              height="80"
+              class="w-16 h-16 sm:w-20 sm:h-20 md:w-22 md:h-22 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.45)] transform hover:scale-105 transition-transform duration-500 opacity-95 hover:opacity-100 shrink-0"
+            />
+          </div>
+          <div class="space-y-1 sm:space-y-1.5">
+            <span class="text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] text-gold block drop-shadow font-sans">
               Kementerian Agama RI
             </span>
-            <div class="text-sm font-semibold text-white/90">
-              Yayasan MPP PUI Ciamis
+            <div class="text-sm sm:text-base font-bold text-white tracking-wide font-sans leading-snug">
+              MA Margajaya &middot; Ponpes Darul Muawanah
             </div>
-            <div class="text-xs text-emerald-300/80 font-medium">
-              Kompleks Ponpes Darul Muawanah
+            <div class="text-xs text-emerald-300/90 font-medium font-sans">
+              Yayasan Suhulul A'la &middot; Sukadana
             </div>
           </div>
         </div>
@@ -41,8 +56,8 @@ const vercelDeployHook = '';
             Portal Administrasi <br />
             <em class="italic text-gold not-italic">MA Margajaya.</em>
           </h1>
-          <p class="text-base sm:text-lg text-slate-200/90 leading-relaxed font-normal max-w-xl">
-            Pusat kendali terpadu untuk publikasi warta resmi madrasah, dokumentasi prestasi santri, dan pengelolaan arsip kegiatan civitas akademika.
+          <p class="text-base sm:text-lg text-slate-200/90 leading-relaxed font-normal max-w-xl font-sans">
+            Pusat kendali terpadu untuk publikasi warta resmi madrasah, dokumentasi prestasi santri, dan pengelolaan arsip kegiatan civitas akademika &amp; pesantren.
           </p>
         </div>
 
@@ -121,11 +136,11 @@ const vercelDeployHook = '';
           </form>
 
           <div class="mt-6 pt-5 border-t border-white/10 text-center">
-            <p class="text-xs text-slate-400 flex items-center justify-center gap-1.5 font-medium">
+            <p class="text-xs text-slate-400 flex items-center justify-center gap-1.5 font-medium font-sans">
               <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
               </svg>
-              <span>Akses Khusus Civitas MA Margajaya Sukadana</span>
+              <span>Akses Khusus Civitas MA Margajaya &amp; Ponpes Darul Muawanah</span>
             </p>
           </div>
 
@@ -145,20 +160,37 @@ const vercelDeployHook = '';
     <header class="ios-glass-nav sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
         
-        <!-- Left Brand: macOS App Identity -->
-        <div class="flex items-center gap-3.5">
-          <div class="w-10 h-10 rounded-2xl bg-black/50 border-2 border-white/20 p-1 flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_#022016]">
-            <img src="/logo/logo-ma-margajaya.png" alt="Logo" class="w-7 h-7 object-contain drop-shadow" />
+        <!-- Left Brand: macOS App Identity (Dual Logo MA Margajaya + Ponpes Darul Muawanah) -->
+        <a href="/" target="_blank" title="Lihat Website Utama" class="flex items-center gap-2.5 sm:gap-3.5 group shrink-0">
+          <div class="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 rounded-2xl bg-black/50 border-2 border-white/20 shrink-0 shadow-[2px_2px_0px_0px_#022016] backdrop-blur-md group-hover:border-gold/50 transition-all duration-300">
+            <!-- Logo MA Margajaya -->
+            <img 
+              src="/logo/logo-ma-margajaya-sm.png" 
+              alt="Logo MA Margajaya" 
+              width="32" 
+              height="32" 
+              class="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow transition-transform duration-300 group-hover:scale-105 shrink-0" 
+            />
+            <!-- Vertical Separator -->
+            <div class="w-px h-5 sm:h-6 bg-white/25 shrink-0"></div>
+            <!-- Logo Ponpes Darul Muawanah -->
+            <img 
+              src="/logo/logo-ponpes-darul-muawanah-sm.png" 
+              alt="Logo Ponpes Darul Muawanah" 
+              width="32" 
+              height="32" 
+              class="w-7 h-7 sm:w-8 sm:h-8 object-contain drop-shadow opacity-95 group-hover:opacity-100 transition-transform duration-300 group-hover:scale-105 shrink-0" 
+            />
           </div>
-          <div>
-            <h1 class="font-serif text-base sm:text-lg font-bold text-white tracking-tight leading-tight">
+          <div class="flex flex-col justify-center">
+            <h1 class="font-serif text-sm sm:text-base md:text-lg font-bold text-white tracking-tight leading-tight group-hover:text-gold transition-colors">
               MA Margajaya
             </h1>
-            <p class="text-xs text-emerald-300/80 font-medium font-sans">
-              Portal Warta &amp; Publikasi
+            <p class="text-[10px] sm:text-xs text-emerald-300/90 font-medium font-sans tracking-wide leading-none mt-0.5">
+              Ponpes Darul Muawanah &bull; CMS
             </p>
           </div>
-        </div>
+        </a>
 
         <!-- Center: Segmented Control Pill with Clean Brutalist Border -->
         <nav id="tab-nav" class="hidden md:flex items-center relative p-1.5 rounded-2xl bg-black/60 border-2 border-white/20 backdrop-blur-xl shadow-[3px_3px_0px_0px_#022016] gap-1" role="tablist">
@@ -832,6 +864,23 @@ const vercelDeployHook = '';
       </section>
 
     </main>
+
+    <!-- macOS / iOS Compact Dashboard Footer with Dual Logo -->
+    <footer class="mt-auto border-t-2 border-white/10 py-5 px-4 sm:px-6 bg-black/40 backdrop-blur-md">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-300">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1.5 p-1 rounded-xl bg-black/50 border border-white/15 shrink-0">
+            <img src="/logo/logo-ma-margajaya-sm.png" alt="Logo MA Margajaya" width="24" height="24" class="w-6 h-6 object-contain" />
+            <div class="w-px h-4 bg-white/20"></div>
+            <img src="/logo/logo-ponpes-darul-muawanah-sm.png" alt="Logo Ponpes Darul Muawanah" width="24" height="24" class="w-6 h-6 object-contain opacity-90" />
+          </div>
+          <span class="font-sans font-semibold text-white tracking-wide">MA Margajaya &middot; Pondok Pesantren Darul Muawanah</span>
+        </div>
+        <p class="font-sans text-[11px] text-slate-400 text-center sm:text-right">
+          Portal Administrasi Terpadu &bull; Sukadana, Ciamis
+        </p>
+      </div>
+    </footer>
   </div>
 
 
@@ -867,6 +916,19 @@ const vercelDeployHook = '';
 
       <!-- Article Reading Body -->
       <div class="p-6 sm:p-10 space-y-6">
+        <!-- Dual Brand Official Publication Badge -->
+        <div class="flex items-center gap-3 p-3 rounded-2xl bg-black/40 border border-white/15">
+          <div class="flex items-center gap-2 shrink-0">
+            <img src="/logo/logo-ma-margajaya-sm.png" alt="Logo MA Margajaya" width="24" height="24" class="w-6 h-6 object-contain" />
+            <div class="w-px h-4 bg-white/20"></div>
+            <img src="/logo/logo-ponpes-darul-muawanah-sm.png" alt="Logo Ponpes Darul Muawanah" width="24" height="24" class="w-6 h-6 object-contain opacity-90" />
+          </div>
+          <div class="text-xs font-sans text-slate-300">
+            <span class="font-bold text-white uppercase tracking-wider text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30 mr-1.5">Publikasi Resmi</span>
+            MA Margajaya &middot; Ponpes Darul Muawanah Sukadana
+          </div>
+        </div>
+
         <h2 id="pv-title" class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight pr-6"></h2>
         
         <div class="flex flex-wrap items-center gap-4 text-xs text-slate-300/80 pb-4 border-b-2 border-white/10 font-sans">
