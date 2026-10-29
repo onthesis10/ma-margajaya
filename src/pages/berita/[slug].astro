@@ -1,61 +1,218 @@
 ---
-import PageLayout from '../../layouts/PageLayout.astro';
-import Container from '../../components/ui/Container.astro';
-import { fetchNewsArticles, formatIndonesianDate, estimateReadingTime, sanitizeArticleHtml, stripHtml, formatDriveImageUrl, type NewsArticle } from '../../lib/news';
+import MainLayout from '../../components/layout/MainLayout.astro';
+import ContactSection from '../../components/sections/ContactSection.astro';
+import '../../styles/global.css';
+import {
+  fetchNewsArticles,
+  formatIndonesianDate,
+  estimateReadingTime,
+  stripHtml,
+  formatDriveImageUrl,
+  type NewsArticle,
+} from '../../lib/news';
 
 export async function getStaticPaths() {
   const articles = await fetchNewsArticles();
   return articles.map(article => ({
     params: { slug: article.slug },
-    props: { article },
+    props: { article, allArticles: articles },
   }));
 }
 
 interface Props {
   article: NewsArticle;
+  allArticles: NewsArticle[];
 }
 
-const { article } = Astro.props;
+const { article, allArticles = [] } = Astro.props;
 
-const breadcrumbs = [
-  { label: 'Berita', href: '/berita' },
-  ...(article.kategori ? [{ label: article.kategori, href: `/berita/topik/${encodeURIComponent(article.kategori.toLowerCase().replace(/\s+/g, '-'))}` }] : []),
-  { label: article.judul, href: `/berita/${article.slug}` }
-];
-
-// Gunakan Astro.site agar canonical URL selalu konsisten dengan domain resmi
+// Canonical URL
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? 'https://www.mamargajaya.sch.id';
 const articleUrl = `${siteUrl}/berita/${article.slug}`;
 
-// URL endpoint untuk view-counter.ts
-const statsEndpoint =
-  import.meta.env.PUBLIC_STATS_API_URL ||
-  import.meta.env.PUBLIC_NEWS_API_URL ||
-  '';
+// Breadcrumbs
+const breadcrumbs = [
+  { label: 'Beranda', href: '/' },
+  { label: 'Berita', href: '/berita' },
+  ...(article.kategori
+    ? [{ label: article.kategori, href: `/berita/topik/${encodeURIComponent(article.kategori.toLowerCase().replace(/\s+/g, '-'))}` }]
+    : []),
+  { label: article.judul, href: `/berita/${article.slug}` },
+];
 
 const formattedDate = formatIndonesianDate(article.tanggal);
 const readingTime = estimateReadingTime(article.isi);
 
-// Detect whether content is stored as HTML (from WYSIWYG) or plain text (legacy)
-const isiContent = article.isi || '';
-const isHtmlContent = isiContent.trimStart().startsWith('<');
-const paragraphs = !isHtmlContent ? isiContent.split(/\n\s*\n/).filter(p => p.trim()) : [];
-
-// Buat description bersih (140-160 karakter): strip tag HTML, potong di batas kata ramah SEO
-const plainText = stripHtml(isiContent);
-const fallbackDesc = 'Warta dan informasi resmi civitas akademika MA Margajaya Sukadana bersama Pondok Pesantren Darul Muawanah, Jln. Ciilat - Gardu Margajaya, Ciamis.';
+// SEO description
+const rawContent = article.isi || '';
+const plainText = stripHtml(rawContent);
+const fallbackDesc = 'Warta dan informasi resmi civitas akademika MA Margajaya Sukadana, Ciamis.';
 let articleDescription = fallbackDesc;
 if (plainText.length >= 140) {
   const maxLen = 155;
   const cutIndex = plainText.lastIndexOf(' ', maxLen);
   articleDescription = (cutIndex > 130 ? plainText.substring(0, cutIndex) : plainText.substring(0, maxLen)) + '…';
 } else if (plainText.length > 0) {
-  const combined = `${plainText} — Simak publikasi warta resmi civitas akademika MA Margajaya di Kompleks Pondok Pesantren Darul Muawanah Sukadana, Ciamis.`;
+  const combined = `${plainText} — Simak warta resmi civitas akademika MA Margajaya Sukadana, Ciamis.`;
   articleDescription = combined.length > 158 ? combined.substring(0, combined.lastIndexOf(' ', 155)) + '…' : combined;
 }
+
+// ============================================================
+// HTML PARSER: Convert Google Docs / Gemini dump → clean paragraphs
+// Structure: <div><div><div><div><span><b>CITY</b> – text</span>...</div><br><div>...</div>...</div></div></div></div>
+// ============================================================
+interface ParsedParagraph {
+  html: string;        // Cleaned inline HTML (may contain <em>, <a>, <blockquote>)
+  isBlockquote: boolean;
+}
+
+function parseArticleContent(raw: string): ParsedParagraph[] {
+  if (!raw) return [];
+
+  // --- Step 1: Strip Gemini / Angular bloat ---
+  let text = raw
+    .replace(/<source-footnote\b[^>]*>[\s\S]*?<\/source-footnote>/gi, '')
+    .replace(/<sources-carousel-inline\b[^>]*>[\s\S]*?<\/sources-carousel-inline>/gi, '')
+    .replace(/<source-inline-chip\b[^>]*>[\s\S]*?<\/source-inline-chip>/gi, '')
+    .replace(/<!--[\s\S]*?-->/gi, '')
+    .replace(/\s+style="[^"]*"/gi, '')
+    .replace(/\s+(_ngcontent[^\s=>]*|_nghost[^\s=>]*|inline-copy-host|ng-[a-z0-9_-]+)(?:="[^"]*"|='[^']*'|=[^\s>]+)?/gi, '')
+    .replace(/\s+data-[a-z0-9_-]+="[^"]*"/gi, '')
+    .replace(/\s+aria-[a-z0-9_-]+="[^"]*"/gi, '')
+    .replace(/\s+dir="[^"]*"/gi, '')
+    .replace(/\s+id="[^"]*"/gi, '')
+    .replace(/\s+class="[^"]*"/gi, '');
+
+  // If plain text (no block-level tags), split by double newline
+  const isHtml = /<(?:div|p|br|h[1-6]|blockquote|ul|ol|li)\b/i.test(text);
+  if (!isHtml) {
+    return text
+      .split(/\n\s*\n/)
+      .map(p => p.trim())
+      .filter(p => p.length > 4)
+      .map(p => ({ html: p, isBlockquote: false }));
+  }
+
+  // --- Step 2: Mark block boundaries ---
+  // Replace structural tags with sentinel so we can split cleanly
+  let marked = text
+    .replace(/<\/(?:div|p|h[1-6]|li|section|article|blockquote)>/gi, '\n§§\n')
+    .replace(/<(?:div|p|h[1-6]|section|article|blockquote)[^>]*>/gi, '\n§§\n')
+    .replace(/<br\s*[\/]?>/gi, '\n§§\n');
+
+  // --- Step 3: Extract text+inline-html per chunk ---
+  const rawChunks = marked.split('\n§§\n');
+
+  const paragraphs: ParsedParagraph[] = [];
+
+  for (let chunk of rawChunks) {
+    // Strip only wrapper span/b/strong — preserve em/i/a
+    let cleaned = chunk
+      // Remove empty spans completely
+      .replace(/<span[^>]*>\s*<\/span>/gi, '')
+      // Strip span wrappers but keep text
+      .replace(/<\/?span[^>]*>/gi, '')
+      // Convert <b>/<strong> to nothing (we handle dateline bold ourselves)
+      .replace(/<\/?(?:b|strong)[^>]*>/gi, '')
+      // Collapse whitespace
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    // Skip empty or only punctuation
+    if (!cleaned || cleaned.replace(/[.,;:!?–—\-\s]/g, '').length < 3) continue;
+
+    // Detect if this chunk is a blockquote / pull-quote
+    // (starts with an open/smart quote and is a standalone sentence)
+    const trimmed = cleaned.trimStart();
+    const isBlockquote =
+      (trimmed.startsWith('"') || trimmed.startsWith('"') || trimmed.startsWith('\u201C')) &&
+      cleaned.length > 30;
+
+    paragraphs.push({ html: cleaned, isBlockquote });
+  }
+
+  // --- Step 4: Merge very short fragments back into the previous paragraph ---
+  const merged: ParsedParagraph[] = [];
+  for (const para of paragraphs) {
+    const last = merged[merged.length - 1];
+    // Fragment: ends without terminal punctuation AND is short
+    const isFragment = para.html.length < 20 && !/[.!?]$/.test(para.html.trim());
+    if (last && isFragment && !last.isBlockquote && !para.isBlockquote) {
+      last.html = (last.html + ' ' + para.html).trim();
+    } else {
+      merged.push({ ...para });
+    }
+  }
+
+  return merged;
+}
+
+// Inject dateline + drop cap into the FIRST paragraph text
+function injectDropcapDateline(para: ParsedParagraph, idx: number): ParsedParagraph {
+  if (idx !== 0) return para;
+
+  let html = para.html;
+
+  // Dateline pattern: "CIAMIS – " or "CIAMIS — " (en-dash U+2013 or em-dash U+2014 or plain hyphen)
+  // Drop cap = huruf PERTAMA dari nama kota (mis. "C" dari "CIAMIS")
+  // Dateline label = sisa kota + dash (mis. "IAMIS —")
+  const datelineMatch = html.match(/^([A-Z\u00C0-\u017E]{3,20})\s*[\u002D\u2013\u2014]\s*/u);
+  if (datelineMatch) {
+    const city = datelineMatch[1];               // "CIAMIS"
+    const rest = html.slice(datelineMatch[0].length); // teks setelah "CIAMIS – "
+    const dropLetter = city.charAt(0);           // "C"  ← drop cap
+    const restCity   = city.slice(1);            // "IAMIS"
+    return {
+      html: `<span class="dc-dropcap">${dropLetter}</span><span class="dc-city">${restCity} —</span> ${rest}`,
+      isBlockquote: false,
+    };
+  }
+
+  // No dateline: apply drop cap to first letter
+  if (para.isBlockquote) return para;
+  const firstLetter = html.match(/^([A-Za-z\u00C0-\u017E])/);
+  if (firstLetter) {
+    return {
+      html: `<span class="dc-dropcap">${firstLetter[1]}</span>${html.slice(firstLetter[1].length)}`,
+      isBlockquote: false,
+    };
+  }
+
+  return para;
+}
+
+const parsedParagraphs = parseArticleContent(rawContent).map((p, i) =>
+  injectDropcapDateline(p, i)
+);
+
+// Sidebar data
+const otherArticles = allArticles.filter(a => a.slug !== article.slug);
+
+const terpopuler = [...otherArticles]
+  .sort((a, b) => {
+    const scoreA = (a.unggulan ? 2 : 0) + (a.headline ? 1 : 0);
+    const scoreB = (b.unggulan ? 2 : 0) + (b.headline ? 1 : 0);
+    if (scoreB !== scoreA) return scoreB - scoreA;
+    return new Date(b.tanggal || 0).getTime() - new Date(a.tanggal || 0).getTime();
+  })
+  .slice(0, 5);
+
+const sameCat = otherArticles.filter(
+  a => a.kategori && a.kategori.toLowerCase() === (article.kategori || '').toLowerCase()
+);
+const beritaTerkait = [
+  ...sameCat,
+  ...otherArticles.filter(a => !sameCat.some(s => s.slug === a.slug)),
+].slice(0, 4);
+
+const bacaJuga = otherArticles.slice(0, 3);
+
+// Stats view counter
+const statsEndpoint =
+  import.meta.env.PUBLIC_STATS_API_URL || import.meta.env.PUBLIC_NEWS_API_URL || '';
 ---
 
-<PageLayout
+<MainLayout
   title={article.judul}
   description={articleDescription}
   image={article.url_foto || undefined}
@@ -63,245 +220,1284 @@ if (plainText.length >= 140) {
   publishedTime={article.tanggal ? new Date(article.tanggal).toISOString() : undefined}
   author={article.penulis || 'Humas MA Margajaya'}
   breadcrumbs={breadcrumbs}
+  showHeader={false}
 >
-  {/* Meta untuk view-counter.ts */}
-  {statsEndpoint && (
-    <meta slot="head" name="vc-endpoint" content={statsEndpoint} />
-  )}
+  {/* Google Fonts: Newsreader (editorial serif) */}
+  <link rel="preconnect" href="https://fonts.googleapis.com" slot="head" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin slot="head" />
+  <link
+    rel="preload"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&display=swap"
+    slot="head"
+  />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&display=swap"
+    slot="head"
+  />
+  {statsEndpoint && <meta slot="head" name="vc-endpoint" content={statsEndpoint} />}
   <meta slot="head" name="vc-slug" content={article.slug} />
-  <section class="py-12 md:py-20 bg-slate-50/50 min-h-screen relative overflow-hidden" data-motion-section>
-    
-    <!-- Ambient Background -->
-    <div class="glow-blob w-[500px] h-[500px] bg-emerald-500/10 -top-32 -left-32"></div>
-    <div class="glow-blob w-[600px] h-[600px] bg-gold/10 top-1/3 -right-40"></div>
 
-    <Container>
-      
-      <!-- Official Print Letterhead (ONLY VISIBLE WHEN PRINTING) -->
-      <div class="print-only mb-6 border-b-2 border-black pb-4 text-center font-serif">
-        <div class="text-xs uppercase font-bold tracking-widest text-slate-600">KEMENTERIAN AGAMA REPUBLIK INDONESIA</div>
-        <div class="text-xl font-bold uppercase tracking-wide text-black mt-1">MADRASAH ALIYAH MARGAJAYA SUKADANA</div>
-        <div class="text-[11px] text-slate-600 mt-0.5">Kompleks Pondok Pesantren Darul Muawanah · Dusun Jontor RT 01/04 Margajaya, Sukadana, Ciamis</div>
-        <div class="text-[10px] uppercase tracking-widest text-slate-500 mt-2 border-t border-slate-300 pt-1">DOKUMEN WARTA RESMI CIVITAS AKADEMIKA</div>
+  <!-- ===================================================
+       TOP NAV: Minimal back bar (no global header/navbar)
+       =================================================== -->
+  <header class="no-print art-topbar">
+    <div class="art-topbar-inner">
+      <!-- Back button -->
+      <a href="/berita" class="art-back-btn" aria-label="Kembali ke daftar berita">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span>Berita</span>
+      </a>
+
+      <!-- Wordmark: logo MA + logo Ponpes -->
+      <a href="/" class="art-wordmark" tabindex="-1">
+        <img src="/logo/logo-ma-margajaya-sm.png" alt="" width="22" height="20" aria-hidden="true" />
+        <img src="/logo/logo-ponpes-darul-muawanah-sm.png" alt="" width="22" height="22" aria-hidden="true" class="art-logo-ponpes" />
+        <span>MA Margajaya</span>
+      </a>
+
+      <!-- Share quick action -->
+      <button id="top-share-btn" type="button" class="art-share-btn" title="Bagikan artikel ini" aria-label="Bagikan artikel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Print header (visible only on print) -->
+  <div class="print-only art-print-header">
+    <p class="art-print-school">MADRASAH ALIYAH MARGAJAYA SUKADANA · CIAMIS · JAWA BARAT</p>
+    <p class="art-print-label">DOKUMEN WARTA RESMI</p>
+  </div>
+
+  <!-- ===================================================
+       MAIN EDITORIAL PAGE
+       =================================================== -->
+  <div class="art-page">
+    <div class="art-container">
+
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="no-print art-breadcrumb">
+        <ol>
+          <li><a href="/">Beranda</a></li>
+          <li aria-hidden="true">/</li>
+          <li><a href="/berita">Berita</a></li>
+          {article.kategori && (
+            <>
+              <li aria-hidden="true">/</li>
+              <li>
+                <a href={`/berita/topik/${encodeURIComponent(article.kategori.toLowerCase().replace(/\s+/g, '-'))}`}>
+                  {article.kategori}
+                </a>
+              </li>
+            </>
+          )}
+        </ol>
+      </nav>
+
+      <!-- Section Label -->
+      <div class="art-section-label">
+        <span>{article.kategori || 'WARTA RESMI'}</span>
       </div>
 
-      <article id="article-main" class="max-w-3xl mx-auto space-y-10">
-        
-        <!-- Navigation Back -->
-        <div class="no-print">
-          <a 
-            href="/berita" 
-            class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-emerald-800 transition-colors py-2 px-4 rounded-full bg-white border border-slate-200 shadow-sm"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Kembali ke Daftar Warta
-          </a>
-        </div>
+      <!-- H1: Judul -->
+      <h1 class="art-title">{article.judul}</h1>
 
-        <!-- Header Info -->
-        <div class="space-y-6 border-b border-slate-200/80 pb-8">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap items-center gap-2">
-              <span class="px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold uppercase tracking-wider">
-                {article.kategori || 'Warta Resmi'}
-              </span>
-              {article.kategori && (
+      <!-- Byline bar -->
+      <div class="art-byline">
+        <div class="art-byline-left">
+          <span class="art-byline-author">{article.penulis || 'Humas MA Margajaya'}</span>
+          <span class="art-byline-sep" aria-hidden="true">·</span>
+          <time datetime={article.tanggal || undefined} class="art-byline-date">{formattedDate}</time>
+          <span class="art-byline-sep" aria-hidden="true">·</span>
+          <span class="art-byline-read">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 7v5l3 3"/>
+            </svg>
+            {readingTime}
+          </span>
+        </div>
+        <div class="art-byline-actions no-print">
+          <!-- WhatsApp -->
+          <a
+            href={`https://api.whatsapp.com/send?text=${encodeURIComponent(article.judul + ' ' + articleUrl)}`}
+            target="_blank" rel="noopener noreferrer"
+            aria-label="Bagikan ke WhatsApp" title="WhatsApp"
+            class="art-action-icon"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </a>
+          <!-- Facebook -->
+          <a
+            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`}
+            target="_blank" rel="noopener noreferrer"
+            aria-label="Bagikan ke Facebook" title="Facebook"
+            class="art-action-icon"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+          <!-- X / Twitter -->
+          <a
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.judul)}&url=${encodeURIComponent(articleUrl)}`}
+            target="_blank" rel="noopener noreferrer"
+            aria-label="Bagikan ke X" title="X"
+            class="art-action-icon"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+          </a>
+          <!-- Copy link -->
+          <button id="btn-copy-slug" type="button" aria-label="Salin tautan" title="Salin tautan" class="art-action-icon art-copy-btn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+            <span id="copy-tip" class="art-copy-tip" aria-live="polite">Tersalin ✓</span>
+          </button>
+          <!-- Print -->
+          <button type="button" onclick="window.print()" aria-label="Cetak artikel" title="Cetak" class="art-action-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hero Image -->
+      {article.url_foto && (
+        <figure class="art-hero-figure">
+          <img
+            src={formatDriveImageUrl(article.url_foto, 1200)}
+            alt={article.judul}
+            referrerpolicy="no-referrer"
+            loading="eager"
+            width="1200"
+            height="750"
+            onerror="this.onerror=null; this.src='/og-default.png';"
+            class="art-hero-img"
+          />
+          <figcaption class="art-hero-caption">
+            <span>Dokumentasi Resmi Civitas Akademika MA Margajaya Sukadana</span>
+            <span class="art-hero-credit">Foto: Tim Redaksi</span>
+          </figcaption>
+        </figure>
+      )}
+
+      <!-- =============================================
+           Article Body: 2-col on desktop
+           ============================================= -->
+      <div class="art-body-grid">
+
+        <!-- Main article column -->
+        <article id="article-main" class="art-main-col">
+          <div class="art-prose">
+            {parsedParagraphs.map((para, idx) =>
+              para.isBlockquote ? (
+                <blockquote class="art-pullquote">
+                  <p set:html={para.html} />
+                </blockquote>
+              ) : (
+                <p class={idx === 0 ? 'art-first-para' : undefined} set:html={para.html} />
+              )
+            )}
+          </div>
+
+          <!-- Article Footer: tags + share text bar -->
+          <footer class="art-article-footer">
+            {article.kategori && (
+              <div class="art-tags">
+                <span class="art-tags-label">Kategori:</span>
                 <a
                   href={`/berita/topik/${encodeURIComponent(article.kategori.toLowerCase().replace(/\s+/g, '-'))}`}
-                  class="text-[10px] font-semibold text-ink-muted hover:text-emerald-800 transition-colors underline underline-offset-2"
+                  class="art-tag"
                 >
-                  Lihat topik →
+                  {article.kategori}
                 </a>
-              )}
-            </div>
-            <span class="text-xs font-medium text-slate-400 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path stroke-linecap="round" d="M12 7v5l3 3"></path></svg>
-              <span>{readingTime}</span>
-            </span>
-          </div>
-
-          <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 leading-[1.18] tracking-tight">
-            {article.judul}
-          </h2>
-
-          <!-- Author & Date Strip -->
-          <div class="flex flex-wrap items-center justify-between gap-4 pt-2 text-xs text-slate-500">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-900 flex items-center justify-center font-bold font-serif text-sm">
-                MA
               </div>
-              <div>
-                <div class="font-bold text-slate-800 text-sm">{article.penulis || 'Humas MA Margajaya'}</div>
-                <div class="text-slate-400">Rilis Resmi Madrasah</div>
-              </div>
+            )}
+            <div class="art-share-text no-print">
+              <span class="art-share-label">Bagikan:</span>
+              <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(article.judul + ' ' + articleUrl)}`} target="_blank" rel="noopener noreferrer" class="art-share-link">WhatsApp</a>
+              <span class="art-share-dot" aria-hidden="true">·</span>
+              <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`} target="_blank" rel="noopener noreferrer" class="art-share-link">Facebook</a>
+              <span class="art-share-dot" aria-hidden="true">·</span>
+              <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.judul)}&url=${encodeURIComponent(articleUrl)}`} target="_blank" rel="noopener noreferrer" class="art-share-link">X</a>
+              <span class="art-share-dot" aria-hidden="true">·</span>
+              <button id="btn-copy-text" type="button" class="art-share-link art-share-copy">Salin tautan</button>
             </div>
+          </footer>
+        </article>
 
-            <div class="flex items-center gap-3">
-              <div class="text-right">
-                <div class="font-bold text-emerald-800">{formattedDate}</div>
-                <div class="text-emerald-600 font-medium">Terverifikasi &bull; Publik</div>
+        <!-- Sidebar -->
+        <aside class="art-sidebar no-print" aria-label="Artikel lainnya">
+          <!-- Terpopuler -->
+          {terpopuler.length > 0 && (
+            <section class="art-sidebar-card">
+              <div class="art-sidebar-heading">
+                <h2>Terpopuler</h2>
+                <span class="art-sidebar-dot" aria-hidden="true"></span>
               </div>
-            </div>
-          </div>
-
-          <!-- Social Share Bar & Print Action -->
-          <div class="pt-4 border-t border-slate-100 no-print flex flex-wrap items-center justify-between gap-4">
-            <div class="space-y-1.5">
-              <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Bagikan Warta:
-              </div>
-              <div class="flex flex-wrap items-center gap-2">
-                <!-- WhatsApp -->
-                <a 
-                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(article.judul + ' ' + articleUrl)}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 shadow-sm transition-all"
-                >
-                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                  WhatsApp
-                </a>
-
-                <!-- Facebook -->
-                <a 
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(articleUrl)}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1877F2] text-white text-xs font-semibold hover:bg-blue-700 shadow-sm transition-all"
-                >
-                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                  Facebook
-                </a>
-
-                <!-- X / Twitter -->
-                <a 
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.judul)}&url=${encodeURIComponent(articleUrl)}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 text-white text-xs font-semibold hover:bg-black shadow-sm transition-all"
-                >
-                  <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                  X
-                </a>
-
-                <!-- Copy Link -->
-                <button 
-                  id="btn-copy-slug" 
-                  type="button" 
-                  class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-300 transition-all shadow-sm"
-                >
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                  <span id="label-copy-slug">Salin Tautan</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Print Button -->
-            <button 
-              type="button" 
-              onclick="window.print()"
-              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-300 shadow-sm text-xs font-bold uppercase tracking-wider transition-all self-end"
-            >
-              <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-              </svg>
-              Cetak Dokumen
-            </button>
-          </div>
-        </div>
-        
-        <!-- Cover Photo -->
-        {article.url_foto && (
-          <div class="rounded-3xl overflow-hidden shadow-lg border border-slate-200/80 bg-slate-900">
-            <img 
-              src={formatDriveImageUrl(article.url_foto, 1200)} 
-              alt={article.judul} 
-              referrerpolicy="no-referrer"
-              loading="eager"
-              width="1200"
-              height="750"
-              class="w-full max-h-[580px] object-cover" 
-            />
-            <div class="p-3.5 bg-slate-900/90 text-center text-xs text-white/70 italic backdrop-blur-md">
-              Dokumentasi Resmi Civitas Akademika MA Margajaya Sukadana - Ciamis
-            </div>
-          </div>
-        )}
-
-        <!-- Formatted Body -->
-        <div class="prose-article max-w-none">
-          {isHtmlContent ? (
-            <div set:html={sanitizeArticleHtml(isiContent)} />
-          ) : (
-            // Legacy plain text: split by double newline into paragraphs
-            paragraphs.map(p => (
-              <p class="mb-6 whitespace-pre-line text-justify leading-relaxed">{p}</p>
-            ))
+              <ol class="art-popular-list">
+                {terpopuler.map((item, index) => (
+                  <li class="art-popular-item">
+                    <span class="art-popular-num">{String(index + 1).padStart(2, '0')}</span>
+                    <div class="art-popular-text">
+                      <a href={`/berita/${item.slug}`} class="art-popular-title">{item.judul}</a>
+                      <time class="art-popular-date">{formatIndonesianDate(item.tanggal)}</time>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
           )}
-        </div>
 
-        <!-- Academic Footer Sign-off -->
-        <div class="mt-16 pt-8 border-t border-slate-200 space-y-6">
-          <div class="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <div class="font-serif font-bold text-lg text-blue-ink">Madrasah Aliyah Margajaya</div>
-              <div class="text-xs text-slate-500 mt-0.5">Kompleks Ponpes Darul Muawanah, Sukadana - Ciamis, Jawa Barat</div>
-            </div>
-            <a 
-              href="/berita" 
-              class="px-5 py-2.5 rounded-full bg-emerald-800 text-white text-xs font-bold uppercase tracking-wider hover:bg-emerald-900 transition-colors shadow-sm no-print"
-            >
-              Lihat Warta Lainnya &rarr;
-            </a>
+          <!-- Berita Terkait -->
+          {beritaTerkait.length > 0 && (
+            <section class="art-sidebar-card">
+              <div class="art-sidebar-heading">
+                <h2>Berita Terkait</h2>
+                <span class="art-sidebar-dot art-sidebar-dot--gold" aria-hidden="true"></span>
+              </div>
+              <ul class="art-related-list">
+                {beritaTerkait.map(item => (
+                  <li class="art-related-item">
+                    <a href={`/berita/${item.slug}`} class="art-related-title">{item.judul}</a>
+                    <div class="art-related-meta">
+                      {item.kategori && <span class="art-related-cat">{item.kategori}</span>}
+                      <span class="art-related-date">{formatIndonesianDate(item.tanggal)}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </aside>
+      </div>
+
+      <!-- Baca Juga: 3 kartu -->
+      {bacaJuga.length > 0 && (
+        <section class="art-read-more no-print">
+          <div class="art-section-header">
+            <h2 class="art-section-title">Baca Juga</h2>
+            <a href="/berita" class="art-section-all">Semua berita →</a>
           </div>
-        </div>
+          <div class="art-cards-grid">
+            {bacaJuga.map((item, idx) => (
+              <article class={`art-card ${idx > 0 ? 'art-card--border' : ''}`}>
+                {item.url_foto ? (
+                  <a href={`/berita/${item.slug}`} class="art-card-img-wrap">
+                    <img
+                      src={formatDriveImageUrl(item.url_foto, 600)}
+                      alt={item.judul}
+                      referrerpolicy="no-referrer"
+                      loading="lazy"
+                      width="600"
+                      height="400"
+                      onerror="this.onerror=null; this.src='/og-default.png';"
+                      class="art-card-img"
+                    />
+                  </a>
+                ) : (
+                  <div class="art-card-img-placeholder">
+                    <span>MA Margajaya</span>
+                  </div>
+                )}
+                <div class="art-card-body">
+                  <span class="art-card-cat">{item.kategori || 'Warta'}</span>
+                  <h3 class="art-card-title">
+                    <a href={`/berita/${item.slug}`}>{item.judul}</a>
+                  </h3>
+                  <time class="art-card-date">{formatIndonesianDate(item.tanggal)}</time>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
-      </article>
-    </Container>
-  </section>
-</PageLayout>
+    </div><!-- /art-container -->
+  </div><!-- /art-page -->
 
+  <ContactSection />
+</MainLayout>
+
+<!-- =====================================================
+     STYLES: macOS / iOS editorial, fully self-contained
+     ===================================================== -->
 <style is:global>
-  @media print {
-    body {
-      background: white !important;
-      color: black !important;
-    }
-    .no-print, header, footer, #main-header, nav {
-      display: none !important;
-    }
-    .print-only {
-      display: block !important;
-    }
-    article#article-main {
-      max-width: 100% !important;
-      padding: 0 !important;
-      margin: 0 !important;
+  /* Hide the global header/navbar on this page */
+  #main-header,
+  #top-bar,
+  #nav-container,
+  #floating-ppdb-cta {
+    display: none !important;
+  }
+
+  /* ── Design Tokens ───────────────────────────── */
+  :root {
+    --art-paper:    #FAF8F3;
+    --art-ink:      #1A1A17;
+    --art-ink-soft: #3D3D38;
+    --art-ink-mute: #6A6A64;
+    --art-ink-faint:#A8A49C;
+    --art-green:    #087A35;
+    --art-green-dk: #065C27;
+    --art-gold:     #D4A01B;
+    --art-border:   #E5E0D8;
+    --art-bg-card:  #FFFFFF;
+    --art-radius:   14px;
+    --art-sans:     'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --art-serif:    'Newsreader', Georgia, 'Times New Roman', serif;
+  }
+
+  /* ── Base ─────────────────────────────────────── */
+  .art-page {
+    background: var(--art-paper);
+    color: var(--art-ink);
+    min-height: 100vh;
+    padding-top: 0;
+    padding-bottom: 5rem;
+  }
+
+  .art-container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  @media (min-width: 640px)  { .art-container { padding: 0 1.5rem; } }
+  @media (min-width: 1024px) { .art-container { padding: 0 2rem; } }
+
+  /* ── Top navigation bar ───────────────────────── */
+  .art-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(250, 248, 243, 0.92);
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    border-bottom: 1px solid var(--art-border);
+  }
+
+  .art-topbar-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px)  { .art-topbar-inner { padding: 0 1.5rem; } }
+  @media (min-width: 1024px) { .art-topbar-inner { padding: 0 2rem; } }
+
+  .art-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--art-sans);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--art-ink-mute);
+    text-decoration: none;
+    padding: 0.3rem 0.75rem 0.3rem 0.5rem;
+    border-radius: 20px;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .art-back-btn:hover {
+    color: var(--art-green);
+    background: rgba(8, 122, 53, 0.07);
+  }
+
+  .art-back-btn svg {
+    flex-shrink: 0;
+    stroke: var(--art-green);
+  }
+
+  .art-wordmark {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    font-family: var(--art-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--art-ink);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .art-logo-ponpes {
+    opacity: 0.85;
+  }
+
+  @media (max-width: 479px) {
+    .art-wordmark span { display: none; }
+  }
+
+  .art-share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--art-ink-mute);
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .art-share-btn:hover {
+    color: var(--art-green);
+    background: rgba(8, 122, 53, 0.07);
+  }
+
+  /* ── Breadcrumb ───────────────────────────────── */
+  .art-breadcrumb {
+    padding-top: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .art-breadcrumb ol {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+  }
+
+  .art-breadcrumb li {
+    font-family: var(--art-sans);
+    font-size: 0.75rem;
+    color: var(--art-ink-faint);
+  }
+
+  .art-breadcrumb a {
+    color: var(--art-ink-mute);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .art-breadcrumb a:hover { color: var(--art-green); }
+
+  /* ── Section Label ────────────────────────────── */
+  .art-section-label {
+    border-top: 1px solid var(--art-border);
+    padding-top: 0.875rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .art-section-label span {
+    font-family: var(--art-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--art-green);
+  }
+
+  /* ── Article Title ────────────────────────────── */
+  .art-title {
+    font-family: var(--art-serif);
+    font-size: clamp(1.875rem, 4vw + 1rem, 3.25rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--art-ink);
+    max-width: 22ch;
+    margin-bottom: 1.25rem;
+    text-wrap: balance;
+  }
+
+  /* ── Byline bar ───────────────────────────────── */
+  .art-byline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.875rem 0;
+    border-top: 1px solid var(--art-border);
+    border-bottom: 1px solid var(--art-border);
+    margin-bottom: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .art-byline {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
     }
   }
 
-  .print-only {
-    display: none;
+  .art-byline-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.625rem;
+  }
+
+  .art-byline-author {
+    font-family: var(--art-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--art-ink);
+  }
+
+  .art-byline-sep {
+    color: var(--art-ink-faint);
+    font-size: 0.75rem;
+    user-select: none;
+  }
+
+  .art-byline-date {
+    font-family: var(--art-sans);
+    font-size: 0.8125rem;
+    color: var(--art-ink-soft);
+  }
+
+  .art-byline-read {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--art-sans);
+    font-size: 0.8125rem;
+    color: var(--art-ink-mute);
+  }
+
+  .art-byline-read svg { stroke: var(--art-green); }
+
+  .art-byline-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+  }
+
+  .art-action-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--art-ink-mute);
+    cursor: pointer;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .art-action-icon:hover { color: var(--art-green); background: rgba(8,122,53,0.07); }
+
+  .art-copy-btn { position: relative; }
+
+  .art-copy-tip {
+    position: absolute;
+    top: -2.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--art-ink);
+    color: #fff;
+    font-family: var(--art-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .art-copy-tip.visible { opacity: 1; }
+
+  /* ── Hero Image ───────────────────────────────── */
+  .art-hero-figure {
+    margin-bottom: 2.5rem;
+  }
+
+  .art-hero-img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    display: block;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.06);
+    background: var(--art-border);
+  }
+
+  @media (min-width: 640px) {
+    .art-hero-img { aspect-ratio: 3/2; }
+  }
+
+  .art-hero-caption {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    border-top: 1px solid var(--art-border);
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+    font-family: var(--art-sans);
+    font-size: 0.8125rem;
+    font-style: italic;
+    color: var(--art-ink-mute);
+    line-height: 1.5;
+  }
+
+  .art-hero-credit {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--art-ink-faint);
+  }
+
+  /* ── Body Grid: main + sidebar ────────────────── */
+  .art-body-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .art-body-grid {
+      grid-template-columns: 1fr 288px;
+      gap: 3.5rem;
+      align-items: start;
+    }
+  }
+
+  /* ── Article Prose ────────────────────────────── */
+  .art-main-col {
+    min-width: 0;
+    max-width: 720px;
+    width: 100%;
+  }
+
+  .art-prose {
+    font-family: var(--art-serif);
+    font-size: 1.125rem;
+    line-height: 1.78;
+    color: var(--art-ink-soft);
+    font-weight: 400;
+  }
+
+  @media (max-width: 767px) {
+    .art-prose {
+      font-size: 1.0625rem;
+      line-height: 1.72;
+    }
+  }
+
+  /* Paragraphs: tight natural spacing */
+  .art-prose p {
+    margin: 0 0 1.15em;
+    font-weight: 400;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    font-family: inherit;
+    hyphens: auto;
+  }
+
+  /* No extra margin on last paragraph */
+  .art-prose p:last-child { margin-bottom: 0; }
+
+  /* Kill any rogue bold from nested tags */
+  .art-prose b,
+  .art-prose strong { font-weight: 400; }
+
+  .art-prose em,
+  .art-prose i    { font-style: italic; }
+
+  .art-prose a {
+    color: var(--art-green);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .art-prose a:hover { color: var(--art-green-dk); }
+
+  /* H2/H3 subheadings within article */
+  .art-prose h2 {
+    font-family: var(--art-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--art-ink);
+    line-height: 1.25;
+    margin: 2.5rem 0 0.875rem;
+  }
+
+  .art-prose h3 {
+    font-family: var(--art-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--art-ink);
+    line-height: 1.3;
+    margin: 2rem 0 0.75rem;
+  }
+
+  .art-prose ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.1em; }
+  .art-prose ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 1.1em; }
+  .art-prose li { margin-bottom: 0.35em; }
+  .art-prose hr { border: none; border-top: 1px solid var(--art-border); margin: 2.5rem 0; }
+
+  /* ── Drop cap + Dateline (first para) ─────────── */
+  .art-first-para { overflow: hidden; }
+
+  .dc-city {
+    font-family: var(--art-sans);
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 0.82em;
+    color: var(--art-ink);
+    margin-right: 0.3em;
+  }
+
+  .dc-dropcap {
+    float: left;
+    font-family: var(--art-serif);
+    font-size: 3.6rem;
+    line-height: 0.82;
+    padding-right: 0.5rem;
+    padding-top: 0.1rem;
+    color: var(--art-green);
+    font-weight: 500;
+    user-select: none;
+  }
+
+  @media (max-width: 767px) {
+    .dc-dropcap {
+      font-size: 2.8rem;
+      line-height: 0.85;
+      padding-right: 0.35rem;
+    }
+  }
+
+  /* ── Pull Quote / Blockquote ──────────────────── */
+  .art-pullquote {
+    border-left: 3px solid var(--art-green);
+    padding: 0.875rem 0 0.875rem 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .art-pullquote p {
+    font-family: var(--art-serif);
+    font-style: italic;
+    font-size: 1.35rem;
+    line-height: 1.55;
+    color: var(--art-ink);
+    margin: 0;
+    font-weight: 400;
+  }
+
+  @media (max-width: 767px) {
+    .art-pullquote p { font-size: 1.15rem; }
+  }
+
+  /* ── Article Footer ───────────────────────────── */
+  .art-article-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--art-border);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .art-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .art-tags-label {
+    font-family: var(--art-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--art-ink-mute);
+  }
+
+  .art-tag {
+    font-family: var(--art-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--art-green);
+    background: rgba(8,122,53,0.08);
+    padding: 0.25rem 0.75rem;
+    border-radius: 99px;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .art-tag:hover { background: var(--art-green); color: #fff; }
+
+  .art-share-text {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.375rem 0.5rem;
+    font-family: var(--art-sans);
+    font-size: 0.8125rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--art-border);
+    border-bottom: 1px solid var(--art-border);
+  }
+
+  .art-share-label {
+    font-weight: 600;
+    color: var(--art-ink);
+  }
+
+  .art-share-link {
+    color: var(--art-ink-mute);
+    text-decoration: none;
+    transition: color 0.15s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0;
+  }
+
+  .art-share-link:hover { color: var(--art-green); }
+
+  .art-share-dot {
+    color: var(--art-ink-faint);
+    user-select: none;
+  }
+
+  /* ── Sidebar ──────────────────────────────────── */
+  .art-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    .art-sidebar {
+      position: sticky;
+      top: 68px;
+    }
+  }
+
+  .art-sidebar-card {
+    background: var(--art-bg-card);
+    border: 1px solid var(--art-border);
+    border-radius: var(--art-radius);
+    padding: 1.25rem 1.25rem 1rem;
+  }
+
+  .art-sidebar-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--art-green);
+    padding-bottom: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .art-sidebar-heading h2 {
+    font-family: var(--art-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--art-ink);
+    margin: 0;
+  }
+
+  .art-sidebar-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--art-green);
+    flex-shrink: 0;
+  }
+
+  .art-sidebar-dot--gold { background: var(--art-gold); }
+
+  /* Popular list */
+  .art-popular-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .art-popular-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--art-border);
+  }
+
+  .art-popular-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .art-popular-num {
+    font-family: var(--art-serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgba(8, 122, 53, 0.5);
+    line-height: 1;
+    flex-shrink: 0;
+    padding-top: 0.1rem;
+    min-width: 2rem;
+  }
+
+  .art-popular-text { flex: 1; min-width: 0; }
+
+  .art-popular-title {
+    font-family: var(--art-serif);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--art-ink);
+    text-decoration: none;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.15s;
+  }
+
+  .art-popular-title:hover { color: var(--art-green); }
+
+  .art-popular-date {
+    display: block;
+    font-family: var(--art-sans);
+    font-size: 0.6875rem;
+    color: var(--art-ink-faint);
+    margin-top: 0.25rem;
+  }
+
+  /* Related list */
+  .art-related-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .art-related-item {
+    padding: 0.625rem 0;
+    border-bottom: 1px solid var(--art-border);
+  }
+
+  .art-related-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .art-related-title {
+    font-family: var(--art-serif);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--art-ink);
+    text-decoration: none;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.15s;
+  }
+
+  .art-related-title:hover { color: var(--art-green); }
+
+  .art-related-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+    font-family: var(--art-sans);
+    font-size: 0.6875rem;
+  }
+
+  .art-related-cat {
+    color: var(--art-green);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .art-related-date { color: var(--art-ink-faint); }
+
+  /* ── Baca Juga Section ────────────────────────── */
+  .art-read-more {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--art-border);
+  }
+
+  .art-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--art-border);
+    border-bottom: 1px solid var(--art-border);
+    padding: 0.75rem 0;
+    margin-bottom: 2rem;
+  }
+
+  .art-section-title {
+    font-family: var(--art-sans);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--art-ink);
+    margin: 0;
+  }
+
+  .art-section-all {
+    font-family: var(--art-sans);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--art-green);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .art-section-all:hover { color: var(--art-green-dk); }
+
+  /* Cards grid */
+  .art-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 768px) {
+    .art-cards-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      divide-style: solid; /* Tailwind-style; implemented below */
+    }
+  }
+
+  .art-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .art-card--border {
+      padding-left: 2rem;
+      border-left: 1px solid var(--art-border);
+    }
+  }
+
+  .art-card-img-wrap {
+    display: block;
+    overflow: hidden;
+    border-radius: 6px;
+  }
+
+  .art-card-img {
+    width: 100%;
+    aspect-ratio: 3/2;
+    object-fit: cover;
+    display: block;
+    background: var(--art-border);
+    transition: transform 0.3s ease;
+  }
+
+  .art-card-img-wrap:hover .art-card-img { transform: scale(1.04); }
+
+  .art-card-img-placeholder {
+    width: 100%;
+    aspect-ratio: 3/2;
+    background: var(--art-border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--art-sans);
+    font-size: 0.75rem;
+    color: var(--art-ink-faint);
+    font-style: italic;
+  }
+
+  .art-card-body { display: flex; flex-direction: column; gap: 0.3rem; }
+
+  .art-card-cat {
+    font-family: var(--art-sans);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--art-green);
+  }
+
+  .art-card-title {
+    font-family: var(--art-serif);
+    font-size: 1.0625rem;
+    font-weight: 500;
+    color: var(--art-ink);
+    line-height: 1.35;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .art-card-title a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.15s;
+  }
+
+  .art-card-title a:hover { color: var(--art-green); }
+
+  .art-card-date {
+    font-family: var(--art-sans);
+    font-size: 0.75rem;
+    color: var(--art-ink-faint);
+  }
+
+  /* ── Print Stylesheet ─────────────────────────── */
+  .print-only { display: none; }
+
+  @media print {
+    body { background: white !important; color: black !important; }
+
+    .art-topbar,
+    .no-print,
+    .art-sidebar,
+    .art-read-more,
+    nav,
+    footer,
+    #kontak-section { display: none !important; }
+
+    .print-only { display: block !important; }
+
+    .art-print-header {
+      text-align: center;
+      border-bottom: 2px solid black;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .art-print-school {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-weight: 700;
+    }
+
+    .art-print-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-top: 0.25rem;
+      color: #555;
+    }
+
+    .art-page { background: white !important; padding: 0 !important; }
+    .art-container { max-width: 100% !important; padding: 0 !important; }
+
+    .art-body-grid {
+      display: block !important;
+    }
+
+    article#article-main {
+      max-width: 100% !important;
+    }
+
+    .art-prose {
+      font-size: 11pt !important;
+      color: black !important;
+      line-height: 1.7 !important;
+    }
+
+    .dc-dropcap { color: black !important; }
+    .dc-city { color: black !important; }
+  }
+
+  /* ── Reduced Motion ───────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 </style>
 
 <script is:inline>
-  const copyBtn = document.getElementById('btn-copy-slug');
-  const copyLabel = document.getElementById('label-copy-slug');
-  if (copyBtn) {
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(window.location.href);
-      if (copyLabel) {
-        copyLabel.textContent = 'Tersalin \u2713';
-        setTimeout(() => { copyLabel.textContent = 'Salin Tautan'; }, 2500);
-      }
-    });
-  }
+  (function () {
+    // Copy to clipboard
+    function copyUrl() {
+      if (!navigator.clipboard) return;
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        // Slug button tooltip
+        const tip = document.getElementById('copy-tip');
+        if (tip) {
+          tip.classList.add('visible');
+          setTimeout(() => tip.classList.remove('visible'), 2000);
+        }
+        // Text button
+        const textBtn = document.getElementById('btn-copy-text');
+        if (textBtn) {
+          const orig = textBtn.textContent;
+          textBtn.textContent = 'Tersalin ✓';
+          setTimeout(() => { textBtn.textContent = orig; }, 2000);
+        }
+      });
+    }
+
+    const slugBtn = document.getElementById('btn-copy-slug');
+    const textBtn = document.getElementById('btn-copy-text');
+    const shareBtn = document.getElementById('top-share-btn');
+
+    if (slugBtn) slugBtn.addEventListener('click', copyUrl);
+    if (textBtn) textBtn.addEventListener('click', copyUrl);
+
+    if (shareBtn) {
+      shareBtn.addEventListener('click', () => {
+        if (navigator.share) {
+          navigator.share({ title: document.title, url: window.location.href }).catch(() => {});
+        } else {
+          copyUrl();
+        }
+      });
+    }
+  })();
 </script>
 
-{/* View counter — hanya aktif jika endpoint tersedia */}
 {statsEndpoint && (
   <script src="../../scripts/view-counter.ts"></script>
 )}

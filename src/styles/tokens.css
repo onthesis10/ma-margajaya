@@ -29,6 +29,17 @@
 
   --font-serif: 'Instrument Serif', serif;
   --font-sans: 'Plus Jakarta Sans', sans-serif;
+
+  /* Editorial Newspaper Tokens */
+  --color-editorial-paper: #FAF8F3;
+  --color-editorial-ink: #1A1A17;
+  --color-editorial-ink-muted: #52524E;
+  --color-editorial-border: #E5E0D8;
+  --color-editorial-green: #087A35;
+  --color-editorial-green-dark: #064E3B;
+  --color-editorial-gold: #D4A01B;
+  --font-serif-display: 'Fraunces', Georgia, serif;
+  --font-serif-body: 'Newsreader', Georgia, serif;
 }
 
 /* Hide Google Translate top banner, tooltips, and prevent body margin push */

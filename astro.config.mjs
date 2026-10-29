@@ -7,6 +7,9 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   // Domain resmi — digunakan untuk canonical URL dan sitemap
   site: 'https://www.mamargajaya.sch.id',
+  devToolbar: {
+    enabled: false,
+  },
   integrations: [
     tailwind(),
     sitemap({
