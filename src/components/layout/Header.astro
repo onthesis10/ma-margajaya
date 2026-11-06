@@ -12,7 +12,8 @@ const currentPath = Astro.url.pathname;
 <!-- Mobile Menu Backdrop -->
 <div 
   id="mobile-menu-backdrop" 
-  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 opacity-0 pointer-events-none lg:hidden" 
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-all duration-300 opacity-0 pointer-events-none invisible lg:hidden" 
+  style="visibility: hidden;"
   aria-hidden="true"
 ></div>
 
@@ -196,8 +197,8 @@ const currentPath = Astro.url.pathname;
   <!-- Mobile Floating Glass Menu Panel -->
   <div 
     id="mobile-menu-panel" 
-    class="pointer-events-auto lg:hidden mobile-menu-glass mx-3 sm:mx-4 mt-2 rounded-2xl shadow-2xl overflow-y-auto max-h-[calc(100vh-80px)] pointer-events-none"
-    style="opacity: 0; transform: translateY(-8px) scale(0.98); transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1); -webkit-overflow-scrolling: touch;"
+    class="lg:hidden mobile-menu-glass mx-3 sm:mx-4 mt-2 rounded-2xl shadow-2xl overflow-y-auto max-h-[calc(100vh-80px)] pointer-events-none invisible"
+    style="opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-8px) scale(0.98); transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s; -webkit-overflow-scrolling: touch;"
     aria-hidden="true"
   >
     <nav class="flex flex-col p-4 gap-1">
@@ -490,15 +491,19 @@ const currentPath = Astro.url.pathname;
     menuOpen = true;
     setFloatingState(true);
 
-    panel.classList.remove('pointer-events-none');
-    panel.classList.add('pointer-events-auto');
+    panel.classList.remove('pointer-events-none', 'invisible');
+    panel.classList.add('pointer-events-auto', 'visible');
+    panel.style.visibility = 'visible';
+    panel.style.pointerEvents = 'auto';
     panel.style.opacity = '1';
     panel.style.transform = 'translateY(0) scale(1)';
     panel.setAttribute('aria-hidden', 'false');
 
     if (backdrop) {
-      backdrop.classList.remove('pointer-events-none', 'opacity-0');
-      backdrop.classList.add('pointer-events-auto', 'opacity-100');
+      backdrop.classList.remove('pointer-events-none', 'opacity-0', 'invisible');
+      backdrop.classList.add('pointer-events-auto', 'opacity-100', 'visible');
+      backdrop.style.visibility = 'visible';
+      backdrop.style.pointerEvents = 'auto';
     }
 
     btn?.setAttribute('aria-expanded', 'true');
@@ -524,16 +529,32 @@ const currentPath = Astro.url.pathname;
     if (!panel) return;
     menuOpen = false;
 
-    panel.classList.remove('pointer-events-auto');
+    panel.classList.remove('pointer-events-auto', 'visible');
     panel.classList.add('pointer-events-none');
+    panel.style.pointerEvents = 'none';
     panel.style.opacity = '0';
     panel.style.transform = 'translateY(-8px) scale(0.98)';
     panel.setAttribute('aria-hidden', 'true');
 
     if (backdrop) {
-      backdrop.classList.remove('pointer-events-auto', 'opacity-100');
+      backdrop.classList.remove('pointer-events-auto', 'opacity-100', 'visible');
       backdrop.classList.add('pointer-events-none', 'opacity-0');
+      backdrop.style.pointerEvents = 'none';
     }
+
+    // Sembunyikan total visibility setelah animasi transisi selesai agar 100% bebas ghost-touch
+    setTimeout(() => {
+      if (!menuOpen) {
+        if (panel) {
+          panel.classList.add('invisible');
+          panel.style.visibility = 'hidden';
+        }
+        if (backdrop) {
+          backdrop.classList.add('invisible');
+          backdrop.style.visibility = 'hidden';
+        }
+      }
+    }, 280);
 
     btn?.setAttribute('aria-expanded', 'false');
     btn?.setAttribute('aria-label', 'Buka Menu');
